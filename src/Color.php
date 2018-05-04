@@ -6,18 +6,31 @@
  * Time: 上午9:12
  */
 
-namespace Toolkit\Sys;
+namespace Toolkit\Cli;
 
 /**
  * Class Color
- * @package Toolkit\Sys
+ * @package Toolkit\Cli
+ * // basic
  * @method string red(string $text)
  * @method string blue(string $text)
  * @method string cyan(string $text)
+ * @method string black(string $text)
  * @method string brown(string $text)
  * @method string green(string $text)
+ * @method string white(string $text)
  * @method string yellow(string $text)
  * @method string magenta(string $text)
+ *
+ * // alert
+ * @method string info(string $text)
+ * @method string danger(string $text)
+ * @method string error(string $text)
+ * @method string notice(string $text)
+ * @method string warning(string $text)
+ * @method string success(string $text)
+ *
+ * // more please @see Color::STYLES
  */
 class Color
 {
@@ -74,9 +87,36 @@ class Color
 
     /**
      * some styles
+     * custom style: fg;bg;opt
      * @var array
      */
     const STYLES = [
+        // basic
+        'red' => '0;31',
+        'blue' => '0;34',
+        'cyan' => '0;36',
+        'black' => '0;30',
+        'green' => '0;32',
+        'brown' => '0;33',
+        'white' => '1;37',
+        'normal' => '39',// no color
+        'yellow' => '1;33',
+        'magenta' => '1;35',
+
+        // alert
+        'suc' => '1;32',// same 'green' and 'bold'
+        'success' => '1;32',
+        'info' => '0;32',// same 'green'
+        'comment' => '0;33',// same 'brown'
+        'note' => '36;1',
+        'notice' => '36;4',
+        'warn' => '0;30;43',
+        'warning' => '0;30;43',
+        'danger' => '0;31',// same 'red'
+        'err' => '30;41',
+        'error' => '30;41',
+
+        // more
         'lightRed' => '1;31',
         'light_red' => '1;31',
         'lightGreen' => '1;32',
@@ -85,28 +125,32 @@ class Color
         'light_blue' => '1;34',
         'lightCyan' => '1;36',
         'light_cyan' => '1;36',
-        'magenta' => '1;35',
-        'white' => '1;37',
-        'black' => '0;30',
-        'red' => '0;31',
-        'green' => '0;32',
-        'brown' => '0;33',
-        'blue' => '0;34',
-        'cyan' => '0;36',
-        'yellow' => '1;33',
+        'lightDray' => '37',
+        'light_gray' => '37',
 
+        'darkDray' => '90',
+        'dark_gray' => '90',
+        'lightYellow' => '93',
+        'light_yellow' => '93',
+        'lightMagenta' => '95',
+        'light_magenta' => '95',
+
+        // extra
+        'lightRedEx' => '91',
+        'light_red_ex' => '91',
+        'lightGreenEx' => '92',
+        'light_green_ex' => '92',
+        'lightBlueEx' => '94',
+        'light_blue_ex' => '94',
+        'lightCyanEx' => '96',
+        'light_cyan_ex' => '96',
+        'whiteEx' => '97',
+        'white_ex' => '97',
+
+        // option
         'bold' => '1',
         'underscore' => '4',
         'reverse' => '7',
-
-        //
-        'suc' => '1;32',// same 'green' and 'bold'
-        'success' => '1;32',
-        'info' => '0;32',// same 'green'
-        'comment' => '0;33',// same 'brown'
-        'warning' => '0;30;43',
-        'danger' => '0;31',// same 'red'
-        'error' => '30;41',
     ];
 
     /**
@@ -143,6 +187,18 @@ class Color
      ******************************************************************************/
 
     /**
+     * apply style for text
+     * @param string $style
+     * @param string $text
+     * @return string
+     */
+    public static function apply(string $style, string $text): string
+    {
+        return self::render($text, $style);
+    }
+
+    /**
+     * render text
      * @param string $text
      * @param string|array $style
      * - string: 'green', 'blue'
@@ -155,7 +211,7 @@ class Color
             return $text;
         }
 
-        if (!SysEnv::isSupportColor()) {
+        if (!Cli::isSupportColor()) {
             return self::clearColor($text);
         }
 
@@ -164,7 +220,7 @@ class Color
             $color = self::STYLES[$style] ?? '0';
             // custom style: [self::FG_GREEN, self::BG_WHITE, self::UNDERSCORE]
         } elseif (\is_array($style)) {
-            $color = implode(';', $style);
+            $color = \implode(';', $style);
 
             // user color tag: <info>message</info>
         } elseif (\strpos($text, '<') !== false) {
@@ -178,6 +234,7 @@ class Color
     }
 
     /**
+     * parse color tag e.g: <info>message</info>
      * @param string $text
      * @return mixed|string
      */
@@ -188,7 +245,7 @@ class Color
         }
 
         // if don't support output color text, clear color tag.
-        if (!SysEnv::isSupportColor()) {
+        if (!Cli::isSupportColor()) {
             return static::clearColor($text);
         }
 
@@ -210,13 +267,37 @@ class Color
     }
 
     /**
-     * @param string $text
+     * wrap a style tag
+     * @param string $string
+     * @param string $tag
      * @return string
      */
-    public static function clearColor(string $text): string
+    public static function wrapTag(string $string, string $tag): string
+    {
+        if (!$string) {
+            return '';
+        }
+
+        if (!$tag) {
+            return $string;
+        }
+
+        return "<$tag>$string</$tag>";
+    }
+
+    /**
+     * @param string $text
+     * @param bool $stripTag
+     * @return string
+     */
+    public static function clearColor(string $text, bool $stripTag = true): string
     {
         // return preg_replace('/\033\[(?:\d;?)+m/', '' , "\033[0;36mtext\033[0m");
-        return (string)\preg_replace('/\033\[(?:\d;?)+m/', '', \strip_tags($text));
+        return (string)\preg_replace(
+            '/\033\[(?:\d;?)+m/',
+            '',
+            $stripTag ? \strip_tags($text) : $text
+        );
     }
 
     /**
@@ -228,5 +309,25 @@ class Color
     {
         // $text = strip_tags($text);
         return (string)\preg_replace(self::STRIP_TAG, '', $string);
+    }
+
+    /**
+     * @param string $style
+     * @return bool
+     */
+    public static function hasStyle(string $style): bool
+    {
+        return isset(self::STYLES[$style]);
+    }
+
+    /**
+     * get all style names
+     * @return array
+     */
+    public static function getStyles(): array
+    {
+        return array_filter(\array_keys(self::STYLES), function ($style) {
+            return !\strpos($style, '_');
+        });
     }
 }

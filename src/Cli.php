@@ -6,38 +6,14 @@
  * Time: 下午5:33
  */
 
-namespace Toolkit\Sys;
+namespace Toolkit\Cli;
 
 /**
  * Class Cli
- * @package Toolkit\Sys
+ * @package Toolkit\Cli
  */
 class Cli
 {
-    /*******************************************************************************
-     * color render
-     ******************************************************************************/
-
-    /**
-     * @param $text
-     * @param string|int|array $style
-     * @return string
-     */
-    public static function color(string $text, $style = null): string
-    {
-        return Color::render($text, $style);
-    }
-
-    /**
-     * @param string $text
-     * @return string
-     */
-    public static function clearColor($text): string
-    {
-        // return preg_replace('/\033\[(?:\d;?)+m/', '' , "\033[0;36mtext\033[0m");
-        return preg_replace('/\033\[(?:\d;?)+m/', '', strip_tags($text));
-    }
-
     /*******************************************************************************
      * read/write message
      ******************************************************************************/
@@ -58,17 +34,17 @@ class Cli
 
     /**
      * write message to console
-     * @param $message
+     * @param $messages
      * @param bool $nl
      * @param bool $quit
      */
-    public static function write($message, $nl = true, $quit = false)
+    public static function write($messages, $nl = true, $quit = false)
     {
-        if (\is_array($message)) {
-            $message = implode($nl ? PHP_EOL : '', $message);
+        if (\is_array($messages)) {
+            $messages = implode($nl ? PHP_EOL : '', $messages);
         }
 
-        self::stdout(Color::parseTag($message), $nl, $quit);
+        self::stdout(Color::parseTag($messages), $nl, $quit);
     }
 
     /**
@@ -77,7 +53,7 @@ class Cli
      * @param bool $nl
      * @param bool|int $quit
      */
-    public static function stdout($message, $nl = true, $quit = false)
+    public static function stdout(string $message, $nl = true, $quit = false)
     {
         fwrite(\STDOUT, $message . ($nl ? PHP_EOL : ''));
         fflush(\STDOUT);
@@ -94,7 +70,7 @@ class Cli
      * @param bool $nl
      * @param bool|int $quit
      */
-    public static function stderr($message, $nl = true, $quit = -200)
+    public static function stderr(string $message, $nl = true, $quit = -1)
     {
         fwrite(\STDERR, self::color('[ERROR] ', 'red') . $message . ($nl ? PHP_EOL : ''));
         fflush(\STDOUT);
@@ -105,6 +81,24 @@ class Cli
         }
     }
 
+    /*******************************************************************************
+     * color render
+     ******************************************************************************/
+
+    /**
+     * @param $text
+     * @param string|int|array $style
+     * @return string
+     */
+    public static function color(string $text, $style = null): string
+    {
+        return Color::render($text, $style);
+    }
+
+    /*******************************************************************************
+     * some helpers
+     ******************************************************************************/
+
     /**
      * Returns true if STDOUT supports colorization.
      * This code has been copied and adapted from
@@ -113,8 +107,35 @@ class Cli
      */
     public static function isSupportColor(): bool
     {
-        return SysEnv::isSupportColor();
+        if (DIRECTORY_SEPARATOR === '\\') {
+            return
+                '10.0.10586' === PHP_WINDOWS_VERSION_MAJOR . '.' . PHP_WINDOWS_VERSION_MINOR . '.' . PHP_WINDOWS_VERSION_BUILD
+                || false !== getenv('ANSICON')
+                || 'ON' === getenv('ConEmuANSI')
+                || 'xterm' === getenv('TERM')// || 'cygwin' === getenv('TERM')
+                ;
+        }
+
+        if (!\defined('STDOUT')) {
+            return false;
+        }
+
+        return self::isInteractive(STDOUT);
     }
+
+    /**
+     * Returns if the file descriptor is an interactive terminal or not.
+     * @param  int|resource $fileDescriptor
+     * @return boolean
+     */
+    public static function isInteractive($fileDescriptor): bool
+    {
+        return \function_exists('posix_isatty') && @posix_isatty($fileDescriptor);
+    }
+
+    /*******************************************************************************
+     * parse $argv
+     ******************************************************************************/
 
     /**
      * Parses $GLOBALS['argv'] for parameters and assigns them to an array.
