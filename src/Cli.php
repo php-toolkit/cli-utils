@@ -100,6 +100,14 @@ class Cli
      ******************************************************************************/
 
     /**
+     * @return bool
+     */
+    public static function supportColor(): bool
+    {
+        return self::isSupportColor();
+    }
+
+    /**
      * Returns true if STDOUT supports colorization.
      * This code has been copied and adapted from
      * \Symfony\Component\Console\Output\OutputStream.
@@ -121,6 +129,26 @@ class Cli
         }
 
         return self::isInteractive(STDOUT);
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isSupport256Color(): bool
+    {
+        return DIRECTORY_SEPARATOR === '/' && strpos(getenv('TERM'), '256color') !== false;
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isAnsiSupport(): bool
+    {
+        if (DIRECTORY_SEPARATOR === '\\') {
+            return getenv('ANSICON') === true || getenv('ConEmuANSI') === 'ON';
+        }
+
+        return true;
     }
 
     /**

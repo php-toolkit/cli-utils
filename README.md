@@ -12,6 +12,10 @@ composer require toolkit/cli-utils
 
 ![colors](./example/all-color-style.jpg)
 
+## php file highlight
+
+![colors](./example/cli-php-file-highlight.jpg)
+
 ## license
 
 MIT
