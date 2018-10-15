@@ -60,7 +60,7 @@ class Console extends Cli
             $type,
             $optString,
             \trim($msg),
-            $data ? PHP_EOL . \json_encode($data, \JSON_UNESCAPED_SLASHES|\JSON_PRETTY_PRINT) : ''
+            $data ? PHP_EOL . \json_encode($data, \JSON_UNESCAPED_SLASHES | \JSON_PRETTY_PRINT) : ''
         ));
     }
 }

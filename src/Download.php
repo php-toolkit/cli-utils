@@ -65,7 +65,7 @@ final class Download
     public function start(): self
     {
         if (!$this->url || !$this->saveAs) {
-            throw new \RuntimeException("Please the property 'url' and 'saveAs'.", - 1);
+            throw new \RuntimeException("Please the property 'url' and 'saveAs'.", -1);
         }
 
         $ctx = stream_context_create();
