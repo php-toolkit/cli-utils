@@ -14,8 +14,8 @@ namespace Toolkit\Cli;
  */
 final class Download
 {
-    const PROGRESS_TEXT = 'text';
-    const PROGRESS_BAR  = 'bar';
+    public const PROGRESS_TEXT = 'text';
+    public const PROGRESS_BAR  = 'bar';
 
     /** @var int */
     private $fileSize;

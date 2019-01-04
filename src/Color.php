@@ -34,63 +34,63 @@ namespace Toolkit\Cli;
  */
 class Color
 {
-    const NORMAL = 0;
+    public const NORMAL = 0;
 
     // Foreground color
-    const FG_BLACK   = 30;
-    const FG_RED     = 31;
-    const FG_GREEN   = 32;
-    const FG_BROWN   = 33; // like yellow
-    const FG_BLUE    = 34;
-    const FG_CYAN    = 36;
-    const FG_WHITE   = 37;
-    const FG_DEFAULT = 39;
+    public const FG_BLACK   = 30;
+    public const FG_RED     = 31;
+    public const FG_GREEN   = 32;
+    public const FG_BROWN   = 33; // like yellow
+    public const FG_BLUE    = 34;
+    public const FG_CYAN    = 36;
+    public const FG_WHITE   = 37;
+    public const FG_DEFAULT = 39;
 
     // extra Foreground color
-    const FG_DARK_GRAY     = 90;
-    const FG_LIGHT_RED     = 91;
-    const FG_LIGHT_GREEN   = 92;
-    const FG_LIGHT_YELLOW  = 93;
-    const FG_LIGHT_BLUE    = 94;
-    const FG_LIGHT_MAGENTA = 95;
-    const FG_LIGHT_CYAN    = 96;
-    const FG_WHITE_W       = 97;
+    public const FG_DARK_GRAY     = 90;
+    public const FG_LIGHT_RED     = 91;
+    public const FG_LIGHT_GREEN   = 92;
+    public const FG_LIGHT_YELLOW  = 93;
+    public const FG_LIGHT_BLUE    = 94;
+    public const FG_LIGHT_MAGENTA = 95;
+    public const FG_LIGHT_CYAN    = 96;
+    public const FG_WHITE_W       = 97;
 
     // Background color
-    const BG_BLACK   = 40;
-    const BG_RED     = 41;
-    const BG_GREEN   = 42;
-    const BG_BROWN   = 43; // like yellow
-    const BG_BLUE    = 44;
-    const BG_CYAN    = 46;
-    const BG_WHITE   = 47;
-    const BG_DEFAULT = 49;
+    public const BG_BLACK   = 40;
+    public const BG_RED     = 41;
+    public const BG_GREEN   = 42;
+    public const BG_BROWN   = 43; // like yellow
+    public const BG_BLUE    = 44;
+    public const BG_CYAN    = 46;
+    public const BG_WHITE   = 47;
+    public const BG_DEFAULT = 49;
 
     // extra Background color
-    const BG_DARK_GRAY     = 100;
-    const BG_LIGHT_RED     = 101;
-    const BG_LIGHT_GREEN   = 102;
-    const BG_LIGHT_YELLOW  = 103;
-    const BG_LIGHT_BLUE    = 104;
-    const BG_LIGHT_MAGENTA = 105;
-    const BG_LIGHT_CYAN    = 106;
-    const BG_WHITE_W       = 107;
+    public const BG_DARK_GRAY     = 100;
+    public const BG_LIGHT_RED     = 101;
+    public const BG_LIGHT_GREEN   = 102;
+    public const BG_LIGHT_YELLOW  = 103;
+    public const BG_LIGHT_BLUE    = 104;
+    public const BG_LIGHT_MAGENTA = 105;
+    public const BG_LIGHT_CYAN    = 106;
+    public const BG_WHITE_W       = 107;
 
     // color option
-    const BOLD       = 1;      // 加粗
-    const FUZZY      = 2;      // 模糊(不是所有的终端仿真器都支持)
-    const ITALIC     = 3;      // 斜体(不是所有的终端仿真器都支持)
-    const UNDERSCORE = 4;  // 下划线
-    const BLINK      = 5;      // 闪烁
-    const REVERSE    = 7;    // 颠倒的 交换背景色与前景色
-    const CONCEALED  = 8;      // 隐匿的
+    public const BOLD       = 1;      // 加粗
+    public const FUZZY      = 2;      // 模糊(不是所有的终端仿真器都支持)
+    public const ITALIC     = 3;      // 斜体(不是所有的终端仿真器都支持)
+    public const UNDERSCORE = 4;  // 下划线
+    public const BLINK      = 5;      // 闪烁
+    public const REVERSE    = 7;    // 颠倒的 交换背景色与前景色
+    public const CONCEALED  = 8;      // 隐匿的
 
     /**
      * some styles
      * custom style: fg;bg;opt
      * @var array
      */
-    const STYLES = [
+    public const STYLES = [
         // basic
         'red'         => '0;31',
         'blue'        => '0;34',
@@ -156,17 +156,17 @@ class Color
     /**
      * Regex to match tags
      */
-    const COLOR_TAG = '/<([a-z=;]+)>(.*?)<\/\\1>/s';
+    public const COLOR_TAG = '/<([a-z=;]+)>(.*?)<\/\\1>/s';
 
     /**
      * Regex used for removing color codes
      */
-    const STRIP_TAG = '/<[\/]?[a-zA-Z=;]+>/';
+    public const STRIP_TAG = '/<[\/]?[a-zA-Z=;]+>/';
 
     /**
      * CLI color template
      */
-    const COLOR_TPL = "\033[%sm%s\033[0m";
+    public const COLOR_TPL = "\033[%sm%s\033[0m";
 
     /**
      * @param string $method

@@ -200,7 +200,7 @@ class Cli
                 $value = true;
 
                 // long-opt: (--<opt>)
-                if ($opt{0} === '-') {
+                if (\strpos($opt, '-') === 0) {
                     $isLong = true;
                     $opt = substr($opt, 1);
 
@@ -238,14 +238,11 @@ class Cli
                 }
 
                 // arguments: param doesn't belong to any option, define it is args
+            } elseif (strpos($p, '=') !== false) { // value specified inline (<arg>=<value>)
+                list($name, $value) = explode('=', $p, 2);
+                $args[$name] = $value;
             } else {
-                // value specified inline (<arg>=<value>)
-                if (strpos($p, '=') !== false) {
-                    list($name, $value) = explode('=', $p, 2);
-                    $args[$name] = $value;
-                } else {
-                    $args[] = $p;
-                }
+                $args[] = $p;
             }
         }
 

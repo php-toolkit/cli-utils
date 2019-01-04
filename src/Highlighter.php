@@ -16,14 +16,14 @@ namespace Toolkit\Cli;
  */
 class Highlighter
 {
-    const TOKEN_DEFAULT = 'token_default';
-    const TOKEN_COMMENT = 'token_comment';
-    const TOKEN_STRING  = 'token_string';
-    const TOKEN_HTML    = 'token_html';
-    const TOKEN_KEYWORD = 'token_keyword';
+    public const TOKEN_DEFAULT = 'token_default';
+    public const TOKEN_COMMENT = 'token_comment';
+    public const TOKEN_STRING  = 'token_string';
+    public const TOKEN_HTML    = 'token_html';
+    public const TOKEN_KEYWORD = 'token_keyword';
 
-    const ACTUAL_LINE_MARK = 'actual_line_mark';
-    const LINE_NUMBER      = 'line_number';
+    public const ACTUAL_LINE_MARK = 'actual_line_mark';
+    public const LINE_NUMBER      = 'line_number';
 
     // @var Style
     //private $color;

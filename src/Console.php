@@ -14,7 +14,7 @@ namespace Toolkit\Cli;
  */
 class Console extends Cli
 {
-    const LOG_LEVEL2TAG = [
+    public const LOG_LEVEL2TAG = [
         'info'    => 'info',
         'warn'    => 'warning',
         'warning' => 'warning',
@@ -45,7 +45,7 @@ class Console extends Cli
         $userOpts = [];
 
         foreach ($opts as $n => $v) {
-            if (\is_numeric($n) || $n[0] === '_') {
+            if (\is_numeric($n) || \strpos($n, '_') === 0) {
                 $userOpts[] = "[$v]";
             } else {
                 $userOpts[] = "[$n:$v]";

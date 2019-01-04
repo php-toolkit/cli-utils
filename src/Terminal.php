@@ -18,31 +18,31 @@ namespace Toolkit\Cli;
  */
 final class Terminal
 {
-    const BEGIN_CHAR = "\033[";
-    const END_CHAR   = "\033[0m";
+    public const BEGIN_CHAR = "\033[";
+    public const END_CHAR   = "\033[0m";
 
     // Control cursor code name list. more @see [[self::$ctrlCursorCodes]]
-    const CUR_HIDE             = 'hide';
-    const CUR_SHOW             = 'show';
-    const CUR_SAVE_POSITION    = 'savePosition';
-    const CUR_RESTORE_POSITION = 'restorePosition';
-    const CUR_UP               = 'up';
-    const CUR_DOWN             = 'down';
-    const CUR_FORWARD          = 'forward';
-    const CUR_BACKWARD         = 'backward';
-    const CUR_NEXT_LINE        = 'nextLine';
-    const CUR_PREV_LINE        = 'prevLine';
-    const CUR_COORDINATE       = 'coordinate';
+    public const CUR_HIDE             = 'hide';
+    public const CUR_SHOW             = 'show';
+    public const CUR_SAVE_POSITION    = 'savePosition';
+    public const CUR_RESTORE_POSITION = 'restorePosition';
+    public const CUR_UP               = 'up';
+    public const CUR_DOWN             = 'down';
+    public const CUR_FORWARD          = 'forward';
+    public const CUR_BACKWARD         = 'backward';
+    public const CUR_NEXT_LINE        = 'nextLine';
+    public const CUR_PREV_LINE        = 'prevLine';
+    public const CUR_COORDINATE       = 'coordinate';
 
     // Control screen code name list. more @see [[self::$ctrlScreenCodes]]
-    const CLEAR                    = 'clear';
-    const CLEAR_BEFORE_CURSOR      = 'clearBeforeCursor';
-    const CLEAR_LINE               = 'clearLine';
-    const CLEAR_LINE_BEFORE_CURSOR = 'clearLineBeforeCursor';
-    const CLEAR_LINE_AFTER_CURSOR  = 'clearLineAfterCursor';
+    public const CLEAR                    = 'clear';
+    public const CLEAR_BEFORE_CURSOR      = 'clearBeforeCursor';
+    public const CLEAR_LINE               = 'clearLine';
+    public const CLEAR_LINE_BEFORE_CURSOR = 'clearLineBeforeCursor';
+    public const CLEAR_LINE_AFTER_CURSOR  = 'clearLineAfterCursor';
 
-    const SCROLL_UP   = 'scrollUp';
-    const SCROLL_DOWN = 'scrollDown';
+    public const SCROLL_UP   = 'scrollUp';
+    public const SCROLL_DOWN = 'scrollDown';
 
     /**
      * current class's instance
