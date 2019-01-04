@@ -18,12 +18,12 @@ class Highlighter
 {
     const TOKEN_DEFAULT = 'token_default';
     const TOKEN_COMMENT = 'token_comment';
-    const TOKEN_STRING = 'token_string';
-    const TOKEN_HTML = 'token_html';
+    const TOKEN_STRING  = 'token_string';
+    const TOKEN_HTML    = 'token_html';
     const TOKEN_KEYWORD = 'token_keyword';
 
     const ACTUAL_LINE_MARK = 'actual_line_mark';
-    const LINE_NUMBER = 'line_number';
+    const LINE_NUMBER      = 'line_number';
 
     // @var Style
     //private $color;
@@ -33,13 +33,13 @@ class Highlighter
 
     /** @var array */
     private $defaultTheme = [
-        self::TOKEN_STRING => 'red',
-        self::TOKEN_COMMENT => 'yellow',
-        self::TOKEN_KEYWORD => 'info',
-        self::TOKEN_DEFAULT => 'normal',
-        self::TOKEN_HTML => 'cyan',
+        self::TOKEN_STRING     => 'red',
+        self::TOKEN_COMMENT    => 'yellow',
+        self::TOKEN_KEYWORD    => 'info',
+        self::TOKEN_DEFAULT    => 'normal',
+        self::TOKEN_HTML       => 'cyan',
         self::ACTUAL_LINE_MARK => 'red',
-        self::LINE_NUMBER => 'darkGray',
+        self::LINE_NUMBER      => 'darkGray',
     ];
 
     /** @var bool */
@@ -65,7 +65,7 @@ class Highlighter
     /**
      * highlight a full php file content
      * @param string $source
-     * @param bool $withLineNumber with line number
+     * @param bool   $withLineNumber with line number
      * @return string
      */
     public function highlight(string $source, bool $withLineNumber = false): string
@@ -82,9 +82,9 @@ class Highlighter
 
     /**
      * @param string $source
-     * @param int $lineNumber
-     * @param int $linesBefore
-     * @param int $linesAfter
+     * @param int    $lineNumber
+     * @param int    $linesBefore
+     * @param int    $linesAfter
      * @return string
      * @throws \InvalidArgumentException
      */
@@ -95,9 +95,9 @@ class Highlighter
 
     /**
      * @param string $source
-     * @param int $lineNumber
-     * @param int $linesBefore
-     * @param int $linesAfter
+     * @param int    $lineNumber
+     * @param int    $linesBefore
+     * @param int    $linesAfter
      * @return string
      * @throws \InvalidArgumentException
      */
@@ -267,7 +267,7 @@ class Highlighter
     }
 
     /**
-     * @param array $lines
+     * @param array    $lines
      * @param null|int $markLine
      * @return string
      */

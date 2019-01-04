@@ -19,29 +19,29 @@ namespace Toolkit\Cli;
 final class Terminal
 {
     const BEGIN_CHAR = "\033[";
-    const END_CHAR = "\033[0m";
+    const END_CHAR   = "\033[0m";
 
     // Control cursor code name list. more @see [[self::$ctrlCursorCodes]]
-    const CUR_HIDE = 'hide';
-    const CUR_SHOW = 'show';
-    const CUR_SAVE_POSITION = 'savePosition';
+    const CUR_HIDE             = 'hide';
+    const CUR_SHOW             = 'show';
+    const CUR_SAVE_POSITION    = 'savePosition';
     const CUR_RESTORE_POSITION = 'restorePosition';
-    const CUR_UP = 'up';
-    const CUR_DOWN = 'down';
-    const CUR_FORWARD = 'forward';
-    const CUR_BACKWARD = 'backward';
-    const CUR_NEXT_LINE = 'nextLine';
-    const CUR_PREV_LINE = 'prevLine';
-    const CUR_COORDINATE = 'coordinate';
+    const CUR_UP               = 'up';
+    const CUR_DOWN             = 'down';
+    const CUR_FORWARD          = 'forward';
+    const CUR_BACKWARD         = 'backward';
+    const CUR_NEXT_LINE        = 'nextLine';
+    const CUR_PREV_LINE        = 'prevLine';
+    const CUR_COORDINATE       = 'coordinate';
 
     // Control screen code name list. more @see [[self::$ctrlScreenCodes]]
-    const CLEAR = 'clear';
-    const CLEAR_BEFORE_CURSOR = 'clearBeforeCursor';
-    const CLEAR_LINE = 'clearLine';
+    const CLEAR                    = 'clear';
+    const CLEAR_BEFORE_CURSOR      = 'clearBeforeCursor';
+    const CLEAR_LINE               = 'clearLine';
     const CLEAR_LINE_BEFORE_CURSOR = 'clearLineBeforeCursor';
-    const CLEAR_LINE_AFTER_CURSOR = 'clearLineAfterCursor';
+    const CLEAR_LINE_AFTER_CURSOR  = 'clearLineAfterCursor';
 
-    const SCROLL_UP = 'scrollUp';
+    const SCROLL_UP   = 'scrollUp';
     const SCROLL_DOWN = 'scrollDown';
 
     /**
@@ -56,40 +56,40 @@ final class Terminal
      */
     private static $ctrlCursorCodes = [
         // Hides the cursor. Use [show] to bring it back.
-        'hide' => '?25l',
+        'hide'            => '?25l',
 
         // Will show a cursor again when it has been hidden by [hide]
-        'show' => '?25h',
+        'show'            => '?25h',
 
         // Saves the current cursor position, Position can then be restored with [restorePosition].
         // - 保存当前光标位置，然后可以使用[restorePosition]恢复位置
-        'savePosition' => 's',
+        'savePosition'    => 's',
 
         // Restores the cursor position saved with [savePosition] - 恢复[savePosition]保存的光标位置
         'restorePosition' => 'u',
 
         // Moves the terminal cursor up
-        'up' => '%dA',
+        'up'              => '%dA',
 
         // Moves the terminal cursor down
-        'down' => '%B',
+        'down'            => '%B',
 
         // Moves the terminal cursor forward - 移动终端光标前进多远
-        'forward' => '%dC',
+        'forward'         => '%dC',
 
         // Moves the terminal cursor backward - 移动终端光标后退多远
-        'backward' => '%dD',
+        'backward'        => '%dD',
 
         // Moves the terminal cursor to the beginning of the previous line - 移动终端光标到前一行的开始
-        'prevLine' => '%dF',
+        'prevLine'        => '%dF',
 
         // Moves the terminal cursor to the beginning of the next line - 移动终端光标到下一行的开始
-        'nextLine' => '%dE',
+        'nextLine'        => '%dE',
 
         // Moves the cursor to an absolute position given as column and row
         // $column 1-based column number, 1 is the left edge of the screen.
         //  $row 1-based row number, 1 is the top edge of the screen. if not set, will move cursor only in current line.
-        'coordinate' => '%dG|%d;%dH' // only column: '%dG', column and row: '%d;%dH'.
+        'coordinate'      => '%dG|%d;%dH' // only column: '%dG', column and row: '%d;%dH'.
     ];
 
     /**
@@ -98,25 +98,25 @@ final class Terminal
      */
     private static $ctrlScreenCodes = [
         // Clears entire screen content - 清除整个屏幕内容
-        'clear' => '2J', // "\033[2J"
+        'clear'                 => '2J', // "\033[2J"
 
         // Clears text from cursor to the beginning of the screen - 从光标清除文本到屏幕的开头
-        'clearBeforeCursor' => '1J',
+        'clearBeforeCursor'     => '1J',
 
         // Clears the line - 清除此行
-        'clearLine' => '2K',
+        'clearLine'             => '2K',
 
         // Clears text from cursor position to the beginning of the line - 清除此行从光标位置开始到开始的字符
         'clearLineBeforeCursor' => '1K',
 
         // Clears text from cursor position to the end of the line - 清除此行从光标位置开始到结束的字符
-        'clearLineAfterCursor' => '0K',
+        'clearLineAfterCursor'  => '0K',
 
         // Scrolls whole page up. e.g "\033[2S" scroll up 2 line. - 上移多少行
-        'scrollUp' => '%dS',
+        'scrollUp'              => '%dS',
 
         // Scrolls whole page down.e.g "\033[2T" scroll down 2 line. - 下移多少行
-        'scrollDown' => '%dT',
+        'scrollDown'            => '%dT',
     ];
 
     public static function make(): Terminal
@@ -136,7 +136,7 @@ final class Terminal
      * Terminal::build(0);          // "\033[0m" Build end char, Resets any ANSI format
      * ```
      *
-     * @param mixed $format
+     * @param mixed  $format
      * @param string $type
      * @return string
      */
@@ -150,8 +150,8 @@ final class Terminal
     /**
      * control cursor
      * @param string $typeName
-     * @param int $arg1
-     * @param null $arg2
+     * @param int    $arg1
+     * @param null   $arg2
      * @return $this
      */
     public function cursor($typeName, $arg1 = 1, $arg2 = null): self
@@ -186,7 +186,7 @@ final class Terminal
 
     /**
      * control screen
-     * @param $typeName
+     * @param      $typeName
      * @param null $arg
      * @return $this
      */

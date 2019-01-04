@@ -15,20 +15,20 @@ namespace Toolkit\Cli;
 class Console extends Cli
 {
     const LOG_LEVEL2TAG = [
-        'info' => 'info',
-        'warn' => 'warning',
+        'info'    => 'info',
+        'warn'    => 'warning',
         'warning' => 'warning',
-        'debug' => 'cyan',
-        'notice' => 'notice',
-        'error' => 'error',
+        'debug'   => 'cyan',
+        'notice'  => 'notice',
+        'error'   => 'error',
     ];
 
     /**
      * print log to console
      * @param string $msg
-     * @param array $data
+     * @param array  $data
      * @param string $type
-     * @param array $opts
+     * @param array  $opts
      * [
      *  '_category' => 'application',
      *  'process' => 'work',

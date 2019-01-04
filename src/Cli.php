@@ -20,7 +20,7 @@ class Cli
 
     /**
      * @param mixed $message
-     * @param bool $nl
+     * @param bool  $nl
      * @return string
      */
     public static function read($message = null, $nl = false): string
@@ -34,7 +34,7 @@ class Cli
 
     /**
      * write message to console
-     * @param $messages
+     * @param      $messages
      * @param bool $nl
      * @param bool $quit
      */
@@ -49,8 +49,8 @@ class Cli
 
     /**
      * Logs data to stdout
-     * @param string $message
-     * @param bool $nl
+     * @param string   $message
+     * @param bool     $nl
      * @param bool|int $quit
      */
     public static function stdout(string $message, $nl = true, $quit = false)
@@ -66,8 +66,8 @@ class Cli
 
     /**
      * Logs data to stderr
-     * @param string $message
-     * @param bool $nl
+     * @param string   $message
+     * @param bool     $nl
      * @param bool|int $quit
      */
     public static function stderr(string $message, $nl = true, $quit = -1)
@@ -86,7 +86,7 @@ class Cli
      ******************************************************************************/
 
     /**
-     * @param $text
+     * @param                  $text
      * @param string|int|array $style
      * @return string
      */
@@ -176,7 +176,7 @@ class Cli
      * <value>
      * @link https://github.com/inhere/php-console/blob/master/src/io/Input.php
      * @param array $noValues List of parameters without values
-     * @param bool $mergeOpts
+     * @param bool  $mergeOpts
      * @return array
      */
     public static function parseArgv(array $noValues = [], $mergeOpts = false): array

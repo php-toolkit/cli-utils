@@ -15,7 +15,7 @@ namespace Toolkit\Cli;
 final class Download
 {
     const PROGRESS_TEXT = 'text';
-    const PROGRESS_BAR = 'bar';
+    const PROGRESS_BAR  = 'bar';
 
     /** @var int */
     private $fileSize;
@@ -92,12 +92,12 @@ final class Download
     }
 
     /**
-     * @param int $notifyCode stream notify code
-     * @param int $severity severity code
+     * @param int    $notifyCode stream notify code
+     * @param int    $severity severity code
      * @param string $message Message text
-     * @param int $messageCode Message code
-     * @param int $transferredBytes Have been transferred bytes
-     * @param int $maxBytes Target max length bytes
+     * @param int    $messageCode Message code
+     * @param int    $transferredBytes Have been transferred bytes
+     * @param int    $maxBytes Target max length bytes
      */
     public function progressShow($notifyCode, $severity, $message, $messageCode, $transferredBytes, $maxBytes)
     {
