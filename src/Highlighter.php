@@ -193,7 +193,7 @@ class Highlighter
                 $currentType = $newType;
             }
 
-            if ($currentType != $newType) {
+            if ($currentType !== $newType) {
                 $output[] = [$currentType, $buffer];
                 $buffer = '';
                 $currentType = $newType;
