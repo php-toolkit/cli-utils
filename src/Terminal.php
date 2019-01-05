@@ -163,7 +163,7 @@ final class Terminal
         $code = self::$ctrlCursorCodes[$typeName];
 
         // allow argument
-        if (false !== strpos($code, '%')) {
+        if (false !== \strpos($code, '%')) {
             // The special code: ` 'coordinate' => '%dG|%d;%dH' `
             if ($typeName === self::CUR_COORDINATE) {
                 $codes = explode('|', $code);
