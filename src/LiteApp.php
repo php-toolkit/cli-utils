@@ -101,7 +101,7 @@ class LiteApp
 
     /**
      * @param string $command
-     * @param $handler
+     * @param        $handler
      * @return mixed
      * @throws \InvalidArgumentException
      */
@@ -185,9 +185,9 @@ class LiteApp
     }
 
     /**
-     * @param string $command
+     * @param string          $command
      * @param string|\Closure $handler
-     * @param string $description
+     * @param string          $description
      * @throws \InvalidArgumentException
      */
     public function addCommand(string $command, $handler, $description = '')
@@ -247,7 +247,7 @@ class LiteApp
 
     /**
      * @param string $name
-     * @param mixed $default
+     * @param mixed  $default
      * @return mixed|null
      */
     public function getArg($name, $default = null)
@@ -257,7 +257,7 @@ class LiteApp
 
     /**
      * @param string $name
-     * @param mixed $default
+     * @param mixed  $default
      * @return mixed|null
      */
     public function getOpt($name, $default = null)
