@@ -255,4 +255,13 @@ class Cli
         return [$fullScript, $script, $args, $sOpts, $lOpts];
     }
 
+    /**
+     * clear Ansi Code
+     * @param string $string
+     * @return string
+     */
+    public static function stripAnsiCode(string $string): string
+    {
+        return (string)\preg_replace('/\033\[[\d;?]*\w/', '', $string);
+    }
 }
