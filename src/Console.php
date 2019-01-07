@@ -39,7 +39,7 @@ class Console extends Cli
     public static function log(string $msg, array $data = [], string $type = 'info', array $opts = [])
     {
         if (isset(self::LOG_LEVEL2TAG[$type])) {
-            $type = Color::wrapTag(\strtoupper($type), self::LOG_LEVEL2TAG[$type]);
+            $type = ColorTag::add(\strtoupper($type), self::LOG_LEVEL2TAG[$type]);
         }
 
         $userOpts = [];

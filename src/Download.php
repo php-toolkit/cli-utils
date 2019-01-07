@@ -17,17 +17,17 @@ final class Download
     public const PROGRESS_TEXT = 'text';
     public const PROGRESS_BAR  = 'bar';
 
-    /** @var int */
-    private $fileSize;
-
-    /** @var int */
-    private $showType;
-
     /** @var string */
-    public $url;
+    private $url;
 
     /** @var string */
     private $saveAs;
+
+    /** @var int */
+    private $fileSize;
+
+    /** @var string */
+    private $showType;
 
     /**
      * eg: php down.php <http://example.com/file> <localFile>
@@ -37,7 +37,7 @@ final class Download
      * @return Download
      * @throws \RuntimeException
      */
-    public static function file(string $url, string $saveAs, string $type = self::PROGRESS_TEXT): Download
+    public static function file(string $url, string $saveAs = '', string $type = self::PROGRESS_TEXT): Download
     {
         $d = new self($url, $saveAs, $type);
 
@@ -50,10 +50,11 @@ final class Download
      * @param string $saveAs
      * @param string $type
      */
-    public function __construct(string $url, string $saveAs, $type = self::PROGRESS_TEXT)
+    public function __construct(string $url, string $saveAs = '', $type = self::PROGRESS_TEXT)
     {
-        $this->url = $url;
-        $this->saveAs = $saveAs;
+        $this->setUrl($url);
+        $this->setSaveAs($saveAs);
+
         $this->showType = $type === self::PROGRESS_BAR ? self::PROGRESS_BAR : self::PROGRESS_TEXT;
     }
 
@@ -64,30 +65,41 @@ final class Download
      */
     public function start(): self
     {
-        if (!$this->url || !$this->saveAs) {
+        if (!$this->url) {
             throw new \RuntimeException("Please the property 'url' and 'saveAs'.", -1);
         }
 
-        $ctx = stream_context_create();
+        // default save to current dir.
+        if (!$save = $this->saveAs) {
+            $save = \getcwd() . '/' . \basename($this->url);
+            // reset
+            $this->saveAs = $save;
+        }
+
+        $ctx = \stream_context_create();
 
         // register stream notification callback
-        stream_context_set_params($ctx, [
+        \stream_context_set_params($ctx, [
             'notification' => [$this, 'progressShow']
         ]);
 
-        Cli::write("Download: {$this->url}\nSave As: {$this->saveAs}\n");
+        Cli::write("Download: {$this->url}\nSave As: {$save}\n");
 
-        $fp = fopen($this->url, 'rb', false, $ctx);
+        $fp = \fopen($this->url, 'rb', false, $ctx);
 
-        if (\is_resource($fp) && file_put_contents($this->saveAs, $fp)) {
+        if (\is_resource($fp) && \file_put_contents($save, $fp)) {
             Cli::write("\nDone!");
         } else {
             $err = \error_get_last();
             Cli::stderr("\nErr.rrr..orr...\n {$err['message']}\n", true, -1);
         }
 
-        $this->fileSize = null;
+        // close resource
+        if (\is_resource($fp)) {
+            \fclose($fp);
+        }
 
+        $this->fileSize = null;
         return $this;
     }
 
@@ -104,38 +116,38 @@ final class Download
         $msg = '';
 
         switch ($notifyCode) {
-            case STREAM_NOTIFY_RESOLVE:
-            case STREAM_NOTIFY_AUTH_REQUIRED:
-            case STREAM_NOTIFY_COMPLETED:
-            case STREAM_NOTIFY_FAILURE:
-            case STREAM_NOTIFY_AUTH_RESULT:
+            case \STREAM_NOTIFY_RESOLVE:
+            case \STREAM_NOTIFY_AUTH_REQUIRED:
+            case \STREAM_NOTIFY_COMPLETED:
+            case \STREAM_NOTIFY_FAILURE:
+            case \STREAM_NOTIFY_AUTH_RESULT:
                 $msg = "NOTIFY: $message(NO: $messageCode, Severity: $severity)";
                 /* Ignore */
                 break;
 
-            case STREAM_NOTIFY_REDIRECTED:
+            case \STREAM_NOTIFY_REDIRECTED:
                 $msg = "Being redirected to: $message";
                 break;
 
-            case STREAM_NOTIFY_CONNECT:
+            case \STREAM_NOTIFY_CONNECT:
                 $msg = 'Connected ...';
                 break;
 
-            case STREAM_NOTIFY_FILE_SIZE_IS:
+            case \STREAM_NOTIFY_FILE_SIZE_IS:
                 $this->fileSize = $maxBytes;
-                $fileSize = sprintf('%2d', $maxBytes / 1024);
-                $msg = "Got the file size: <info>$fileSize</info> kb";
+                // print size
+                $size = sprintf('%2d', $maxBytes / 1024);
+                $msg  = "Got the file size: <info>$size</info> kb";
                 break;
 
-            case STREAM_NOTIFY_MIME_TYPE_IS:
+            case \STREAM_NOTIFY_MIME_TYPE_IS:
                 $msg = "Found the mime-type: <info>$message</info>";
                 break;
 
-            case STREAM_NOTIFY_PROGRESS:
+            case \STREAM_NOTIFY_PROGRESS:
                 if ($transferredBytes > 0) {
                     $this->showProgressByType($transferredBytes);
                 }
-
                 break;
         }
 
@@ -172,17 +184,17 @@ final class Download
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getShowType(): int
+    public function getShowType(): string
     {
         return $this->showType;
     }
 
     /**
-     * @param int $showType
+     * @param string $showType
      */
-    public function setShowType(int $showType)
+    public function setShowType(string $showType)
     {
         $this->showType = $showType;
     }
@@ -200,7 +212,7 @@ final class Download
      */
     public function setUrl(string $url)
     {
-        $this->url = $url;
+        $this->url = \trim($url);
     }
 
     /**
@@ -216,36 +228,6 @@ final class Download
      */
     public function setSaveAs(string $saveAs)
     {
-        $this->saveAs = $saveAs;
+        $this->saveAs = \trim($saveAs);
     }
-
-    /*
-    progressBar() OUT:
-    Connected...
-    Mime-type: text/html; charset=utf-8
-    Being redirected to: http://no2.php.net/distributions/php-5.2.5.tar.bz2
-    Connected...
-    FileSize: 7773024
-    Mime-type: application/octet-stream
-    [========================================>                                                           ] 40% (3076/7590 kb)
-
-    progress Text OUT:
-    Connected...
-    Found the mime-type: text/html; charset=utf-8
-    Being redirected to: http://no.php.net/contact
-    Connected...
-    Got the fileSize: 0
-    Found the mime-type: text/html; charset=utf-8
-    Being redirected to: http://no.php.net/contact.php
-    Connected...
-    Got the fileSize: 4589
-    Found the mime-type: text/html;charset=utf-8
-    Made some progress, downloaded 0 so far
-    Made some progress, downloaded 0 so far
-    Made some progress, downloaded 0 so far
-    Made some progress, downloaded 1440 so far
-    ... ...
-     */
-
-
 }

@@ -13,8 +13,8 @@ spl_autoload_register(function ($class) {
     if (0 === strpos($class, 'Toolkit\Cli\Example\\')) {
         $path = str_replace('\\', '/', substr($class, strlen('Toolkit\Cli\Example\\')));
         $file = dirname(__DIR__) . "/example/{$path}.php";
-    } elseif (0 === strpos($class, 'Toolkit\Cli\Test\\')) {
-        $path = str_replace('\\', '/', substr($class, strlen('Toolkit\Cli\Test\\')));
+    } elseif (0 === strpos($class, 'Toolkit\CliTest\\')) {
+        $path = str_replace('\\', '/', substr($class, strlen('Toolkit\CliTest\\')));
         $file = __DIR__ . "/{$path}.php";
     } elseif (0 === strpos($class, 'Toolkit\Cli\\')) {
         $path = str_replace('\\', '/', substr($class, strlen('Toolkit\Cli\\')));

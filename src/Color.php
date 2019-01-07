@@ -54,7 +54,7 @@ class Color
     public const FG_LIGHT_BLUE    = 94;
     public const FG_LIGHT_MAGENTA = 95;
     public const FG_LIGHT_CYAN    = 96;
-    public const FG_WHITE_W       = 97;
+    public const FG_LIGHT_WHITE   = 97;
 
     // Background color
     public const BG_BLACK   = 40;
@@ -113,8 +113,8 @@ class Color
         'warn'        => '0;30;43',
         'warning'     => '0;30;43',
         'danger'      => '0;31',// same 'red'
-        'err'         => '30;41',
-        'error'       => '30;41',
+        'err'         => '97;41',
+        'error'       => '97;41',
 
         // more
         'lightRed'    => '1;31',
@@ -153,19 +153,10 @@ class Color
         'reverse'        => '7',
     ];
 
-    /**
-     * Regex to match tags
-     */
+    // Regex to match color tags
     public const COLOR_TAG = '/<([a-z=;]+)>(.*?)<\/\\1>/s';
 
-    /**
-     * Regex used for removing color codes
-     */
-    public const STRIP_TAG = '/<[\/]?[a-zA-Z=;]+>/';
-
-    /**
-     * CLI color template
-     */
+    // CLI color template
     public const COLOR_TPL = "\033[%sm%s\033[0m";
 
     /**
@@ -240,7 +231,7 @@ class Color
      */
     public static function parseTag(string $text)
     {
-        if (!$text || false === \strpos($text, '<')) {
+        if (!$text || false === \strpos($text, '</')) {
             return $text;
         }
 
@@ -255,34 +246,15 @@ class Color
 
         foreach ((array)$matches[0] as $i => $m) {
             if ($style = self::STYLES[$matches[1][$i]] ?? null) {
-                $tag = $matches[1][$i];
+                $tag   = $matches[1][$i];
                 $match = $matches[2][$i];
 
-                $replace = \sprintf("\033[%sm%s\033[0m", $style, $match);
-                $text = \str_replace("<$tag>$match</$tag>", $replace, $text);
+                $repl = \sprintf("\033[%sm%s\033[0m", $style, $match);
+                $text = \str_replace("<$tag>$match</$tag>", $repl, $text);
             }
         }
 
         return $text;
-    }
-
-    /**
-     * wrap a style tag
-     * @param string $string
-     * @param string $tag
-     * @return string
-     */
-    public static function wrapTag(string $string, string $tag): string
-    {
-        if (!$string) {
-            return '';
-        }
-
-        if (!$tag) {
-            return $string;
-        }
-
-        return "<$tag>$string</$tag>";
     }
 
     /**
@@ -293,22 +265,11 @@ class Color
     public static function clearColor(string $text, bool $stripTag = true): string
     {
         // return preg_replace('/\033\[(?:\d;?)+m/', '' , "\033[0;36mtext\033[0m");
-        return (string)\preg_replace(
+        return \preg_replace(
             '/\033\[(?:\d;?)+m/',
             '',
             $stripTag ? \strip_tags($text) : $text
         );
-    }
-
-    /**
-     * Strip color tags from a string.
-     * @param string $string
-     * @return mixed
-     */
-    public static function stripTag(string $string): string
-    {
-        // $text = strip_tags($text);
-        return (string)\preg_replace(self::STRIP_TAG, '', $string);
     }
 
     /**
@@ -326,7 +287,7 @@ class Color
      */
     public static function getStyles(): array
     {
-        return array_filter(\array_keys(self::STYLES), function ($style) {
+        return \array_filter(\array_keys(self::STYLES), function ($style) {
             return !\strpos($style, '_');
         });
     }

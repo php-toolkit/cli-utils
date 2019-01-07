@@ -24,6 +24,11 @@
       "Toolkit\\Cli\\": "src/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Toolkit\\CliTest\\": "src/"
+    }
+  },
   "suggest": {
     "inhere/simple-print-tool": "Very lightweight data printing tools",
     "inhere/php-validate": "Very lightweight data validate tool",

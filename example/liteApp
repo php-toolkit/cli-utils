@@ -6,7 +6,7 @@ define('BASE_PATH', dirname(__DIR__));
 require dirname(__DIR__) . '/test/boot.php';
 
 // create app instance
-$app = new Toolkit\Cli\LiteApp;
+$app = new Toolkit\Cli\App;
 
 // register commands
 $app->addCommand('test', function () {

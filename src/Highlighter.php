@@ -71,7 +71,7 @@ class Highlighter
     public function highlight(string $source, bool $withLineNumber = false): string
     {
         $tokenLines = $this->getHighlightedLines($source);
-        $lines = $this->colorLines($tokenLines);
+        $lines      = $this->colorLines($tokenLines);
 
         if ($withLineNumber) {
             return $this->lineNumbers($lines);
@@ -105,9 +105,9 @@ class Highlighter
     {
         $tokenLines = $this->getHighlightedLines($source);
 
-        $offset = $lineNumber - $linesBefore - 1;
-        $offset = max($offset, 0);
-        $length = $linesAfter + $linesBefore + 1;
+        $offset     = $lineNumber - $linesBefore - 1;
+        $offset     = max($offset, 0);
+        $length     = $linesAfter + $linesBefore + 1;
         $tokenLines = \array_slice($tokenLines, $offset, $length, $preserveKeys = true);
 
         $lines = $this->colorLines($tokenLines);
@@ -138,9 +138,9 @@ class Highlighter
      */
     private function tokenize(string $source): array
     {
-        $buffer = '';
-        $output = [];
-        $tokens = \token_get_all($source);
+        $buffer  = '';
+        $output  = [];
+        $tokens  = \token_get_all($source);
         $newType = $currentType = null;
 
         foreach ($tokens as $token) {
@@ -194,8 +194,8 @@ class Highlighter
             }
 
             if ($currentType !== $newType) {
-                $output[] = [$currentType, $buffer];
-                $buffer = '';
+                $output[]    = [$currentType, $buffer];
+                $buffer      = '';
                 $currentType = $newType;
             }
 
@@ -221,7 +221,7 @@ class Highlighter
             foreach (explode("\n", $token[1]) as $count => $tokenLine) {
                 if ($count > 0) {
                     $lines[] = $line;
-                    $line = [];
+                    $line    = [];
                 }
                 if ($tokenLine === '') {
                     continue;

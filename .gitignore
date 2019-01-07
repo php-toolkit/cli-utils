@@ -8,3 +8,4 @@ composer.lock
 *.pid
 *.patch
 .DS_Store
+*.bz2

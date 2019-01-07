@@ -9,24 +9,21 @@
 namespace Toolkit\Cli;
 
 /**
- * Class LiteApp - A lite CLI Application
+ * Class App - A lite CLI Application
  * @package Inhere\Console
  */
-class LiteApp
+class App
 {
-    /****************************************************************************
-     * simple cli support
-     ****************************************************************************/
+    /** @var string Current dir */
+    private $pwd;
 
     /**
-     * parse from `name=val var2=val2`
-     * @var array
+     * @var array Parsed from `arg0 name=val var2=val2`
      */
     private $args = [];
 
     /**
-     * parse from `--name=val --var2=val2 -d`
-     * @var array
+     * @var array Parsed from `--name=val --var2=val2 -d`
      */
     private $opts = [];
 
@@ -37,16 +34,35 @@ class LiteApp
     private $command = '';
 
     /**
-     * user add commands
-     * @var array
+     * @var array User add commands
      */
     private $commands = [];
 
     /**
-     * description message for the command
-     * @var array
+     * @var array Description message for the commands
      */
     private $messages = [];
+
+    /** @var int */
+    private $keyWidth = 12;
+
+    /**
+     * Class constructor.
+     * @param array|null $argv
+     */
+    public function __construct(array $argv = null)
+    {
+        // get current dir
+        $this->pwd = \getcwd();
+
+        // parse cli argv
+        $argv = $argv ?? (array)$_SERVER['argv'];
+        // get script file
+        $this->script = \array_shift($argv);
+        // parse flags
+        [$this->args, $this->opts] = Flags::simpleParseArgv($argv);
+
+    }
 
     /**
      * @param bool $exit
@@ -54,8 +70,6 @@ class LiteApp
      */
     public function run(bool $exit = true)
     {
-        $this->parseCliArgv();
-
         if (isset($this->args[0])) {
             $this->command = $this->args[0];
             unset($this->args[0]);
@@ -71,7 +85,8 @@ class LiteApp
     public function dispatch(bool $exit = true)
     {
         if (!$command = $this->command) {
-            $this->showCommands();
+            $this->displayHelp();
+            return;
         }
 
         $status = 0;
@@ -80,7 +95,7 @@ class LiteApp
             if (isset($this->commands[$command])) {
                 $status = $this->runHandler($command, $this->commands[$command]);
             } else {
-                $this->showCommands("The command {$command} not exists!");
+                $this->displayHelp("The command {$command} not exists!");
             }
         } catch (\Throwable $e) {
             $status = $this->handleException($e);
@@ -152,52 +167,19 @@ class LiteApp
     }
 
     /**
-     * parseCliArgv
-     */
-    public function parseCliArgv()
-    {
-        /** @var array $argv */
-        $argv = $_SERVER['argv'];
-        $this->script = array_shift($argv);
-
-        foreach ($argv as $key => $value) {
-            // opts
-            if (strpos($value, '-') === 0) {
-                $value = trim($value, '-');
-
-                if (!$value) {
-                    continue;
-                }
-
-                if (strpos($value, '=')) {
-                    list($n, $v) = explode('=', $value);
-                    $this->opts[$n] = $v;
-                } else {
-                    $this->opts[$value] = true;
-                }
-            } elseif (strpos($value, '=')) {
-                list($n, $v) = explode('=', $value);
-                $this->args[$n] = $v;
-            } else {
-                $this->args[] = $value;
-            }
-        }
-    }
-
-    /**
-     * @param string          $command
-     * @param string|\Closure $handler
-     * @param string          $description
+     * @param string   $command
+     * @param callable $handler
+     * @param string   $description
      * @throws \InvalidArgumentException
      */
-    public function addCommand(string $command, $handler, $description = '')
+    public function addCommand(string $command, callable $handler, string $description = '')
     {
         if (!$command || !$handler) {
             throw new \InvalidArgumentException('Invalid arguments');
         }
 
         $this->commands[$command] = $handler;
-        $this->messages[$command] = trim($description);
+        $this->messages[$command] = \trim($description);
     }
 
     /**
@@ -210,9 +192,9 @@ class LiteApp
             $des = '';
 
             if (\is_array($handler)) {
-                $conf = array_values($handler);
+                $conf    = \array_values($handler);
                 $handler = $conf[0];
-                $des = $conf[1] ?? '';
+                $des     = $conf[1] ?? '';
             }
 
             $this->addCommand($command, $handler, $des);
@@ -226,19 +208,20 @@ class LiteApp
     /**
      * @param string $err
      */
-    public function showCommands($err = '')
+    public function displayHelp(string $err = '')
     {
         if ($err) {
             echo Color::render("<red>ERROR</red>: $err\n\n");
         }
 
         $commandWidth = 12;
+        // help
         $help = "Welcome to the Lite Console Application.\n\n<comment>Available Commands:</comment>\n";
 
         foreach ($this->messages as $command => $desc) {
             $command = str_pad($command, $commandWidth, ' ');
-            $desc = $desc ?: 'No description for the command';
-            $help .= "  $command   $desc\n";
+            $desc    = $desc ?: 'No description for the command';
+            $help    .= "  $command   $desc\n";
         }
 
         echo Color::render($help) . PHP_EOL;
@@ -246,8 +229,8 @@ class LiteApp
     }
 
     /**
-     * @param string $name
-     * @param mixed  $default
+     * @param string|int $name
+     * @param mixed      $default
      * @return mixed|null
      */
     public function getArg($name, $default = null)
@@ -260,7 +243,7 @@ class LiteApp
      * @param mixed  $default
      * @return mixed|null
      */
-    public function getOpt($name, $default = null)
+    public function getOpt(string $name, $default = null)
     {
         return $this->opts[$name] ?? $default;
     }
@@ -344,7 +327,7 @@ class LiteApp
     /**
      * @param array $commands
      */
-    public function setCommands(array $commands)
+    public function setCommands(array $commands): void
     {
         $this->commands = $commands;
     }
@@ -360,9 +343,33 @@ class LiteApp
     /**
      * @param array $messages
      */
-    public function setMessages(array $messages)
+    public function setMessages(array $messages): void
     {
         $this->messages = $messages;
+    }
+
+    /**
+     * @return int
+     */
+    public function getKeyWidth(): int
+    {
+        return $this->keyWidth;
+    }
+
+    /**
+     * @param int $keyWidth
+     */
+    public function setKeyWidth(int $keyWidth): void
+    {
+        $this->keyWidth = $keyWidth > 1 ? $keyWidth : 12;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPwd(): string
+    {
+        return $this->pwd;
     }
 
 }
