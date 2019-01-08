@@ -30,6 +30,17 @@ final class Download
     private $showType;
 
     /**
+     * @param string $url
+     * @param string $saveAs
+     * @param string $type
+     * @return Download
+     */
+    public static function create(string $url, string $saveAs = '', string $type = self::PROGRESS_TEXT)
+    {
+        return new self($url, $saveAs, $type);
+    }
+
+    /**
      * eg: php down.php <http://example.com/file> <localFile>
      * @param string $url
      * @param string $saveAs

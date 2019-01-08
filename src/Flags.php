@@ -90,19 +90,19 @@ class Flags
 
         $config = \array_merge([
             // List of parameters without values(bool option keys)
-            'noValues'       => [], // ['debug', 'h']
+            'boolOpts'       => [], // ['debug', 'h']
             // Whether merge short-opts and long-opts
             // 'mergeOpts'      => false,
             // want parsed options. if not empty, will ignore no matched
             'wantParsedOpts' => [],
-            // list of params allow array.
-            'arrayValues'    => [], // ['names', 'status']
+            // list of option allow array values.
+            'arrayOpts'      => [], // ['names', 'status']
         ], $config);
 
         $args = $sOpts = $lOpts = [];
         // config
-        $noValues  = \array_flip((array)$config['noValues']);
-        $arrValues = \array_flip((array)$config['arrayValues']);
+        $boolOpts  = \array_flip((array)$config['boolOpts']);
+        $arrayOpts = \array_flip((array)$config['arrayOpts']);
 
         // each() will deprecated at 7.2. so,there use current and next instead it.
         // while (list(,$p) = each($params)) {
@@ -111,65 +111,69 @@ class Flags
 
             // is options
             if ($p{0} === '-') {
-                $val    = true;
-                $opt    = \substr($p, 1);
+                $value  = true;
+                $option = \substr($p, 1);
                 $isLong = false;
 
                 // long-opt: (--<opt>)
-                if (\strpos($opt, '-') === 0) {
-                    $opt    = \substr($opt, 1);
+                if (\strpos($option, '-') === 0) {
+                    $option = \substr($option, 1);
                     $isLong = true;
 
                     // long-opt: value specified inline (--<opt>=<value>)
-                    if (\strpos($opt, '=') !== false) {
-                        list($opt, $val) = \explode('=', $opt, 2);
+                    if (\strpos($option, '=') !== false) {
+                        list($option, $value) = \explode('=', $option, 2);
                     }
 
                     // short-opt: value specified inline (-<opt>=<value>)
-                } elseif (isset($opt{1}) && $opt{1} === '=') {
-                    list($opt, $val) = \explode('=', $opt, 2);
+                } elseif (isset($option{1}) && $option{1} === '=') {
+                    list($option, $value) = \explode('=', $option, 2);
                 }
 
                 // check if next parameter is a descriptor or a value
                 $nxt = \current($params);
 
                 // next elem is value. fix: allow empty string ''
-                if ($val === true && !isset($noValues[$opt]) && self::nextIsValue($nxt)) {
+                if ($value === true && !isset($boolOpts[$option]) && self::nextIsValue($nxt)) {
                     // list(,$val) = each($params);
-                    $val = $nxt;
+                    $value = $nxt;
                     \next($params);
 
                     // short-opt: bool opts. like -e -abc
-                } elseif (!$isLong && $val === true) {
-                    foreach (\str_split($opt) as $char) {
+                } elseif (!$isLong && $value === true) {
+                    foreach (\str_split($option) as $char) {
                         $sOpts[$char] = true;
                     }
                     continue;
                 }
 
-                $val     = self::filterBool($val);
-                $isArray = isset($arrValues[$opt]);
+                $value   = self::filterBool($value);
+                $isArray = isset($arrayOpts[$option]);
 
                 if ($isLong) {
                     if ($isArray) {
-                        $lOpts[$opt][] = $val;
+                        $lOpts[$option][] = $value;
                     } else {
-                        $lOpts[$opt] = $val;
+                        $lOpts[$option] = $value;
                     }
                 } elseif ($isArray) { // short
-                    $sOpts[$opt][] = $val;
+                    $sOpts[$option][] = $value;
                 } else { // short
-                    $sOpts[$opt] = $val;
+                    $sOpts[$option] = $value;
                 }
-                // arguments: param doesn't belong to any option, define it is args
+
+                continue;
+            }
+
+            // parse arguments:
+            // - param doesn't belong to any option, define it is args
+
+            // value specified inline (<arg>=<value>)
+            if (\strpos($p, '=') !== false) {
+                list($name, $value) = \explode('=', $p, 2);
+                $args[$name] = self::filterBool($value);
             } else {
-                // value specified inline (<arg>=<value>)
-                if (\strpos($p, '=') !== false) {
-                    list($name, $val) = \explode('=', $p, 2);
-                    $args[$name] = self::filterBool($val);
-                } else {
-                    $args[] = $p;
-                }
+                $args[] = $p;
             }
         }
 
@@ -183,6 +187,7 @@ class Flags
      *  'arg' => 'val',
      *  '--lp' => 'val2',
      *  '--s' => 'val3',
+     *  '-h' => true,
      * ]);
      * ```
      * @param array $params
@@ -193,14 +198,22 @@ class Flags
         $args = $sOpts = $lOpts = [];
 
         foreach ($params as $key => $val) {
-            if ($key === '--' || $key === '-') {
+            if (\is_int($key)) { // as argument
+                $args[$key] = $val;
                 continue;
             }
 
-            if (0 === \strpos($key, '--')) {
-                $lOpts[substr($key, 2)] = $val;
-            } elseif (\strpos($key, '-') === 0) {
-                $sOpts[\substr($key, 1)] = $val;
+            $cleanKey = \trim((string)$key, '-');
+
+            if ('' === $cleanKey) { // as argument
+                $args[] = $val;
+                continue;
+            }
+
+            if (0 === \strpos($key, '--')) { // long option
+                $lOpts[$cleanKey] = $val;
+            } elseif (0 === \strpos($key, '-')) { // short option
+                $sOpts[$cleanKey] = $val;
             } else {
                 $args[$key] = $val;
             }
@@ -210,9 +223,12 @@ class Flags
     }
 
     /**
+     * parse flags from a string
+     *
      * ```php
      * $result = Flags::parseString('foo --bar="foobar"');
      * ```
+     *
      * @todo ...
      * @param string $string
      */
@@ -250,7 +266,7 @@ class Flags
      * @param mixed $val
      * @return bool
      */
-    public static function nextIsValue(string $val): bool
+    public static function nextIsValue($val): bool
     {
         // current() fetch error, will return FALSE
         if ($val === false) {

@@ -77,7 +77,7 @@ class Highlighter
             return $this->lineNumbers($lines);
         }
 
-        return implode(PHP_EOL, $lines);
+        return \implode(\PHP_EOL, $lines);
     }
 
     /**
@@ -106,7 +106,7 @@ class Highlighter
         $tokenLines = $this->getHighlightedLines($source);
 
         $offset     = $lineNumber - $linesBefore - 1;
-        $offset     = max($offset, 0);
+        $offset     = \max($offset, 0);
         $length     = $linesAfter + $linesBefore + 1;
         $tokenLines = \array_slice($tokenLines, $offset, $length, $preserveKeys = true);
 
@@ -146,40 +146,40 @@ class Highlighter
         foreach ($tokens as $token) {
             if (\is_array($token)) {
                 switch ($token[0]) {
-                    case T_INLINE_HTML:
+                    case \T_INLINE_HTML:
                         $newType = self::TOKEN_HTML;
                         break;
-                    case T_COMMENT:
-                    case T_DOC_COMMENT:
+                    case \T_COMMENT:
+                    case \T_DOC_COMMENT:
                         $newType = self::TOKEN_COMMENT;
                         break;
-                    case T_ENCAPSED_AND_WHITESPACE:
-                    case T_CONSTANT_ENCAPSED_STRING:
+                    case \T_ENCAPSED_AND_WHITESPACE:
+                    case \T_CONSTANT_ENCAPSED_STRING:
                         $newType = self::TOKEN_STRING;
                         break;
-                    case T_WHITESPACE:
+                    case \T_WHITESPACE:
                         break;
-                    case T_OPEN_TAG:
-                    case T_OPEN_TAG_WITH_ECHO:
-                    case T_CLOSE_TAG:
-                    case T_STRING:
-                    case T_VARIABLE:
+                    case \T_OPEN_TAG:
+                    case \T_OPEN_TAG_WITH_ECHO:
+                    case \T_CLOSE_TAG:
+                    case \T_STRING:
+                    case \T_VARIABLE:
                         // Constants
-                    case T_DIR:
-                    case T_FILE:
-                    case T_METHOD_C:
-                    case T_DNUMBER:
-                    case T_LNUMBER:
-                    case T_NS_C:
-                    case T_LINE:
-                    case T_CLASS_C:
-                    case T_FUNC_C:
+                    case \T_DIR:
+                    case \T_FILE:
+                    case \T_METHOD_C:
+                    case \T_DNUMBER:
+                    case \T_LNUMBER:
+                    case \T_NS_C:
+                    case \T_LINE:
+                    case \T_CLASS_C:
+                    case \T_FUNC_C:
                         //case T_TRAIT_C:
                         $newType = self::TOKEN_DEFAULT;
                         break;
                     default:
                         // Compatibility with PHP 5.3
-                        if (\defined('T_TRAIT_C') && $token[0] === T_TRAIT_C) {
+                        if (\defined('T_TRAIT_C') && $token[0] === \T_TRAIT_C) {
                             $newType = self::TOKEN_DEFAULT;
                         } else {
                             $newType = self::TOKEN_KEYWORD;
@@ -218,7 +218,7 @@ class Highlighter
         $lines = $line = [];
 
         foreach ($tokens as $token) {
-            foreach (explode("\n", $token[1]) as $count => $tokenLine) {
+            foreach (\explode("\n", $token[1]) as $count => $tokenLine) {
                 if ($count > 0) {
                     $lines[] = $line;
                     $line    = [];
@@ -273,10 +273,10 @@ class Highlighter
      */
     private function lineNumbers(array $lines, $markLine = null): string
     {
-        end($lines);
+        \end($lines);
 
         $snippet = '';
-        $lineLen = \strlen(key($lines) + 1);
+        $lineLen = \strlen(\key($lines) + 1);
         $lmStyle = $this->defaultTheme[self::ACTUAL_LINE_MARK];
         $lnStyle = $this->defaultTheme[self::LINE_NUMBER];
 
@@ -285,10 +285,10 @@ class Highlighter
                 $snippet .= ($markLine === $i + 1 ? Color::apply($lmStyle, '  > ') : '    ');
                 $snippet .= Color::apply(
                     $markLine === $i + 1 ? $lmStyle : $lnStyle,
-                    str_pad($i + 1, $lineLen, ' ', STR_PAD_LEFT) . '| '
+                    \str_pad($i + 1, $lineLen, ' ', \STR_PAD_LEFT) . '| '
                 );
             } else {
-                $snippet .= Color::apply($lnStyle, str_pad($i + 1, $lineLen, ' ', STR_PAD_LEFT) . '| ');
+                $snippet .= Color::apply($lnStyle, \str_pad($i + 1, $lineLen, ' ', \STR_PAD_LEFT) . '| ');
             }
 
             $snippet .= $line . PHP_EOL;
