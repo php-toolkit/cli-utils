@@ -1,6 +1,6 @@
 # CLI utils
 
-[![License](https://img.shields.io/packagist/l/php-toolkit/cli-utils.svg?style=flat-square)](LICENSE)
+[![License](https://img.shields.io/packagist/l/toolkit/cli-utils.svg?style=flat-square)](LICENSE)
 [![Php Version](https://img.shields.io/badge/php-%3E=7.1.0-brightgreen.svg?maxAge=2592000)](https://packagist.org/packages/toolkit/cli-utils)
 [![Latest Stable Version](http://img.shields.io/packagist/v/toolkit/cli-utils.svg)](https://packagist.org/packages/toolkit/cli-utils)
 
