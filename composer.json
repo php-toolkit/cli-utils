@@ -30,7 +30,6 @@
     }
   },
   "suggest": {
-    "inhere/simple-print-tool": "Very lightweight data printing tools",
     "inhere/php-validate": "Very lightweight data validate tool",
     "inhere/console": "a lightweight php console application library."
   }
