@@ -28,7 +28,7 @@ class App
     private $opts = [];
 
     /** @var string */
-    private $script = '';
+    private $script;
 
     /** @var string */
     private $command = '';
@@ -68,7 +68,7 @@ class App
      * @param bool $exit
      * @throws \InvalidArgumentException
      */
-    public function run(bool $exit = true)
+    public function run(bool $exit = true): void
     {
         if (isset($this->args[0])) {
             $this->command = $this->args[0];
@@ -82,7 +82,7 @@ class App
      * @param bool $exit
      * @throws \InvalidArgumentException
      */
-    public function dispatch(bool $exit = true)
+    public function dispatch(bool $exit = true): void
     {
         if (!$command = $this->command) {
             $this->displayHelp();
@@ -109,7 +109,7 @@ class App
     /**
      * @param int $code
      */
-    public function stop($code = 0)
+    public function stop($code = 0): void
     {
         exit((int)$code);
     }
@@ -172,7 +172,7 @@ class App
      * @param string   $description
      * @throws \InvalidArgumentException
      */
-    public function addCommand(string $command, callable $handler, string $description = '')
+    public function addCommand(string $command, callable $handler, string $description = ''): void
     {
         if (!$command || !$handler) {
             throw new \InvalidArgumentException('Invalid arguments');
@@ -186,7 +186,7 @@ class App
      * @param array $commands
      * @throws \InvalidArgumentException
      */
-    public function commands(array $commands)
+    public function commands(array $commands): void
     {
         foreach ($commands as $command => $handler) {
             $des = '';
@@ -208,7 +208,7 @@ class App
     /**
      * @param string $err
      */
-    public function displayHelp(string $err = '')
+    public function displayHelp(string $err = ''): void
     {
         if ($err) {
             echo Color::render("<red>ERROR</red>: $err\n\n");
@@ -263,7 +263,7 @@ class App
     /**
      * @param array $args
      */
-    public function setArgs(array $args)
+    public function setArgs(array $args): void
     {
         $this->args = $args;
     }
@@ -279,7 +279,7 @@ class App
     /**
      * @param array $opts
      */
-    public function setOpts(array $opts)
+    public function setOpts(array $opts): void
     {
         $this->opts = $opts;
     }
@@ -295,7 +295,7 @@ class App
     /**
      * @param string $script
      */
-    public function setScript(string $script)
+    public function setScript(string $script): void
     {
         $this->script = $script;
     }
@@ -311,7 +311,7 @@ class App
     /**
      * @param string $command
      */
-    public function setCommand(string $command)
+    public function setCommand(string $command): void
     {
         $this->command = $command;
     }

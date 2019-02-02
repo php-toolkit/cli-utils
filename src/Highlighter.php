@@ -250,7 +250,7 @@ class Highlighter
 
         foreach ($tokenLines as $lineCount => $tokenLine) {
             $line = '';
-            foreach ($tokenLine as list($tokenType, $tokenValue)) {
+            foreach ($tokenLine as [$tokenType, $tokenValue]) {
                 $style = $this->defaultTheme[$tokenType];
 
                 if (Color::hasStyle($style)) {
@@ -308,7 +308,7 @@ class Highlighter
     /**
      * @param array $defaultTheme
      */
-    public function setDefaultTheme(array $defaultTheme)
+    public function setDefaultTheme(array $defaultTheme): void
     {
         $this->defaultTheme = \array_merge($this->defaultTheme, $defaultTheme);
     }

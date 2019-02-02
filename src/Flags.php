@@ -36,13 +36,13 @@ class Flags
                 }
 
                 if (\strpos($value, '=')) {
-                    list($n, $v) = \explode('=', $value);
+                    [$n, $v] = \explode('=', $value);
                     $opts[$n] = $v;
                 } else {
                     $opts[$value] = true;
                 }
             } elseif (\strpos($value, '=')) {
-                list($n, $v) = \explode('=', $value);
+                [$n, $v] = \explode('=', $value);
                 $args[$n] = $v;
             } else {
                 $args[] = $value;
@@ -122,12 +122,12 @@ class Flags
 
                     // long-opt: value specified inline (--<opt>=<value>)
                     if (\strpos($option, '=') !== false) {
-                        list($option, $value) = \explode('=', $option, 2);
+                        [$option, $value] = \explode('=', $option, 2);
                     }
 
                     // short-opt: value specified inline (-<opt>=<value>)
                 } elseif (isset($option{1}) && $option{1} === '=') {
-                    list($option, $value) = \explode('=', $option, 2);
+                    [$option, $value] = \explode('=', $option, 2);
                 }
 
                 // check if next parameter is a descriptor or a value
@@ -170,7 +170,7 @@ class Flags
 
             // value specified inline (<arg>=<value>)
             if (\strpos($p, '=') !== false) {
-                list($name, $value) = \explode('=', $p, 2);
+                [$name, $value] = \explode('=', $p, 2);
                 $args[$name] = self::filterBool($value);
             } else {
                 $args[] = $p;
@@ -232,7 +232,7 @@ class Flags
      * @todo ...
      * @param string $string
      */
-    public static function parseString(string $string)
+    public static function parseString(string $string): void
     {
 
     }

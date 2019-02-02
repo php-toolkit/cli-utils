@@ -157,7 +157,7 @@ final class Terminal
     public function cursor($typeName, $arg1 = 1, $arg2 = null): self
     {
         if (!isset(self::$ctrlCursorCodes[$typeName])) {
-            Cli::stderr("The [$typeName] is not supported cursor control.", true);
+            Cli::stderr("The [$typeName] is not supported cursor control.");
         }
 
         $code = self::$ctrlCursorCodes[$typeName];
@@ -208,7 +208,7 @@ final class Terminal
         return $this;
     }
 
-    public function reset()
+    public function reset(): void
     {
         echo self::END_CHAR;
     }

@@ -35,7 +35,7 @@ final class Download
      * @param string $type
      * @return Download
      */
-    public static function create(string $url, string $saveAs = '', string $type = self::PROGRESS_TEXT)
+    public static function create(string $url, string $saveAs = '', string $type = self::PROGRESS_TEXT): Download
     {
         return new self($url, $saveAs, $type);
     }
@@ -122,7 +122,7 @@ final class Download
      * @param int    $transferredBytes Have been transferred bytes
      * @param int    $maxBytes Target max length bytes
      */
-    public function progressShow($notifyCode, $severity, $message, $messageCode, $transferredBytes, $maxBytes)
+    public function progressShow($notifyCode, $severity, $message, $messageCode, $transferredBytes, $maxBytes): void
     {
         $msg = '';
 
@@ -205,7 +205,7 @@ final class Download
     /**
      * @param string $showType
      */
-    public function setShowType(string $showType)
+    public function setShowType(string $showType): void
     {
         $this->showType = $showType;
     }
@@ -221,7 +221,7 @@ final class Download
     /**
      * @param string $url
      */
-    public function setUrl(string $url)
+    public function setUrl(string $url): void
     {
         $this->url = \trim($url);
     }
@@ -237,7 +237,7 @@ final class Download
     /**
      * @param string $saveAs
      */
-    public function setSaveAs(string $saveAs)
+    public function setSaveAs(string $saveAs): void
     {
         $this->saveAs = \trim($saveAs);
     }

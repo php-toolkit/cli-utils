@@ -9,7 +9,7 @@ require dirname(__DIR__) . '/test/boot.php';
 
 $app  = new \Toolkit\Cli\App();
 $url  = 'http://no2.php.net/distributions/php-7.2.5.tar.bz2';
-$down = Download::create($url, '');
+$down = Download::create($url);
 
 $type = $app->getOpt('type', 'text');
 

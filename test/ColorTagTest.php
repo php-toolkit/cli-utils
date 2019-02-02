@@ -17,7 +17,7 @@ use Toolkit\Cli\ColorTag;
  */
 class ColorTagTest extends TestCase
 {
-    public function testStrip()
+    public function testStrip(): void
     {
         $text = ColorTag::strip('<tag>text</tag>');
         $this->assertSame('text', $text);
@@ -27,7 +27,7 @@ class ColorTagTest extends TestCase
         $this->assertSame('<tag>text<tag>', $text);
     }
 
-    public function testWrap()
+    public function testWrap(): void
     {
         $text = ColorTag::wrap('text', 'tag');
         $this->assertSame('<tag>text</tag>', $text);
@@ -39,7 +39,7 @@ class ColorTagTest extends TestCase
         $this->assertSame('', $text);
     }
 
-    public function testExists()
+    public function testExists(): void
     {
         $this->assertTrue(ColorTag::exists('<tag>text</tag>'));
         $this->assertFalse(ColorTag::exists('text'));

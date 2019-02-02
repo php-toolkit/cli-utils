@@ -38,7 +38,7 @@ class Cli
      * @param bool $nl
      * @param bool $quit
      */
-    public static function write($messages, $nl = true, $quit = false)
+    public static function write($messages, $nl = true, $quit = false): void
     {
         if (\is_array($messages)) {
             $messages = implode($nl ? \PHP_EOL : '', $messages);
@@ -53,7 +53,7 @@ class Cli
      * @param bool     $nl
      * @param bool|int $quit
      */
-    public static function stdout(string $message, $nl = true, $quit = false)
+    public static function stdout(string $message, $nl = true, $quit = false): void
     {
         fwrite(\STDOUT, $message . ($nl ? \PHP_EOL : ''));
         fflush(\STDOUT);
@@ -70,7 +70,7 @@ class Cli
      * @param bool     $nl
      * @param bool|int $quit
      */
-    public static function stderr(string $message, $nl = true, $quit = -1)
+    public static function stderr(string $message, $nl = true, $quit = -1): void
     {
         fwrite(\STDERR, self::color('[ERROR] ', 'red') . $message . ($nl ? PHP_EOL : ''));
         fflush(\STDOUT);
