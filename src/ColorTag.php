@@ -17,6 +17,9 @@ class ColorTag
     // regex used for removing color tags
     private const STRIP_TAG = '/<[\/]?[a-zA-Z=;]+>/';
 
+    // Regex to match tags/
+    private const COLOR_TAG = '/<([a-zA-Z=;]+)>(.*?)<\/\\1>/s';
+
     /**
      * alias of the wrap()
      * @param string $text
@@ -40,6 +43,19 @@ class ColorTag
         }
 
         return "<$tag>$text</$tag>";
+    }
+
+    /**
+     * @param string $text
+     * @return array
+     */
+    public static function matchAll(string $text): array
+    {
+        if (!\preg_match_all(self::COLOR_TAG, $text, $matches)) {
+            return [];
+        }
+
+        return $matches;
     }
 
     public static function parse(string $text): string

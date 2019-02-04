@@ -17,6 +17,18 @@ use Toolkit\Cli\ColorTag;
  */
 class ColorTagTest extends TestCase
 {
+    public function testMatchAll(): void
+    {
+        $ret = ColorTag::matchAll('<tag>text0</tag> or <info>text1</info>');
+
+        $this->assertCount(3, $ret);
+        // tag
+        $this->assertSame('tag', $ret[1][0]);
+        $this->assertSame('info', $ret[1][1]);
+        // content
+        $this->assertSame('text0', $ret[2][0]);
+    }
+
     public function testStrip(): void
     {
         $text = ColorTag::strip('<tag>text</tag>');
