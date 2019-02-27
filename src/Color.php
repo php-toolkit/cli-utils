@@ -34,6 +34,7 @@ namespace Toolkit\Cli;
  */
 class Color
 {
+    public const RESET  = 0;
     public const NORMAL = 0;
 
     // Foreground color
@@ -164,7 +165,7 @@ class Color
      * @param array  $args
      * @return string
      */
-    public static function __callStatic($method, array $args)
+    public static function __callStatic(string $method, array $args)
     {
         if (isset(self::STYLES[$method])) {
             return self::render($args[0], $method);
@@ -173,12 +174,8 @@ class Color
         return '';
     }
 
-    /*******************************************************************************
-     * color render
-     ******************************************************************************/
-
     /**
-     * apply style for text
+     * Apply style for text
      * @param string $style
      * @param string $text
      * @return string
@@ -189,7 +186,21 @@ class Color
     }
 
     /**
-     * render text
+     * Format and print to STDOUT
+     * @param string $format
+     * @param mixed  ...$args
+     */
+    public static function printf(string $format, ...$args): void
+    {
+        echo self::render(\sprintf($format, ...$args));
+    }
+
+    /*******************************************************************************
+     * color render
+     ******************************************************************************/
+
+    /**
+     * Render text, apply color code
      * @param string       $text
      * @param string|array $style
      * - string: 'green', 'blue'
@@ -214,7 +225,7 @@ class Color
             $color = \implode(';', $style);
 
             // user color tag: <info>message</info>
-        } elseif (\strpos($text, '<') !== false) {
+        } elseif (\strpos($text, '</') > 0) {
             return self::parseTag($text);
         } else {
             return $text;
@@ -240,7 +251,7 @@ class Color
             return static::clearColor($text);
         }
 
-        if (!\preg_match_all(self::COLOR_TAG, $text, $matches)) {
+        if (!\preg_match_all(ColorTag::MATCH_TAG, $text, $matches)) {
             return $text;
         }
 

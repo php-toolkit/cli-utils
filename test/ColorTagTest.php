@@ -20,13 +20,26 @@ class ColorTagTest extends TestCase
     public function testMatchAll(): void
     {
         $ret = ColorTag::matchAll('<tag>text0</tag> or <info>text1</info>');
-
         $this->assertCount(3, $ret);
         // tag
         $this->assertSame('tag', $ret[1][0]);
         $this->assertSame('info', $ret[1][1]);
         // content
         $this->assertSame('text0', $ret[2][0]);
+
+        $ret = ColorTag::matchAll('<some_tag>text</some_tag>');
+        $this->assertCount(3, $ret);
+        // tag
+        $this->assertSame('some_tag', $ret[1][0]);
+        // content
+        $this->assertSame('text', $ret[2][0]);
+
+        $ret = ColorTag::matchAll('<someTag>text</someTag>');
+        $this->assertCount(3, $ret);
+        // tag
+        $this->assertSame('someTag', $ret[1][0]);
+        // content
+        $this->assertSame('text', $ret[2][0]);
     }
 
     public function testStrip(): void

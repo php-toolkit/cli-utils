@@ -15,14 +15,15 @@ namespace Toolkit\Cli;
 class ColorTag
 {
     // regex used for removing color tags
-    private const STRIP_TAG = '/<[\/]?[a-zA-Z=;]+>/';
+    public const STRIP_TAG = '/<[\/]?[a-zA-Z=;]+>/';
 
     // Regex to match tags/
-    private const COLOR_TAG = '/<([a-zA-Z=;]+)>(.*?)<\/\\1>/s';
+    public const MATCH_TAG = '/<([a-zA-Z=;_]+)>(.*?)<\/\\1>/s';
 
     /**
-     * alias of the wrap()
+     * Alias of the wrap()
      * @param string $text
+     * @param string $tag
      * @return string
      */
     public static function add(string $text, string $tag): string
@@ -51,7 +52,7 @@ class ColorTag
      */
     public static function matchAll(string $text): array
     {
-        if (!\preg_match_all(self::COLOR_TAG, $text, $matches)) {
+        if (!\preg_match_all(self::MATCH_TAG, $text, $matches)) {
             return [];
         }
 
@@ -64,17 +65,17 @@ class ColorTag
     }
 
     /**
-     * exists color tags
+     * Exists color tags
      * @param string $text
      * @return bool
      */
     public static function exists(string $text): bool
     {
-        return false !== \strpos($text, '</');
+        return \strpos($text, '</') > 0;
     }
 
     /**
-     * alias of the strip()
+     * Alias of the strip()
      * @param string $text
      * @return string
      */

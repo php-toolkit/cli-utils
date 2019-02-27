@@ -8,22 +8,33 @@
 
 namespace Toolkit\Cli;
 
+use function getenv;
+
 /**
  * Class Cli
  * @package Toolkit\Cli
  */
 class Cli
 {
+    public const LOG_LEVEL2TAG = [
+        'info'    => 'info',
+        'warn'    => 'warning',
+        'warning' => 'warning',
+        'debug'   => 'cyan',
+        'notice'  => 'notice',
+        'error'   => 'error',
+    ];
+
     /*******************************************************************************
      * read/write message
      ******************************************************************************/
 
     /**
-     * @param mixed $message
+     * @param string $message
      * @param bool  $nl
      * @return string
      */
-    public static function read($message = null, $nl = false): string
+    public static function read(string $message = '', bool $nl = false): string
     {
         if ($message) {
             self::write($message, $nl);
@@ -33,15 +44,24 @@ class Cli
     }
 
     /**
-     * write message to console
-     * @param      $messages
-     * @param bool $nl
-     * @param bool $quit
+     * @param string $format
+     * @param mixed  ...$args
      */
-    public static function write($messages, $nl = true, $quit = false): void
+    public static function writef(string $format, ...$args): void
+    {
+        self::write(\sprintf($format, ...$args));
+    }
+
+    /**
+     * Write message to console
+     * @param string|array $messages
+     * @param bool         $nl
+     * @param bool|int     $quit
+     */
+    public static function write($messages, bool $nl = true, $quit = false): void
     {
         if (\is_array($messages)) {
-            $messages = implode($nl ? \PHP_EOL : '', $messages);
+            $messages = \implode($nl ? \PHP_EOL : '', $messages);
         }
 
         self::stdout(Color::parseTag($messages), $nl, $quit);
@@ -53,10 +73,10 @@ class Cli
      * @param bool     $nl
      * @param bool|int $quit
      */
-    public static function stdout(string $message, $nl = true, $quit = false): void
+    public static function stdout(string $message, bool $nl = true, $quit = false): void
     {
-        fwrite(\STDOUT, $message . ($nl ? \PHP_EOL : ''));
-        fflush(\STDOUT);
+        \fwrite(\STDOUT, $message . ($nl ? \PHP_EOL : ''));
+        \fflush(\STDOUT);
 
         if (($isTrue = true === $quit) || \is_int($quit)) {
             $code = $isTrue ? 0 : $quit;
@@ -72,8 +92,8 @@ class Cli
      */
     public static function stderr(string $message, $nl = true, $quit = -1): void
     {
-        fwrite(\STDERR, self::color('[ERROR] ', 'red') . $message . ($nl ? PHP_EOL : ''));
-        fflush(\STDOUT);
+        \fwrite(\STDERR, self::color('[ERROR] ', 'red') . $message . ($nl ? PHP_EOL : ''));
+        \fflush(\STDOUT);
 
         if (($isTrue = true === $quit) || \is_int($quit)) {
             $code = $isTrue ? 0 : $quit;
@@ -93,6 +113,47 @@ class Cli
     public static function color(string $text, $style = null): string
     {
         return Color::render($text, $style);
+    }
+
+    /**
+     * print log to console
+     * @param string $msg
+     * @param array  $data
+     * @param string $type
+     * @param array  $opts
+     * [
+     *  '_category' => 'application',
+     *  'process' => 'work',
+     *  'pid' => 234,
+     *  'coId' => 12,
+     * ]
+     */
+    public static function log(string $msg, array $data = [], string $type = 'info', array $opts = []): void
+    {
+        if (isset(self::LOG_LEVEL2TAG[$type])) {
+            $type = ColorTag::add(\strtoupper($type), self::LOG_LEVEL2TAG[$type]);
+        }
+
+        $userOpts = [];
+
+        foreach ($opts as $n => $v) {
+            if (\is_numeric($n) || \strpos($n, '_') === 0) {
+                $userOpts[] = "[$v]";
+            } else {
+                $userOpts[] = "[$n:$v]";
+            }
+        }
+
+        $optString = $userOpts ? ' ' . \implode(' ', $userOpts) : '';
+
+        self::write(\sprintf(
+            '%s [%s]%s %s %s',
+            \date('Y/m/d H:i:s'),
+            $type,
+            $optString,
+            \trim($msg),
+            $data ? \PHP_EOL . \json_encode($data, \JSON_UNESCAPED_SLASHES | \JSON_PRETTY_PRINT) : ''
+        ));
     }
 
     /*******************************************************************************

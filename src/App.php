@@ -43,7 +43,9 @@ class App
      */
     private $messages = [];
 
-    /** @var int */
+    /**
+     * @var int
+     */
     private $keyWidth = 12;
 
     /**
@@ -61,7 +63,6 @@ class App
         $this->script = \array_shift($argv);
         // parse flags
         [$this->args, $this->opts] = Flags::simpleParseArgv($argv);
-
     }
 
     /**
@@ -178,6 +179,10 @@ class App
             throw new \InvalidArgumentException('Invalid arguments');
         }
 
+        if (($len = \strlen($command)) > $this->keyWidth) {
+            $this->keyWidth = $len;
+        }
+
         $this->commands[$command] = $handler;
         $this->messages[$command] = \trim($description);
     }
@@ -219,7 +224,7 @@ class App
         $help = "Welcome to the Lite Console Application.\n\n<comment>Available Commands:</comment>\n";
 
         foreach ($this->messages as $command => $desc) {
-            $command = str_pad($command, $commandWidth, ' ');
+            $command = \str_pad($command, $commandWidth, ' ');
             $desc    = $desc ?: 'No description for the command';
             $help    .= "  $command   $desc\n";
         }
