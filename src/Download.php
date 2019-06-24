@@ -8,8 +8,31 @@
 
 namespace Toolkit\Cli;
 
+use RuntimeException;
+use function basename;
+use function error_get_last;
+use function fclose;
+use function file_put_contents;
+use function fopen;
+use function getcwd;
+use function is_resource;
+use function stream_context_create;
+use function stream_context_set_params;
+use function trim;
+use const STREAM_NOTIFY_AUTH_REQUIRED;
+use const STREAM_NOTIFY_AUTH_RESULT;
+use const STREAM_NOTIFY_COMPLETED;
+use const STREAM_NOTIFY_CONNECT;
+use const STREAM_NOTIFY_FAILURE;
+use const STREAM_NOTIFY_FILE_SIZE_IS;
+use const STREAM_NOTIFY_MIME_TYPE_IS;
+use const STREAM_NOTIFY_PROGRESS;
+use const STREAM_NOTIFY_REDIRECTED;
+use const STREAM_NOTIFY_RESOLVE;
+
 /**
  * Class Download
+ *
  * @package Toolkit\Cli
  */
 final class Download
@@ -33,6 +56,7 @@ final class Download
      * @param string $url
      * @param string $saveAs
      * @param string $type
+     *
      * @return Download
      */
     public static function create(string $url, string $saveAs = '', string $type = self::PROGRESS_TEXT): Download
@@ -42,11 +66,13 @@ final class Download
 
     /**
      * eg: php down.php <http://example.com/file> <localFile>
+     *
      * @param string $url
      * @param string $saveAs
      * @param string $type
+     *
      * @return Download
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public static function file(string $url, string $saveAs = '', string $type = self::PROGRESS_TEXT): Download
     {
@@ -57,6 +83,7 @@ final class Download
 
     /**
      * Download constructor.
+     *
      * @param string $url
      * @param string $saveAs
      * @param string $type
@@ -71,43 +98,44 @@ final class Download
 
     /**
      * start download
+     *
      * @return $this
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function start(): self
     {
         if (!$this->url) {
-            throw new \RuntimeException("Please the property 'url' and 'saveAs'.", -1);
+            throw new RuntimeException("Please the property 'url' and 'saveAs'.", -1);
         }
 
         // default save to current dir.
         if (!$save = $this->saveAs) {
-            $save = \getcwd() . '/' . \basename($this->url);
+            $save = getcwd() . '/' . basename($this->url);
             // reset
             $this->saveAs = $save;
         }
 
-        $ctx = \stream_context_create();
+        $ctx = stream_context_create();
 
         // register stream notification callback
-        \stream_context_set_params($ctx, [
+        stream_context_set_params($ctx, [
             'notification' => [$this, 'progressShow']
         ]);
 
         Cli::write("Download: {$this->url}\nSave As: {$save}\n");
 
-        $fp = \fopen($this->url, 'rb', false, $ctx);
+        $fp = fopen($this->url, 'rb', false, $ctx);
 
-        if (\is_resource($fp) && \file_put_contents($save, $fp)) {
+        if (is_resource($fp) && file_put_contents($save, $fp)) {
             Cli::write("\nDone!");
         } else {
-            $err = \error_get_last();
+            $err = error_get_last();
             Cli::stderr("\nErr.rrr..orr...\n {$err['message']}\n", true, -1);
         }
 
         // close resource
-        if (\is_resource($fp)) {
-            \fclose($fp);
+        if (is_resource($fp)) {
+            fclose($fp);
         }
 
         $this->fileSize = null;
@@ -115,47 +143,47 @@ final class Download
     }
 
     /**
-     * @param int    $notifyCode stream notify code
-     * @param int    $severity severity code
-     * @param string $message Message text
-     * @param int    $messageCode Message code
+     * @param int    $notifyCode       stream notify code
+     * @param int    $severity         severity code
+     * @param string $message          Message text
+     * @param int    $messageCode      Message code
      * @param int    $transferredBytes Have been transferred bytes
-     * @param int    $maxBytes Target max length bytes
+     * @param int    $maxBytes         Target max length bytes
      */
     public function progressShow($notifyCode, $severity, $message, $messageCode, $transferredBytes, $maxBytes): void
     {
         $msg = '';
 
         switch ($notifyCode) {
-            case \STREAM_NOTIFY_RESOLVE:
-            case \STREAM_NOTIFY_AUTH_REQUIRED:
-            case \STREAM_NOTIFY_COMPLETED:
-            case \STREAM_NOTIFY_FAILURE:
-            case \STREAM_NOTIFY_AUTH_RESULT:
+            case STREAM_NOTIFY_RESOLVE:
+            case STREAM_NOTIFY_AUTH_REQUIRED:
+            case STREAM_NOTIFY_COMPLETED:
+            case STREAM_NOTIFY_FAILURE:
+            case STREAM_NOTIFY_AUTH_RESULT:
                 $msg = "NOTIFY: $message(NO: $messageCode, Severity: $severity)";
                 /* Ignore */
                 break;
 
-            case \STREAM_NOTIFY_REDIRECTED:
+            case STREAM_NOTIFY_REDIRECTED:
                 $msg = "Being redirected to: $message";
                 break;
 
-            case \STREAM_NOTIFY_CONNECT:
+            case STREAM_NOTIFY_CONNECT:
                 $msg = 'Connected ...';
                 break;
 
-            case \STREAM_NOTIFY_FILE_SIZE_IS:
+            case STREAM_NOTIFY_FILE_SIZE_IS:
                 $this->fileSize = $maxBytes;
                 // print size
                 $size = sprintf('%2d', $maxBytes / 1024);
                 $msg  = "Got the file size: <info>$size</info> kb";
                 break;
 
-            case \STREAM_NOTIFY_MIME_TYPE_IS:
+            case STREAM_NOTIFY_MIME_TYPE_IS:
                 $msg = "Found the mime-type: <info>$message</info>";
                 break;
 
-            case \STREAM_NOTIFY_PROGRESS:
+            case STREAM_NOTIFY_PROGRESS:
                 if ($transferredBytes > 0) {
                     $this->showProgressByType($transferredBytes);
                 }
@@ -167,6 +195,7 @@ final class Download
 
     /**
      * @param $transferredBytes
+     *
      * @return string
      */
     public function showProgressByType($transferredBytes): string
@@ -223,7 +252,7 @@ final class Download
      */
     public function setUrl(string $url): void
     {
-        $this->url = \trim($url);
+        $this->url = trim($url);
     }
 
     /**
@@ -239,6 +268,6 @@ final class Download
      */
     public function setSaveAs(string $saveAs): void
     {
-        $this->saveAs = \trim($saveAs);
+        $this->saveAs = trim($saveAs);
     }
 }

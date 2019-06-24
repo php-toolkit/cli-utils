@@ -8,8 +8,13 @@
 
 namespace Toolkit\Cli;
 
+use function preg_match_all;
+use function preg_replace;
+use function strpos;
+
 /**
  * Class ColorTag
+ *
  * @package Toolkit\Cli
  */
 class ColorTag
@@ -22,8 +27,10 @@ class ColorTag
 
     /**
      * Alias of the wrap()
+     *
      * @param string $text
      * @param string $tag
+     *
      * @return string
      */
     public static function add(string $text, string $tag): string
@@ -33,8 +40,10 @@ class ColorTag
 
     /**
      * wrap a color style tag
+     *
      * @param string $text
      * @param string $tag
+     *
      * @return string
      */
     public static function wrap(string $text, string $tag): string
@@ -48,11 +57,12 @@ class ColorTag
 
     /**
      * @param string $text
+     *
      * @return array
      */
     public static function matchAll(string $text): array
     {
-        if (!\preg_match_all(self::MATCH_TAG, $text, $matches)) {
+        if (!preg_match_all(self::MATCH_TAG, $text, $matches)) {
             return [];
         }
 
@@ -61,22 +71,26 @@ class ColorTag
 
     public static function parse(string $text): string
     {
-
+        return '';
     }
 
     /**
      * Exists color tags
+     *
      * @param string $text
+     *
      * @return bool
      */
     public static function exists(string $text): bool
     {
-        return \strpos($text, '</') > 0;
+        return strpos($text, '</') > 0;
     }
 
     /**
      * Alias of the strip()
+     *
      * @param string $text
+     *
      * @return string
      */
     public static function clear(string $text): string
@@ -86,16 +100,18 @@ class ColorTag
 
     /**
      * Strip color tags from a string.
+     *
      * @param string $text
+     *
      * @return mixed
      */
     public static function strip(string $text): string
     {
-        if (false === \strpos($text, '</')) {
+        if (false === strpos($text, '</')) {
             return $text;
         }
 
         // $text = \strip_tags($text);
-        return \preg_replace(self::STRIP_TAG, '', $text);
+        return preg_replace(self::STRIP_TAG, '', $text);
     }
 }

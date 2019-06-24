@@ -13,6 +13,7 @@ use Toolkit\Cli\ColorTag;
 
 /**
  * Class ColorTagTest
+ *
  * @package Toolkit\CliTest
  */
 class ColorTagTest extends TestCase

@@ -8,8 +8,25 @@
 
 namespace Toolkit\Cli;
 
+use function array_flip;
+use function array_merge;
+use function current;
+use function escapeshellarg;
+use function explode;
+use function is_bool;
+use function is_int;
+use function is_numeric;
+use function next;
+use function preg_match;
+use function str_split;
+use function stripos;
+use function strpos;
+use function substr;
+use function trim;
+
 /**
  * Class FlagsParse - console argument and option parse
+ *
  * @package Toolkit\Cli
  */
 class Flags
@@ -20,6 +37,7 @@ class Flags
 
     /**
      * @param array $argv
+     *
      * @return array [$args, $opts]
      */
     public static function simpleParseArgv(array $argv): array
@@ -27,22 +45,22 @@ class Flags
         $args = $opts = [];
         foreach ($argv as $key => $value) {
             // opts
-            if (\strpos($value, '-') === 0) {
-                $value = \trim($value, '-');
+            if (strpos($value, '-') === 0) {
+                $value = trim($value, '-');
 
                 // invalid
                 if (!$value) {
                     continue;
                 }
 
-                if (\strpos($value, '=')) {
-                    [$n, $v] = \explode('=', $value);
+                if (strpos($value, '=')) {
+                    [$n, $v] = explode('=', $value);
                     $opts[$n] = $v;
                 } else {
                     $opts[$value] = true;
                 }
-            } elseif (\strpos($value, '=')) {
-                [$n, $v] = \explode('=', $value);
+            } elseif (strpos($value, '=')) {
+                [$n, $v] = explode('=', $value);
                 $args[$n] = $v;
             } else {
                 $args[] = $value;
@@ -77,9 +95,12 @@ class Flags
      * --long-opt
      * --long-opt <value>
      * --long-opt=<value>
+     *
      * @link http://php.net/manual/zh/function.getopt.php#83414
+     *
      * @param array $params
      * @param array $config
+     *
      * @return array [args, short-opts, long-opts]
      */
     public static function parseArgv(array $params, array $config = []): array
@@ -88,7 +109,7 @@ class Flags
             return [[], [], []];
         }
 
-        $config = \array_merge([
+        $config = array_merge([
             // List of parameters without values(bool option keys)
             'boolOpts'       => [], // ['debug', 'h']
             // Whether merge short-opts and long-opts
@@ -101,47 +122,47 @@ class Flags
 
         $args = $sOpts = $lOpts = [];
         // config
-        $boolOpts  = \array_flip((array)$config['boolOpts']);
-        $arrayOpts = \array_flip((array)$config['arrayOpts']);
+        $boolOpts  = array_flip((array)$config['boolOpts']);
+        $arrayOpts = array_flip((array)$config['arrayOpts']);
 
         // each() will deprecated at 7.2. so,there use current and next instead it.
         // while (list(,$p) = each($params)) {
-        while (false !== ($p = \current($params))) {
-            \next($params);
+        while (false !== ($p = current($params))) {
+            next($params);
 
             // is options
             if ($p{0} === '-') {
                 $value  = true;
-                $option = \substr($p, 1);
+                $option = substr($p, 1);
                 $isLong = false;
 
                 // long-opt: (--<opt>)
-                if (\strpos($option, '-') === 0) {
-                    $option = \substr($option, 1);
+                if (strpos($option, '-') === 0) {
+                    $option = substr($option, 1);
                     $isLong = true;
 
                     // long-opt: value specified inline (--<opt>=<value>)
-                    if (\strpos($option, '=') !== false) {
-                        [$option, $value] = \explode('=', $option, 2);
+                    if (strpos($option, '=') !== false) {
+                        [$option, $value] = explode('=', $option, 2);
                     }
 
                     // short-opt: value specified inline (-<opt>=<value>)
                 } elseif (isset($option{1}) && $option{1} === '=') {
-                    [$option, $value] = \explode('=', $option, 2);
+                    [$option, $value] = explode('=', $option, 2);
                 }
 
                 // check if next parameter is a descriptor or a value
-                $nxt = \current($params);
+                $nxt = current($params);
 
                 // next elem is value. fix: allow empty string ''
                 if ($value === true && !isset($boolOpts[$option]) && self::nextIsValue($nxt)) {
                     // list(,$val) = each($params);
                     $value = $nxt;
-                    \next($params);
+                    next($params);
 
                     // short-opt: bool opts. like -e -abc
                 } elseif (!$isLong && $value === true) {
-                    foreach (\str_split($option) as $char) {
+                    foreach (str_split($option) as $char) {
                         $sOpts[$char] = true;
                     }
                     continue;
@@ -169,8 +190,8 @@ class Flags
             // - param doesn't belong to any option, define it is args
 
             // value specified inline (<arg>=<value>)
-            if (\strpos($p, '=') !== false) {
-                [$name, $value] = \explode('=', $p, 2);
+            if (strpos($p, '=') !== false) {
+                [$name, $value] = explode('=', $p, 2);
                 $args[$name] = self::filterBool($value);
             } else {
                 $args[] = $p;
@@ -190,7 +211,9 @@ class Flags
      *  '-h' => true,
      * ]);
      * ```
+     *
      * @param array $params
+     *
      * @return array
      */
     public static function parseArray(array $params): array
@@ -198,21 +221,21 @@ class Flags
         $args = $sOpts = $lOpts = [];
 
         foreach ($params as $key => $val) {
-            if (\is_int($key)) { // as argument
+            if (is_int($key)) { // as argument
                 $args[$key] = $val;
                 continue;
             }
 
-            $cleanKey = \trim((string)$key, '-');
+            $cleanKey = trim((string)$key, '-');
 
             if ('' === $cleanKey) { // as argument
                 $args[] = $val;
                 continue;
             }
 
-            if (0 === \strpos($key, '--')) { // long option
+            if (0 === strpos($key, '--')) { // long option
                 $lOpts[$cleanKey] = $val;
-            } elseif (0 === \strpos($key, '-')) { // short option
+            } elseif (0 === strpos($key, '-')) { // short option
                 $sOpts[$cleanKey] = $val;
             } else {
                 $args[$key] = $val;
@@ -229,8 +252,9 @@ class Flags
      * $result = Flags::parseString('foo --bar="foobar"');
      * ```
      *
-     * @todo ...
      * @param string $string
+     *
+     * @todo ...
      */
     public static function parseString(string $string): void
     {
@@ -240,21 +264,22 @@ class Flags
     /**
      * @param string|bool $val
      * @param bool        $enable
+     *
      * @return bool|mixed
      */
     public static function filterBool($val, $enable = true)
     {
         if ($enable) {
-            if (\is_bool($val) || \is_numeric($val)) {
+            if (is_bool($val) || is_numeric($val)) {
                 return $val;
             }
 
             // check it is a bool value.
-            if (false !== \stripos(self::TRUE_WORDS, "|$val|")) {
+            if (false !== stripos(self::TRUE_WORDS, "|$val|")) {
                 return true;
             }
 
-            if (false !== \stripos(self::FALSE_WORDS, "|$val|")) {
+            if (false !== stripos(self::FALSE_WORDS, "|$val|")) {
                 return false;
             }
         }
@@ -264,6 +289,7 @@ class Flags
 
     /**
      * @param mixed $val
+     *
      * @return bool
      */
     public static function nextIsValue($val): bool
@@ -279,16 +305,18 @@ class Flags
         }
 
         // it isn't option or named argument
-        return $val{0} !== '-' && false === \strpos($val, '=');
+        return $val{0} !== '-' && false === strpos($val, '=');
     }
 
     /**
      * Escapes a token through escapeshellarg if it contains unsafe chars.
+     *
      * @param string $token
+     *
      * @return string
      */
     public static function escapeToken(string $token): string
     {
-        return \preg_match('{^[\w-]+$}', $token) ? $token : \escapeshellarg($token);
+        return preg_match('{^[\w-]+$}', $token) ? $token : escapeshellarg($token);
     }
 }

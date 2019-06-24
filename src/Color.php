@@ -8,8 +8,21 @@
 
 namespace Toolkit\Cli;
 
+use function array_filter;
+use function array_keys;
+use function implode;
+use function is_array;
+use function is_string;
+use function preg_match_all;
+use function preg_replace;
+use function sprintf;
+use function str_replace;
+use function strip_tags;
+use function strpos;
+
 /**
  * Class Color
+ *
  * @package Toolkit\Cli
  * // basic
  * @method string red(string $text)
@@ -89,6 +102,7 @@ class Color
     /**
      * some styles
      * custom style: fg;bg;opt
+     *
      * @var array
      */
     public const STYLES = [
@@ -163,6 +177,7 @@ class Color
     /**
      * @param string $method
      * @param array  $args
+     *
      * @return string
      */
     public static function __callStatic(string $method, array $args)
@@ -176,8 +191,10 @@ class Color
 
     /**
      * Apply style for text
+     *
      * @param string $style
      * @param string $text
+     *
      * @return string
      */
     public static function apply(string $style, string $text): string
@@ -187,12 +204,13 @@ class Color
 
     /**
      * Format and print to STDOUT
+     *
      * @param string $format
      * @param mixed  ...$args
      */
     public static function printf(string $format, ...$args): void
     {
-        echo self::render(\sprintf($format, ...$args));
+        echo self::render(sprintf($format, ...$args));
     }
 
     /*******************************************************************************
@@ -201,10 +219,12 @@ class Color
 
     /**
      * Render text, apply color code
+     *
      * @param string       $text
      * @param string|array $style
      * - string: 'green', 'blue'
      * - array: [Color::FG_GREEN, Color::BG_WHITE, Color::UNDERSCORE]
+     *
      * @return string
      */
     public static function render(string $text, $style = null): string
@@ -218,31 +238,33 @@ class Color
         }
 
         // use defined style: 'green'
-        if (\is_string($style)) {
+        if (is_string($style)) {
             $color = self::STYLES[$style] ?? '0';
             // custom style: [self::FG_GREEN, self::BG_WHITE, self::UNDERSCORE]
-        } elseif (\is_array($style)) {
-            $color = \implode(';', $style);
+        } elseif (is_array($style)) {
+            $color = implode(';', $style);
 
             // user color tag: <info>message</info>
-        } elseif (\strpos($text, '</') > 0) {
+        } elseif (strpos($text, '</') > 0) {
             return self::parseTag($text);
         } else {
             return $text;
         }
 
         // $result = chr(27). "$color{$text}" . chr(27) . chr(27) . "[0m". chr(27);
-        return \sprintf(self::COLOR_TPL, $color, $text);
+        return sprintf(self::COLOR_TPL, $color, $text);
     }
 
     /**
      * parse color tag e.g: <info>message</info>
+     *
      * @param string $text
+     *
      * @return mixed|string
      */
     public static function parseTag(string $text)
     {
-        if (!$text || false === \strpos($text, '</')) {
+        if (!$text || false === strpos($text, '</')) {
             return $text;
         }
 
@@ -251,7 +273,7 @@ class Color
             return static::clearColor($text);
         }
 
-        if (!\preg_match_all(ColorTag::MATCH_TAG, $text, $matches)) {
+        if (!preg_match_all(ColorTag::MATCH_TAG, $text, $matches)) {
             return $text;
         }
 
@@ -260,8 +282,8 @@ class Color
                 $tag   = $matches[1][$i];
                 $match = $matches[2][$i];
 
-                $repl = \sprintf("\033[%sm%s\033[0m", $style, $match);
-                $text = \str_replace("<$tag>$match</$tag>", $repl, $text);
+                $repl = sprintf("\033[%sm%s\033[0m", $style, $match);
+                $text = str_replace("<$tag>$match</$tag>", $repl, $text);
             }
         }
 
@@ -271,20 +293,18 @@ class Color
     /**
      * @param string $text
      * @param bool   $stripTag
+     *
      * @return string
      */
     public static function clearColor(string $text, bool $stripTag = true): string
     {
         // return preg_replace('/\033\[(?:\d;?)+m/', '' , "\033[0;36mtext\033[0m");
-        return \preg_replace(
-            '/\033\[(?:\d;?)+m/',
-            '',
-            $stripTag ? \strip_tags($text) : $text
-        );
+        return preg_replace('/\033\[(?:\d;?)+m/', '', $stripTag ? strip_tags($text) : $text);
     }
 
     /**
      * @param string $style
+     *
      * @return bool
      */
     public static function hasStyle(string $style): bool
@@ -294,12 +314,13 @@ class Color
 
     /**
      * get all style names
+     *
      * @return array
      */
     public static function getStyles(): array
     {
-        return \array_filter(\array_keys(self::STYLES), function ($style) {
-            return !\strpos($style, '_');
+        return array_filter(array_keys(self::STYLES), function ($style) {
+            return !strpos($style, '_');
         });
     }
 }

@@ -7,6 +7,7 @@ use Toolkit\Cli\Color;
 
 /**
  * Class ColorTest
+ *
  * @package Toolkit\CliTest
  */
 class ColorTest extends TestCase

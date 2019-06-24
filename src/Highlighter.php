@@ -8,11 +8,51 @@
 
 namespace Toolkit\Cli;
 
+use InvalidArgumentException;
+use function array_merge;
+use function array_slice;
+use function defined;
+use function end;
+use function explode;
+use function function_exists;
+use function implode;
+use function is_array;
+use function key;
+use function max;
+use function str_pad;
+use function str_replace;
+use function strlen;
+use function token_get_all;
+use const PHP_EOL;
+use const STR_PAD_LEFT;
+use const T_CLASS_C;
+use const T_CLOSE_TAG;
+use const T_COMMENT;
+use const T_CONSTANT_ENCAPSED_STRING;
+use const T_DIR;
+use const T_DNUMBER;
+use const T_DOC_COMMENT;
+use const T_ENCAPSED_AND_WHITESPACE;
+use const T_FILE;
+use const T_FUNC_C;
+use const T_INLINE_HTML;
+use const T_LINE;
+use const T_LNUMBER;
+use const T_METHOD_C;
+use const T_NS_C;
+use const T_OPEN_TAG;
+use const T_OPEN_TAG_WITH_ECHO;
+use const T_STRING;
+use const T_TRAIT_C;
+use const T_VARIABLE;
+use const T_WHITESPACE;
+
 /**
  * Class Highlighter
+ *
  * @package Toolkit\Cli
- * @see jakub-onderka/php-console-highlighter
- * @link https://github.com/JakubOnderka/PHP-Console-Highlighter/blob/master/src/Highlighter.php
+ * @see     jakub-onderka/php-console-highlighter
+ * @link    https://github.com/JakubOnderka/PHP-Console-Highlighter/blob/master/src/Highlighter.php
  */
 class Highlighter
 {
@@ -59,13 +99,15 @@ class Highlighter
 
     public function __construct()
     {
-        $this->hasTokenFunc = \function_exists('token_get_all');
+        $this->hasTokenFunc = function_exists('token_get_all');
     }
 
     /**
      * highlight a full php file content
+     *
      * @param string $source
      * @param bool   $withLineNumber with line number
+     *
      * @return string
      */
     public function highlight(string $source, bool $withLineNumber = false): string
@@ -77,7 +119,7 @@ class Highlighter
             return $this->lineNumbers($lines);
         }
 
-        return \implode(\PHP_EOL, $lines);
+        return implode(PHP_EOL, $lines);
     }
 
     /**
@@ -85,8 +127,9 @@ class Highlighter
      * @param int    $lineNumber
      * @param int    $linesBefore
      * @param int    $linesAfter
+     *
      * @return string
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function snippet(string $source, int $lineNumber, int $linesBefore = 2, int $linesAfter = 2): string
     {
@@ -98,17 +141,18 @@ class Highlighter
      * @param int    $lineNumber
      * @param int    $linesBefore
      * @param int    $linesAfter
+     *
      * @return string
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function highlightSnippet($source, $lineNumber, $linesBefore = 2, $linesAfter = 2): string
     {
         $tokenLines = $this->getHighlightedLines($source);
 
         $offset     = $lineNumber - $linesBefore - 1;
-        $offset     = \max($offset, 0);
+        $offset     = max($offset, 0);
         $length     = $linesAfter + $linesBefore + 1;
-        $tokenLines = \array_slice($tokenLines, $offset, $length, $preserveKeys = true);
+        $tokenLines = array_slice($tokenLines, $offset, $length, $preserveKeys = true);
 
         $lines = $this->colorLines($tokenLines);
 
@@ -117,11 +161,12 @@ class Highlighter
 
     /**
      * @param string $source
+     *
      * @return array
      */
     private function getHighlightedLines(string $source): array
     {
-        $source = \str_replace(["\r\n", "\r"], "\n", $source);
+        $source = str_replace(["\r\n", "\r"], "\n", $source);
 
         if ($this->hasTokenFunc) {
             $tokens = $this->tokenize($source);
@@ -129,57 +174,58 @@ class Highlighter
         }
 
         // if no func: token_get_all
-        return \explode("\n", $source);
+        return explode("\n", $source);
     }
 
     /**
      * @param string $source
+     *
      * @return array
      */
     private function tokenize(string $source): array
     {
         $buffer  = '';
         $output  = [];
-        $tokens  = \token_get_all($source);
+        $tokens  = token_get_all($source);
         $newType = $currentType = null;
 
         foreach ($tokens as $token) {
-            if (\is_array($token)) {
+            if (is_array($token)) {
                 switch ($token[0]) {
-                    case \T_INLINE_HTML:
+                    case T_INLINE_HTML:
                         $newType = self::TOKEN_HTML;
                         break;
-                    case \T_COMMENT:
-                    case \T_DOC_COMMENT:
+                    case T_COMMENT:
+                    case T_DOC_COMMENT:
                         $newType = self::TOKEN_COMMENT;
                         break;
-                    case \T_ENCAPSED_AND_WHITESPACE:
-                    case \T_CONSTANT_ENCAPSED_STRING:
+                    case T_ENCAPSED_AND_WHITESPACE:
+                    case T_CONSTANT_ENCAPSED_STRING:
                         $newType = self::TOKEN_STRING;
                         break;
-                    case \T_WHITESPACE:
+                    case T_WHITESPACE:
                         break;
-                    case \T_OPEN_TAG:
-                    case \T_OPEN_TAG_WITH_ECHO:
-                    case \T_CLOSE_TAG:
-                    case \T_STRING:
-                    case \T_VARIABLE:
+                    case T_OPEN_TAG:
+                    case T_OPEN_TAG_WITH_ECHO:
+                    case T_CLOSE_TAG:
+                    case T_STRING:
+                    case T_VARIABLE:
                         // Constants
-                    case \T_DIR:
-                    case \T_FILE:
-                    case \T_METHOD_C:
-                    case \T_DNUMBER:
-                    case \T_LNUMBER:
-                    case \T_NS_C:
-                    case \T_LINE:
-                    case \T_CLASS_C:
-                    case \T_FUNC_C:
+                    case T_DIR:
+                    case T_FILE:
+                    case T_METHOD_C:
+                    case T_DNUMBER:
+                    case T_LNUMBER:
+                    case T_NS_C:
+                    case T_LINE:
+                    case T_CLASS_C:
+                    case T_FUNC_C:
                         //case T_TRAIT_C:
                         $newType = self::TOKEN_DEFAULT;
                         break;
                     default:
                         // Compatibility with PHP 5.3
-                        if (\defined('T_TRAIT_C') && $token[0] === \T_TRAIT_C) {
+                        if (defined('T_TRAIT_C') && $token[0] === T_TRAIT_C) {
                             $newType = self::TOKEN_DEFAULT;
                         } else {
                             $newType = self::TOKEN_KEYWORD;
@@ -199,7 +245,7 @@ class Highlighter
                 $currentType = $newType;
             }
 
-            $buffer .= \is_array($token) ? $token[1] : $token;
+            $buffer .= is_array($token) ? $token[1] : $token;
         }
 
         if (null !== $newType) {
@@ -211,6 +257,7 @@ class Highlighter
 
     /**
      * @param array $tokens
+     *
      * @return array
      */
     private function splitToLines(array $tokens): array
@@ -218,7 +265,7 @@ class Highlighter
         $lines = $line = [];
 
         foreach ($tokens as $token) {
-            foreach (\explode("\n", $token[1]) as $count => $tokenLine) {
+            foreach (explode("\n", $token[1]) as $count => $tokenLine) {
                 if ($count > 0) {
                     $lines[] = $line;
                     $line    = [];
@@ -237,8 +284,9 @@ class Highlighter
 
     /**
      * @param array[] $tokenLines
+     *
      * @return array
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     private function colorLines(array $tokenLines): array
     {
@@ -269,26 +317,25 @@ class Highlighter
     /**
      * @param array    $lines
      * @param null|int $markLine
+     *
      * @return string
      */
     private function lineNumbers(array $lines, $markLine = null): string
     {
-        \end($lines);
+        end($lines);
 
         $snippet = '';
-        $lineLen = \strlen(\key($lines) + 1);
+        $lineLen = strlen(key($lines) + 1);
         $lmStyle = $this->defaultTheme[self::ACTUAL_LINE_MARK];
         $lnStyle = $this->defaultTheme[self::LINE_NUMBER];
 
         foreach ($lines as $i => $line) {
             if ($markLine !== null) {
                 $snippet .= ($markLine === $i + 1 ? Color::apply($lmStyle, '  > ') : '    ');
-                $snippet .= Color::apply(
-                    $markLine === $i + 1 ? $lmStyle : $lnStyle,
-                    \str_pad($i + 1, $lineLen, ' ', \STR_PAD_LEFT) . '| '
-                );
+                $snippet .= Color::apply($markLine === $i + 1 ? $lmStyle : $lnStyle,
+                    str_pad($i + 1, $lineLen, ' ', STR_PAD_LEFT) . '| ');
             } else {
-                $snippet .= Color::apply($lnStyle, \str_pad($i + 1, $lineLen, ' ', \STR_PAD_LEFT) . '| ');
+                $snippet .= Color::apply($lnStyle, str_pad($i + 1, $lineLen, ' ', STR_PAD_LEFT) . '| ');
             }
 
             $snippet .= $line . PHP_EOL;
@@ -310,6 +357,6 @@ class Highlighter
      */
     public function setDefaultTheme(array $defaultTheme): void
     {
-        $this->defaultTheme = \array_merge($this->defaultTheme, $defaultTheme);
+        $this->defaultTheme = array_merge($this->defaultTheme, $defaultTheme);
     }
 }

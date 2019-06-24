@@ -8,8 +8,12 @@
 
 namespace Toolkit\Cli;
 
+use function array_keys;
+use function strpos;
+
 /**
  * Class Terminal - terminal control by ansiCode
+ *
  * @package Toolkit\Cli
  *
  * 2K 清除本行
@@ -46,12 +50,14 @@ final class Terminal
 
     /**
      * current class's instance
+     *
      * @var self
      */
     private static $instance;
 
     /**
      * Control cursor code list
+     *
      * @var array
      */
     private static $ctrlCursorCodes = [
@@ -94,6 +100,7 @@ final class Terminal
 
     /**
      * Control screen code list
+     *
      * @var array
      */
     private static $ctrlScreenCodes = [
@@ -138,6 +145,7 @@ final class Terminal
      *
      * @param mixed  $format
      * @param string $type
+     *
      * @return string
      */
     public static function build($format, $type = 'm'): string
@@ -149,9 +157,11 @@ final class Terminal
 
     /**
      * control cursor
+     *
      * @param string $typeName
      * @param int    $arg1
      * @param null   $arg2
+     *
      * @return $this
      */
     public function cursor($typeName, $arg1 = 1, $arg2 = null): self
@@ -163,7 +173,7 @@ final class Terminal
         $code = self::$ctrlCursorCodes[$typeName];
 
         // allow argument
-        if (false !== \strpos($code, '%')) {
+        if (false !== strpos($code, '%')) {
             // The special code: ` 'coordinate' => '%dG|%d;%dH' `
             if ($typeName === self::CUR_COORDINATE) {
                 $codes = explode('|', $code);
@@ -186,8 +196,10 @@ final class Terminal
 
     /**
      * control screen
+     *
      * @param      $typeName
      * @param null $arg
+     *
      * @return $this
      */
     public function screen(string $typeName, $arg = null): self
@@ -218,7 +230,7 @@ final class Terminal
      */
     public static function supportedCursorCtrl(): array
     {
-        return \array_keys(self::$ctrlCursorCodes);
+        return array_keys(self::$ctrlCursorCodes);
     }
 
     /**
@@ -226,6 +238,6 @@ final class Terminal
      */
     public static function supportedScreenCtrl(): array
     {
-        return \array_keys(self::$ctrlScreenCodes);
+        return array_keys(self::$ctrlScreenCodes);
     }
 }

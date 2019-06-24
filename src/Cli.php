@@ -8,10 +8,37 @@
 
 namespace Toolkit\Cli;
 
+use function date;
+use function defined;
+use function fflush;
+use function fgets;
+use function function_exists;
+use function fwrite;
 use function getenv;
+use function implode;
+use function is_array;
+use function is_int;
+use function is_numeric;
+use function json_encode;
+use function preg_replace;
+use function sprintf;
+use function strpos;
+use function strtoupper;
+use function trim;
+use const DIRECTORY_SEPARATOR;
+use const JSON_PRETTY_PRINT;
+use const JSON_UNESCAPED_SLASHES;
+use const PHP_EOL;
+use const PHP_WINDOWS_VERSION_BUILD;
+use const PHP_WINDOWS_VERSION_MAJOR;
+use const PHP_WINDOWS_VERSION_MINOR;
+use const STDERR;
+use const STDIN;
+use const STDOUT;
 
 /**
  * Class Cli
+ *
  * @package Toolkit\Cli
  */
 class Cli
@@ -31,7 +58,8 @@ class Cli
 
     /**
      * @param string $message
-     * @param bool  $nl
+     * @param bool   $nl
+     *
      * @return string
      */
     public static function read(string $message = '', bool $nl = false): string
@@ -40,7 +68,7 @@ class Cli
             self::write($message, $nl);
         }
 
-        return \trim(\fgets(\STDIN));
+        return trim(fgets(STDIN));
     }
 
     /**
@@ -49,19 +77,20 @@ class Cli
      */
     public static function writef(string $format, ...$args): void
     {
-        self::write(\sprintf($format, ...$args));
+        self::write(sprintf($format, ...$args));
     }
 
     /**
      * Write message to console
+     *
      * @param string|array $messages
      * @param bool         $nl
      * @param bool|int     $quit
      */
     public static function write($messages, bool $nl = true, $quit = false): void
     {
-        if (\is_array($messages)) {
-            $messages = \implode($nl ? \PHP_EOL : '', $messages);
+        if (is_array($messages)) {
+            $messages = implode($nl ? PHP_EOL : '', $messages);
         }
 
         self::stdout(Color::parseTag($messages), $nl, $quit);
@@ -69,16 +98,17 @@ class Cli
 
     /**
      * Logs data to stdout
+     *
      * @param string   $message
      * @param bool     $nl
      * @param bool|int $quit
      */
     public static function stdout(string $message, bool $nl = true, $quit = false): void
     {
-        \fwrite(\STDOUT, $message . ($nl ? \PHP_EOL : ''));
-        \fflush(\STDOUT);
+        fwrite(STDOUT, $message . ($nl ? PHP_EOL : ''));
+        fflush(STDOUT);
 
-        if (($isTrue = true === $quit) || \is_int($quit)) {
+        if (($isTrue = true === $quit) || is_int($quit)) {
             $code = $isTrue ? 0 : $quit;
             exit($code);
         }
@@ -86,16 +116,17 @@ class Cli
 
     /**
      * Logs data to stderr
+     *
      * @param string   $message
      * @param bool     $nl
      * @param bool|int $quit
      */
     public static function stderr(string $message, $nl = true, $quit = -1): void
     {
-        \fwrite(\STDERR, self::color('[ERROR] ', 'red') . $message . ($nl ? PHP_EOL : ''));
-        \fflush(\STDOUT);
+        fwrite(STDERR, self::color('[ERROR] ', 'red') . $message . ($nl ? PHP_EOL : ''));
+        fflush(STDOUT);
 
-        if (($isTrue = true === $quit) || \is_int($quit)) {
+        if (($isTrue = true === $quit) || is_int($quit)) {
             $code = $isTrue ? 0 : $quit;
             exit($code);
         }
@@ -108,6 +139,7 @@ class Cli
     /**
      * @param                  $text
      * @param string|int|array $style
+     *
      * @return string
      */
     public static function color(string $text, $style = null): string
@@ -117,43 +149,38 @@ class Cli
 
     /**
      * print log to console
+     *
      * @param string $msg
      * @param array  $data
      * @param string $type
      * @param array  $opts
-     * [
+     *  [
      *  '_category' => 'application',
      *  'process' => 'work',
      *  'pid' => 234,
      *  'coId' => 12,
-     * ]
+     *  ]
      */
     public static function log(string $msg, array $data = [], string $type = 'info', array $opts = []): void
     {
         if (isset(self::LOG_LEVEL2TAG[$type])) {
-            $type = ColorTag::add(\strtoupper($type), self::LOG_LEVEL2TAG[$type]);
+            $type = ColorTag::add(strtoupper($type), self::LOG_LEVEL2TAG[$type]);
         }
 
         $userOpts = [];
 
         foreach ($opts as $n => $v) {
-            if (\is_numeric($n) || \strpos($n, '_') === 0) {
+            if (is_numeric($n) || strpos($n, '_') === 0) {
                 $userOpts[] = "[$v]";
             } else {
                 $userOpts[] = "[$n:$v]";
             }
         }
 
-        $optString = $userOpts ? ' ' . \implode(' ', $userOpts) : '';
+        $optString = $userOpts ? ' ' . implode(' ', $userOpts) : '';
 
-        self::write(\sprintf(
-            '%s [%s]%s %s %s',
-            \date('Y/m/d H:i:s'),
-            $type,
-            $optString,
-            \trim($msg),
-            $data ? \PHP_EOL . \json_encode($data, \JSON_UNESCAPED_SLASHES | \JSON_PRETTY_PRINT) : ''
-        ));
+        self::write(sprintf('%s [%s]%s %s %s', date('Y/m/d H:i:s'), $type, $optString, trim($msg),
+            $data ? PHP_EOL . json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) : ''));
     }
 
     /*******************************************************************************
@@ -172,24 +199,21 @@ class Cli
      * Returns true if STDOUT supports colorization.
      * This code has been copied and adapted from
      * \Symfony\Component\Console\Output\OutputStream.
+     *
      * @return boolean
      */
     public static function isSupportColor(): bool
     {
-        if (\DIRECTORY_SEPARATOR === '\\') {
-            return
-                '10.0.10586' === \PHP_WINDOWS_VERSION_MAJOR . '.' . \PHP_WINDOWS_VERSION_MINOR . '.' . \PHP_WINDOWS_VERSION_BUILD
-                || false !== getenv('ANSICON')
-                || 'ON' === getenv('ConEmuANSI')
-                || 'xterm' === getenv('TERM')// || 'cygwin' === getenv('TERM')
+        if (DIRECTORY_SEPARATOR === '\\') {
+            return '10.0.10586' === PHP_WINDOWS_VERSION_MAJOR . '.' . PHP_WINDOWS_VERSION_MINOR . '.' . PHP_WINDOWS_VERSION_BUILD || false !== getenv('ANSICON') || 'ON' === getenv('ConEmuANSI') || 'xterm' === getenv('TERM')// || 'cygwin' === getenv('TERM')
                 ;
         }
 
-        if (!\defined('STDOUT')) {
+        if (!defined('STDOUT')) {
             return false;
         }
 
-        return self::isInteractive(\STDOUT);
+        return self::isInteractive(STDOUT);
     }
 
     /**
@@ -197,7 +221,7 @@ class Cli
      */
     public static function isSupport256Color(): bool
     {
-        return \DIRECTORY_SEPARATOR === '/' && strpos(getenv('TERM'), '256color') !== false;
+        return DIRECTORY_SEPARATOR === '/' && strpos(getenv('TERM'), '256color') !== false;
     }
 
     /**
@@ -205,7 +229,7 @@ class Cli
      */
     public static function isAnsiSupport(): bool
     {
-        if (\DIRECTORY_SEPARATOR === '\\') {
+        if (DIRECTORY_SEPARATOR === '\\') {
             return getenv('ANSICON') === true || getenv('ConEmuANSI') === 'ON';
         }
 
@@ -214,21 +238,25 @@ class Cli
 
     /**
      * Returns if the file descriptor is an interactive terminal or not.
-     * @param  int|resource $fileDescriptor
+     *
+     * @param int|resource $fileDescriptor
+     *
      * @return boolean
      */
     public static function isInteractive($fileDescriptor): bool
     {
-        return \function_exists('posix_isatty') && @posix_isatty($fileDescriptor);
+        return function_exists('posix_isatty') && @posix_isatty($fileDescriptor);
     }
 
     /**
      * clear Ansi Code
+     *
      * @param string $string
+     *
      * @return string
      */
     public static function stripAnsiCode(string $string): string
     {
-        return \preg_replace('/\033\[[\d;?]*\w/', '', $string);
+        return preg_replace('/\033\[[\d;?]*\w/', '', $string);
     }
 }
