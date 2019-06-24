@@ -16,11 +16,13 @@ use function class_exists;
 use function function_exists;
 use function getcwd;
 use function is_array;
+use function is_object;
 use function is_string;
 use function method_exists;
 use function str_pad;
 use function strlen;
 use function trim;
+use function ucfirst;
 
 /**
  * Class App - A lite CLI Application
@@ -29,6 +31,12 @@ use function trim;
  */
 class App
 {
+    private const COMMAND_CONFIG = [
+        'desc'  => '',
+        'usage' => '',
+        'help'  => '',
+    ];
+
     /** @var string Current dir */
     private $pwd;
 
@@ -58,7 +66,7 @@ class App
     private $commands = [];
 
     /**
-     * @var array Description message for the commands
+     * @var array Command messages for the commands
      */
     private $messages = [];
 
@@ -163,7 +171,7 @@ class App
         }
 
         // a \Closure OR $handler->__invoke()
-        if (method_exists($handler, '__invoke')) {
+        if (is_object($handler) && method_exists($handler, '__invoke')) {
             return $handler($this);
         }
 
@@ -177,7 +185,7 @@ class App
      */
     protected function handleException(Throwable $e): int
     {
-        $code = $e->getCode() !== 0 ? $e->getCode() : 133;
+        $code = $e->getCode() !== 0 ? $e->getCode() : -1;
 
         printf("Exception(%d): %s\nFile: %s(Line %d)\nTrace:\n%s\n", $code, $e->getMessage(), $e->getFile(),
             $e->getLine(), $e->getTraceAsString());
@@ -186,16 +194,24 @@ class App
     }
 
     /**
-     * @param string   $command
-     * @param callable $handler
-     * @param string   $description
-     *
-     * @throws InvalidArgumentException
+     * @param string            $command
+     * @param callable          $handler
+     * @param null|array|string $config
      */
-    public function addCommand(string $command, callable $handler, string $description = ''): void
+    public function add(string $command, callable $handler, $config = null): void
+    {
+        $this->addCommand($command, $handler, $config);
+    }
+
+    /**
+     * @param string            $command
+     * @param callable          $handler
+     * @param null|array|string $config
+     */
+    public function addCommand(string $command, callable $handler, $config = null): void
     {
         if (!$command || !$handler) {
-            throw new InvalidArgumentException('Invalid arguments');
+            throw new InvalidArgumentException('Invalid arguments for add command');
         }
 
         if (($len = strlen($command)) > $this->keyWidth) {
@@ -203,7 +219,19 @@ class App
         }
 
         $this->commands[$command] = $handler;
-        $this->messages[$command] = trim($description);
+
+        if (is_string($config)) {
+            $desc   = trim($config);
+            $config = self::COMMAND_CONFIG;
+
+            // append desc
+            $config['desc'] = $desc;
+
+            // save
+            $this->messages[$command] = $config;
+        } elseif (is_array($config)) {
+            $this->messages[$command] = \array_merge(self::COMMAND_CONFIG, $config);
+        }
     }
 
     /**
@@ -214,15 +242,15 @@ class App
     public function commands(array $commands): void
     {
         foreach ($commands as $command => $handler) {
-            $des = '';
+            $desc = '';
 
             if (is_array($handler)) {
                 $conf    = array_values($handler);
                 $handler = $conf[0];
-                $des     = $conf[1] ?? '';
+                $desc    = $conf[1] ?? '';
             }
 
-            $this->addCommand($command, $handler, $des);
+            $this->addCommand($command, $handler, $desc);
         }
     }
 
@@ -239,13 +267,13 @@ class App
             echo Color::render("<red>ERROR</red>: $err\n\n");
         }
 
-        $commandWidth = 12;
+        $commandWidth = $this->keyWidth;
         // help
         $help = "Welcome to the Lite Console Application.\n\n<comment>Available Commands:</comment>\n";
 
-        foreach ($this->messages as $command => $desc) {
+        foreach ($this->messages as $command => $item) {
             $command = str_pad($command, $commandWidth, ' ');
-            $desc    = $desc ?: 'No description for the command';
+            $desc    = $item['desc'] ? ucfirst($item['desc']) : 'No description for the command';
             $help    .= "  $command   $desc\n";
         }
 
@@ -265,6 +293,28 @@ class App
     }
 
     /**
+     * @param string|int $name
+     * @param int        $default
+     *
+     * @return int
+     */
+    public function getIntArg($name, int $default = 0): int
+    {
+        return (int)$this->getArg($name, $default);
+    }
+
+    /**
+     * @param string|int $name
+     * @param string     $default
+     *
+     * @return string
+     */
+    public function getStrArg($name, string $default = ''): string
+    {
+        return (string)$this->getArg($name, $default);
+    }
+
+    /**
      * @param string $name
      * @param mixed  $default
      *
@@ -273,6 +323,28 @@ class App
     public function getOpt(string $name, $default = null)
     {
         return $this->opts[$name] ?? $default;
+    }
+
+    /**
+     * @param string $name
+     * @param int    $default
+     *
+     * @return int
+     */
+    public function getIntOpt(string $name, int $default = 0): int
+    {
+        return (int)$this->getOpt($name, $default);
+    }
+
+    /**
+     * @param string $name
+     * @param string $default
+     *
+     * @return string
+     */
+    public function getStrOpt(string $name, string $default = ''): string
+    {
+        return (string)$this->getOpt($name, $default);
     }
 
     /****************************************************************************
