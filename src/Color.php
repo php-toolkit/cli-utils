@@ -219,11 +219,11 @@ class Color
      * @param string|array $messages
      * @param string       $style
      */
-    public function println($messages, string $style = 'info'): void
+    public static function println($messages, string $style = 'info'): void
     {
         $string = is_array($messages) ? implode("\n", $messages) : (string)$messages;
 
-        echo self::render($string, $style);
+        echo self::render($string . "\n", $style);
     }
 
     /*******************************************************************************

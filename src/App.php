@@ -9,6 +9,7 @@
 namespace Toolkit\Cli;
 
 use InvalidArgumentException;
+use RuntimeException;
 use Throwable;
 use function array_merge;
 use function array_shift;
@@ -23,6 +24,8 @@ use function is_string;
 use function method_exists;
 use function str_pad;
 use function strlen;
+use function strpos;
+use function strtr;
 use function trim;
 use function ucfirst;
 
@@ -181,7 +184,7 @@ class App
             return $handler($this);
         }
 
-        throw new InvalidArgumentException("Invalid handler of the command: $command");
+        throw new RuntimeException("Invalid handler of the command: $command");
     }
 
     /**
@@ -191,6 +194,11 @@ class App
      */
     protected function handleException(Throwable $e): int
     {
+        if ($e instanceof InvalidArgumentException) {
+            Color::println('ERROR: ' . $e->getMessage(), 'error');
+            return 0;
+        }
+
         $code = $e->getCode() !== 0 ? $e->getCode() : -1;
 
         printf("Exception(%d): %s\nFile: %s(Line %d)\nTrace:\n%s\n", $code, $e->getMessage(), $e->getFile(),
@@ -292,9 +300,11 @@ class App
      */
     public function displayCommandHelp(string $name): void
     {
-        $fullCmd = $this->script . " $name";
-        $config  = $this->messages[$name] ?? [];
-        $usage   = "$fullCmd [args ...] [--opts ...]";
+        $checkVar = false;
+        $fullCmd  = $this->script . " $name";
+
+        $config = $this->messages[$name] ?? [];
+        $usage  = "$fullCmd [args ...] [--opts ...]";
 
         if (!$config) {
             $nodes = [
@@ -302,6 +312,8 @@ class App
                 "<comment>Usage:</comment> \n  $usage"
             ];
         } else {
+            $checkVar = true;
+
             $nodes = [
                 ucfirst($config['desc']),
                 "<comment>Usage:</comment> \n  " . ($config['usage'] ?: $usage),
@@ -309,7 +321,19 @@ class App
             ];
         }
 
-        echo Color::render(implode("\n", $nodes));
+        $help = implode("\n", $nodes);
+
+        if ($checkVar && strpos($help, '{{')) {
+            $help = strtr($help, [
+                '{{command}}' => $name,
+                '{{fullCmd}}' => $fullCmd,
+                '{{workDir}}' => $this->pwd,
+                '{{pwdDir}}'  => $this->pwd,
+                '{{script}}'  => $this->script,
+            ]);
+        }
+
+        echo Color::render($help);
     }
 
     /**
@@ -380,7 +404,7 @@ class App
 
     /**
      * @param string $name
-     * @param bool $default
+     * @param bool   $default
      *
      * @return bool
      */
