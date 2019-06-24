@@ -378,6 +378,17 @@ class App
         return (string)$this->getOpt($name, $default);
     }
 
+    /**
+     * @param string $name
+     * @param bool $default
+     *
+     * @return bool
+     */
+    public function getBoolOpt(string $name, bool $default = false): bool
+    {
+        return (bool)$this->getOpt($name, $default);
+    }
+
     /****************************************************************************
      * getter/setter methods
      ****************************************************************************/
