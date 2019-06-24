@@ -10,11 +10,13 @@ namespace Toolkit\Cli;
 
 use InvalidArgumentException;
 use Throwable;
+use function array_merge;
 use function array_shift;
 use function array_values;
 use function class_exists;
 use function function_exists;
 use function getcwd;
+use function implode;
 use function is_array;
 use function is_object;
 use function is_string;
@@ -120,14 +122,18 @@ class App
             return;
         }
 
-        $status = 0;
+        if (!isset($this->commands[$command])) {
+            $this->displayHelp("The command {$command} not exists!");
+            return;
+        }
+
+        if (isset($this->opts['h']) || isset($this->opts['help'])) {
+            $this->displayCommandHelp($command);
+            return;
+        }
 
         try {
-            if (isset($this->commands[$command])) {
-                $status = $this->runHandler($command, $this->commands[$command]);
-            } else {
-                $this->displayHelp("The command {$command} not exists!");
-            }
+            $status = $this->runHandler($command, $this->commands[$command]);
         } catch (Throwable $e) {
             $status = $this->handleException($e);
         }
@@ -230,7 +236,7 @@ class App
             // save
             $this->messages[$command] = $config;
         } elseif (is_array($config)) {
-            $this->messages[$command] = \array_merge(self::COMMAND_CONFIG, $config);
+            $this->messages[$command] = array_merge(self::COMMAND_CONFIG, $config);
         }
     }
 
@@ -279,6 +285,31 @@ class App
 
         echo Color::render($help) . PHP_EOL;
         exit(0);
+    }
+
+    /**
+     * @param string $name
+     */
+    public function displayCommandHelp(string $name): void
+    {
+        $fullCmd = $this->script . " $name";
+        $config  = $this->messages[$name] ?? [];
+        $usage   = "$fullCmd [args ...] [--opts ...]";
+
+        if (!$config) {
+            $nodes = [
+                'No description for the command',
+                "<comment>Usage:</comment> \n  $usage"
+            ];
+        } else {
+            $nodes = [
+                ucfirst($config['desc']),
+                "<comment>Usage:</comment> \n  " . ($config['usage'] ?: $usage),
+                $config['help']
+            ];
+        }
+
+        echo Color::render(implode("\n", $nodes));
     }
 
     /**

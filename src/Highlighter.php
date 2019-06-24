@@ -14,6 +14,7 @@ use function array_slice;
 use function defined;
 use function end;
 use function explode;
+use function file_get_contents;
 use function function_exists;
 use function implode;
 use function is_array;
@@ -120,6 +121,13 @@ class Highlighter
         }
 
         return implode(PHP_EOL, $lines);
+    }
+
+    public function highlightFile(string $file, bool $withLineNumber = false): string
+    {
+        $source = file_get_contents($file);
+
+        return $this->highlight($source, $withLineNumber);
     }
 
     /**

@@ -213,6 +213,19 @@ class Color
         echo self::render(sprintf($format, ...$args));
     }
 
+    /**
+     * Print colored message to STDOUT
+     *
+     * @param string|array $messages
+     * @param string       $style
+     */
+    public function println($messages, string $style = 'info'): void
+    {
+        $string = is_array($messages) ? implode("\n", $messages) : (string)$messages;
+
+        echo self::render($string, $style);
+    }
+
     /*******************************************************************************
      * color render
      ******************************************************************************/
@@ -240,6 +253,7 @@ class Color
         // use defined style: 'green'
         if (is_string($style)) {
             $color = self::STYLES[$style] ?? '0';
+
             // custom style: [self::FG_GREEN, self::BG_WHITE, self::UNDERSCORE]
         } elseif (is_array($style)) {
             $color = implode(';', $style);
