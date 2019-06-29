@@ -123,8 +123,18 @@ class Highlighter
         return implode(PHP_EOL, $lines);
     }
 
+    /**
+     * @param string $file
+     * @param bool   $withLineNumber
+     *
+     * @return string
+     */
     public function highlightFile(string $file, bool $withLineNumber = false): string
     {
+        if (!file_exists($file)) {
+            throw new InvalidArgumentException("the target file is not exist! file: $file");
+        }
+
         $source = file_get_contents($file);
 
         return $this->highlight($source, $withLineNumber);

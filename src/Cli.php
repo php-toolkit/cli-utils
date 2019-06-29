@@ -178,9 +178,9 @@ class Cli
         }
 
         $optString = $userOpts ? ' ' . implode(' ', $userOpts) : '';
+        $dataString = $data ? PHP_EOL . json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) : '';
 
-        self::write(sprintf('%s [%s]%s %s %s', date('Y/m/d H:i:s'), $type, $optString, trim($msg),
-            $data ? PHP_EOL . json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) : ''));
+        self::writef('%s [%s]%s %s %s', date('Y/m/d H:i:s'), $type, $optString, trim($msg), $dataString);
     }
 
     /*******************************************************************************
@@ -245,6 +245,7 @@ class Cli
      */
     public static function isInteractive($fileDescriptor): bool
     {
+        /** @noinspection PhpComposerExtensionStubsInspection */
         return function_exists('posix_isatty') && @posix_isatty($fileDescriptor);
     }
 
