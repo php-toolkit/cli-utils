@@ -102,6 +102,7 @@ class Flags
      * @param array $config
      *
      * @return array [args, short-opts, long-opts]
+     *               If 'mergeOpts' is True, will return [args, opts]
      */
     public static function parseArgv(array $params, array $config = []): array
     {
@@ -113,7 +114,7 @@ class Flags
             // List of parameters without values(bool option keys)
             'boolOpts'       => [], // ['debug', 'h']
             // Whether merge short-opts and long-opts
-            // 'mergeOpts'      => false,
+            'mergeOpts'      => false,
             // want parsed options. if not empty, will ignore no matched
             'wantParsedOpts' => [],
             // list of option allow array values.
@@ -196,6 +197,10 @@ class Flags
             } else {
                 $args[] = $p;
             }
+        }
+
+        if ($config['mergeOpts']) {
+            return [$args, array_merge($sOpts, $lOpts)];
         }
 
         return [$args, $sOpts, $lOpts];

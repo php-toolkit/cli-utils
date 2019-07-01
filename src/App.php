@@ -95,7 +95,7 @@ class App
         // get script file
         $this->script = array_shift($argv);
         // parse flags
-        [$this->args, $this->opts] = Flags::parseArgv($argv);
+        [$this->args, $this->opts] = Flags::parseArgv($argv, ['mergeOpts' => true]);
     }
 
     /**
@@ -205,6 +205,15 @@ class App
             $e->getLine(), $e->getTraceAsString());
 
         return $code;
+    }
+
+    /**
+     * @param callable $handler
+     * @param array    $config
+     */
+    public function addByConfig(callable $handler, array $config): void
+    {
+        $this->addCommand($config['name'], $handler, $config);
     }
 
     /**
