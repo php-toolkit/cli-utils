@@ -21,6 +21,7 @@ use function implode;
 use function is_array;
 use function is_object;
 use function is_string;
+use function ksort;
 use function method_exists;
 use function str_pad;
 use function strlen;
@@ -290,12 +291,14 @@ class App
             echo Color::render("<red>ERROR</red>: $err\n\n");
         }
 
-        $commandWidth = $this->keyWidth;
         // help
+        $len  = $this->keyWidth;
         $help = "Welcome to the Lite Console Application.\n\n<comment>Available Commands:</comment>\n";
+        $data = $this->messages;
+        ksort($data);
 
-        foreach ($this->messages as $command => $item) {
-            $command = str_pad($command, $commandWidth, ' ');
+        foreach ($data as $command => $item) {
+            $command = str_pad($command, $len, ' ');
             $desc    = $item['desc'] ? ucfirst($item['desc']) : 'No description for the command';
             $help    .= "  $command   $desc\n";
         }
@@ -322,11 +325,12 @@ class App
             ];
         } else {
             $checkVar = true;
+            $userHelp = $config['help'];
 
             $nodes = [
                 ucfirst($config['desc']),
                 "<comment>Usage:</comment> \n  " . ($config['usage'] ?: $usage),
-                $config['help']
+                $userHelp ? $userHelp . "\n" : ''
             ];
         }
 
