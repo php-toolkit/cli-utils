@@ -93,10 +93,14 @@ class App
 
         // parse cli argv
         $argv = $argv ?? (array)$_SERVER['argv'];
+
         // get script file
         $this->script = array_shift($argv);
+
         // parse flags
-        [$this->args, $this->opts] = Flags::parseArgv($argv, ['mergeOpts' => true]);
+        [$this->args, $this->opts] = Flags::parseArgv($argv, [
+            'mergeOpts' => true
+        ]);
     }
 
     /**
@@ -106,12 +110,33 @@ class App
      */
     public function run(bool $exit = true): void
     {
-        if (isset($this->args[0])) {
-            $this->command = $this->args[0];
-            unset($this->args[0]);
-        }
+        $this->findCommand();
 
         $this->dispatch($exit);
+    }
+
+    /**
+     * find command name. it is first argument.
+     */
+    protected function findCommand(): void
+    {
+        if (!isset($this->args[0])) {
+            return;
+        }
+
+        $newArgs = [];
+
+        foreach ($this->args as $key => $value) {
+            if ($key === 0) {
+                $this->command = trim($value);
+            } elseif (is_int($key)) {
+                $newArgs[] = $value;
+            } else {
+                $newArgs[$key] = $value;
+            }
+        }
+
+        $this->args = $newArgs;
     }
 
     /**
@@ -127,7 +152,7 @@ class App
         }
 
         if (!isset($this->commands[$command])) {
-            $this->displayHelp("The command {$command} not exists!");
+            $this->displayHelp("The command '{$command}' is not exists!");
             return;
         }
 
@@ -201,9 +226,10 @@ class App
         }
 
         $code = $e->getCode() !== 0 ? $e->getCode() : -1;
+        $eTpl = "Exception(%d): %s\nFile: %s(Line %d)\nTrace:\n%s\n";
 
-        printf("Exception(%d): %s\nFile: %s(Line %d)\nTrace:\n%s\n", $code, $e->getMessage(), $e->getFile(),
-            $e->getLine(), $e->getTraceAsString());
+        // print exception message
+        printf($eTpl, $code, $e->getMessage(), $e->getFile(), $e->getLine(), $e->getTraceAsString());
 
         return $code;
     }
