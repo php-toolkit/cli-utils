@@ -39,6 +39,14 @@ $rendered = Highlighter::create()->highlight(file_get_contents(__FILE__));
 
 ## Console color
 
+```php
+Color::printf('<info>%s</info> world', 'hello');
+Color::println('hello world', 'info');
+Color::println('hello world', 'error');
+Color::println('hello world', 'warning');
+Color::println('hello world', 'success');
+```
+
 ![colors](./example/all-color-style.jpg)
 
 ## Cli downloader
