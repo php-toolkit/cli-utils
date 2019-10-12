@@ -4,7 +4,13 @@
 [![Php Version](https://img.shields.io/badge/php-%3E=7.1.0-brightgreen.svg?maxAge=2592000)](https://packagist.org/packages/toolkit/cli-utils)
 [![Latest Stable Version](http://img.shields.io/packagist/v/toolkit/cli-utils.svg)](https://packagist.org/packages/toolkit/cli-utils)
 
-Some useful utils for the php CLI env.
+Provide some useful utils for the php CLI. 
+
+- Parse CLI arguments and options
+- Console color render
+- CLI env information helper
+- CLI code highlighter
+- Build simple cli application
 
 ## Install
 
@@ -47,6 +53,8 @@ Color::println('hello world', 'info');
 Color::println('hello world', 'error');
 Color::println('hello world', 'warning');
 Color::println('hello world', 'success');
+
+echo Color::render('hello world', 'success');
 ```
 
 ![colors](./example/all-color-style.jpg)
