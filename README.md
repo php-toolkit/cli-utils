@@ -26,6 +26,8 @@ list($args, $shortOpts, $longOpts) = Flags::parseArgv($argv);
 
 ## PHP file highlight
 
+> This is inspire jakub-onderka/php-console-highlighter
+
 ```php
 use Toolkit\Cli\Highlighter;
 
