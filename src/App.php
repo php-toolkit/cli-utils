@@ -98,7 +98,7 @@ class App
         $this->script = array_shift($argv);
 
         // parse flags
-        [$this->args, $this->opts] = Flags::parseArgv($argv, [
+        [$this->args, $this->opts] = Flags::parseArgv(array_values($argv), [
             'mergeOpts' => true
         ]);
     }
