@@ -1,0 +1,41 @@
+name: Unit-tests
+
+on: [push]
+
+# usage refer https://github.com/shivammathur/setup-php
+jobs:
+  test:
+    name: Test on php ${{ matrix.php}} and ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false # dont fast fail
+      matrix:
+        php: [7.1, 7.2, 7.3, 7.4]
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup PHP
+        timeout-minutes: 5
+        uses: shivammathur/setup-php@v1
+        with:
+          php-version: ${{ matrix.php}}
+          extension-csv: mbstring #optional, setup extensions
+          ini-values-csv: post_max_size=56M, short_open_tag=On #optional, setup php.ini configuration
+          coverage: none #optional, setup coverage driver: xdebug, none
+          pecl: true
+
+      - name: Install extensions
+        run: |
+          php -m
+#          sudo pecl update-channels && pecl install -f msgpack && pecl install -f igbinary && php -m
+
+      - name: Install dependencies
+        run: composer install --no-progress --no-suggest
+
+      # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
+      # Docs: https://getcomposer.org/doc/articles/scripts.md
+
+      - name: Run test suite
+        run: composer run test
