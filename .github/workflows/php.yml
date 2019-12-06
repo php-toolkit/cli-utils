@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false # dont fast fail
       matrix:
-        php: [7.1, 7.2, 7.3, 7.4]
+        php: [7.1] # , 7.2, 7.3, 7.4
         os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
@@ -26,9 +26,8 @@ jobs:
           coverage: none #optional, setup coverage driver: xdebug, none
           pecl: true
 
-      - name: Install extensions
-        run: |
-          php -m
+      - name: Display Env
+        run: env
 #          sudo pecl update-channels && pecl install -f msgpack && pecl install -f igbinary && php -m
 
       - name: Install dependencies

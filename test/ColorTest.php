@@ -14,6 +14,10 @@ class ColorTest extends TestCase
 {
     public function testRender(): void
     {
+        if (!Cli::isSupportColor()) {
+            return;
+        }
+
         $text = Color::render('text', 'info');
         $this->assertStringContainsString(Color::STYLES['info'], $text);
 
@@ -32,6 +36,10 @@ class ColorTest extends TestCase
 
     public function testApply(): void
     {
+        if (!Cli::isSupportColor()) {
+            return;
+        }
+
         $text = Color::apply('info', 'text');
         $this->assertStringContainsString(Color::STYLES['info'], $text);
 
