@@ -164,6 +164,7 @@ class Color
 
         // option
         'bold'           => '1',
+        'italic'         => '3',
         'underscore'     => '4',
         'reverse'        => '7',
     ];

@@ -57,11 +57,14 @@ use const T_WHITESPACE;
  */
 class Highlighter
 {
-    public const TOKEN_DEFAULT = 'token_default';
-    public const TOKEN_COMMENT = 'token_comment';
-    public const TOKEN_STRING  = 'token_string';
-    public const TOKEN_HTML    = 'token_html';
-    public const TOKEN_KEYWORD = 'token_keyword';
+    public const TOKEN_DEFAULT  = 'token_default';
+    public const TOKEN_COMMENT  = 'token_comment';
+    public const TOKEN_STRING   = 'token_string';
+    public const TOKEN_HTML     = 'token_html';
+
+    public const TOKEN_KEYWORD  = 'token_keyword';
+    public const TOKEN_CONSTANT = 'token_constant';
+    public const TOKEN_VARIABLE = 'token_variable';
 
     public const ACTUAL_LINE_MARK = 'actual_line_mark';
     public const LINE_NUMBER      = 'line_number';
@@ -74,11 +77,13 @@ class Highlighter
 
     /** @var array */
     private $defaultTheme = [
-        self::TOKEN_STRING     => 'red',
-        self::TOKEN_COMMENT    => 'yellow',
-        self::TOKEN_KEYWORD    => 'info',
+        self::TOKEN_STRING     => 'green',
+        self::TOKEN_COMMENT    => 'italic',
+        self::TOKEN_KEYWORD    => 'yellow',
         self::TOKEN_DEFAULT    => 'normal',
+        self::TOKEN_CONSTANT   => 'red',
         self::TOKEN_HTML       => 'cyan',
+        self::TOKEN_VARIABLE   => 'cyan',
         self::ACTUAL_LINE_MARK => 'red',
         self::LINE_NUMBER      => 'darkGray',
     ];
@@ -227,10 +232,9 @@ class Highlighter
                     case T_OPEN_TAG_WITH_ECHO:
                     case T_CLOSE_TAG:
                     case T_STRING:
-                    case T_VARIABLE:
                         // Constants
-                    case T_DIR:
-                    case T_FILE:
+                    // case T_DIR:
+                    // case T_FILE:
                     case T_METHOD_C:
                     case T_DNUMBER:
                     case T_LNUMBER:
@@ -240,6 +244,14 @@ class Highlighter
                     case T_FUNC_C:
                         //case T_TRAIT_C:
                         $newType = self::TOKEN_DEFAULT;
+                        break;
+                    // Constants
+                    case T_DIR:
+                    case T_FILE:
+                        $newType = self::TOKEN_CONSTANT;
+                        break;
+                    case T_VARIABLE:
+                        $newType = self::TOKEN_VARIABLE;
                         break;
                     default:
                         // Compatibility with PHP 5.3

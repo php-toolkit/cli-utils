@@ -19,6 +19,9 @@
   "require": {
     "php": ">7.1.0"
   },
+  "require-dev": {
+    "phpunit/phpunit": "^7.5"
+  },
   "autoload": {
     "psr-4": {
       "Toolkit\\Cli\\": "src/"
@@ -28,6 +31,9 @@
     "psr-4": {
       "Toolkit\\CliTest\\": "src/"
     }
+  },
+  "scripts": {
+    "test": "./vendor/bin/phpunit"
   },
   "suggest": {
     "inhere/php-validate": "Very lightweight data validate tool",

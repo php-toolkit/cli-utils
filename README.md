@@ -43,7 +43,7 @@ $rendered = Highlighter::create()->highlight(file_get_contents(__FILE__));
 \Toolkit\Cli\Cli::write($rendered);
 ```
 
-![colors](./example/cli-php-file-highlight.jpg)
+![colors](./example/cli-php-file-highlight.png)
 
 ## Console color
 

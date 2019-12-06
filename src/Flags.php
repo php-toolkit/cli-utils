@@ -132,7 +132,7 @@ class Flags
             next($params);
 
             // is options
-            if ($p{0} === '-') {
+            if ($p[0] === '-') {
                 $value  = true;
                 $option = substr($p, 1);
                 $isLong = false;
@@ -148,7 +148,7 @@ class Flags
                     }
 
                     // short-opt: value specified inline (-<opt>=<value>)
-                } elseif (isset($option{1}) && $option{1} === '=') {
+                } elseif (isset($option[1]) && $option[1] === '=') {
                     [$option, $value] = explode('=', $option, 2);
                 }
 
@@ -310,7 +310,7 @@ class Flags
         }
 
         // it isn't option or named argument
-        return $val{0} !== '-' && false === strpos($val, '=');
+        return $val[0] !== '-' && false === strpos($val, '=');
     }
 
     /**
