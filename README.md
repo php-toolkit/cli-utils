@@ -3,6 +3,7 @@
 [![License](https://img.shields.io/packagist/l/toolkit/cli-utils.svg?style=flat-square)](LICENSE)
 [![Php Version](https://img.shields.io/badge/php-%3E=7.1.0-brightgreen.svg?maxAge=2592000)](https://packagist.org/packages/toolkit/cli-utils)
 [![Latest Stable Version](http://img.shields.io/packagist/v/toolkit/cli-utils.svg)](https://packagist.org/packages/toolkit/cli-utils)
+[![Github Actions Status](https://github.com/php-toolkit/cli-utils/workflows/Unit-tests/badge.svg)](https://github.com/php-toolkit/cli-utils/actions)
 
 Provide some useful utils for the php CLI. 
 
