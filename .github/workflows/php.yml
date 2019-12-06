@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false # dont fast fail
       matrix:
-        php: [7.1] # , 7.2, 7.3, 7.4
+        php: [7.1, 7.2, 7.3, 7.4] #
         os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:

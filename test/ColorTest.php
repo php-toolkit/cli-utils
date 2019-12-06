@@ -4,6 +4,7 @@ namespace Toolkit\CliTest;
 
 use PHPUnit\Framework\TestCase;
 use Toolkit\Cli\Color;
+use Toolkit\Cli\Cli;
 
 /**
  * Class ColorTest
