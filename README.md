@@ -58,7 +58,7 @@ Color::println('hello world', 'success');
 echo Color::render('hello world', 'success');
 ```
 
-![colors](./example/all-color-style.jpg)
+![colors](./example/terminal-color.png)
 
 ## Cli downloader
 
