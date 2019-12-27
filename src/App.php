@@ -37,6 +37,9 @@ use function ucfirst;
  */
 class App
 {
+    /** @var self */
+    public static $i;
+    
     private const COMMAND_CONFIG = [
         'desc'  => '',
         'usage' => '',
@@ -88,6 +91,9 @@ class App
      */
     public function __construct(array $argv = null)
     {
+        // save self
+        self::$i = $this;
+        
         // get current dir
         $this->pwd = getcwd();
 
