@@ -23,6 +23,7 @@ use function is_object;
 use function is_string;
 use function ksort;
 use function method_exists;
+use function rtrim;
 use function str_pad;
 use function strlen;
 use function strpos;
@@ -256,6 +257,25 @@ class App
      * @param callable $handler
      * @param array    $config
      */
+    public function addObject(callable $handler, array $config = []): void
+    {
+        if (is_object($handler) && method_exists($handler, '__invoke')) {
+            // has config method
+            if (method_exists($handler, 'getHelpConfig')) {
+                $config = $handler->getHelpConfig();
+            }
+
+            $this->addByConfig($handler, $config);
+            return;
+        }
+
+        throw new InvalidArgumentException('Command handler must be an object and has method: __invoke');
+    }
+
+    /**
+     * @param callable $handler
+     * @param array    $config
+     */
     public function addByConfig(callable $handler, array $config): void
     {
         if (empty($config['name']) || !$handler) {
@@ -377,11 +397,12 @@ class App
             ];
         } else {
             $checkVar = true;
-            $userHelp = $config['help'];
+            $userHelp = rtrim($config['help'], "\n");
 
+            $usage = $config['usage'] ?: $usage;
             $nodes = [
                 ucfirst($config['desc']),
-                "<comment>Usage:</comment> \n  " . ($config['usage'] ?: $usage),
+                "<comment>Usage:</comment> \n  $usage\n",
                 $userHelp ? $userHelp . "\n" : ''
             ];
         }

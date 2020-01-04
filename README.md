@@ -31,6 +31,21 @@ $script = \array_shift($argv);
 list($args, $shortOpts, $longOpts) = Flags::parseArgv($argv);
 ```
 
+## Build CLI application
+
+You can quickly build an simple CLI application:
+
+```php
+use Toolkit\Cli\App;
+
+// create app instance
+$app = new App([
+  'desc' => 'this is my cli application',
+]);
+
+
+```
+
 ## PHP file highlight
 
 > This is inspire jakub-onderka/php-console-highlighter
