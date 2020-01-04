@@ -14,6 +14,7 @@ use Throwable;
 use function array_merge;
 use function array_shift;
 use function array_values;
+use function basename;
 use function class_exists;
 use function function_exists;
 use function getcwd;
@@ -546,6 +547,14 @@ class App
     public function getScript(): string
     {
         return $this->script;
+    }
+
+    /**
+     * @return string
+     */
+    public function getScriptName(): string
+    {
+        return basename($this->script);
     }
 
     /**
