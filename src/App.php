@@ -39,7 +39,7 @@ class App
 {
     /** @var self */
     public static $i;
-    
+
     private const COMMAND_CONFIG = [
         'desc'  => '',
         'usage' => '',
@@ -48,6 +48,14 @@ class App
 
     /** @var string Current dir */
     private $pwd;
+
+    /**
+     * @var array
+     */
+    private $metas = [
+        'name' => 'My application',
+        'desc' => 'My command line application',
+    ];
 
     /**
      * @var array Parsed from `arg0 name=val var2=val2`
@@ -87,18 +95,22 @@ class App
     /**
      * Class constructor.
      *
-     * @param array|null $argv
+     * @param array $config
+     * @param array $argv
      */
-    public function __construct(array $argv = null)
+    public function __construct(array $config = [], array $argv = null)
     {
         // save self
         self::$i = $this;
-        
+
         // get current dir
         $this->pwd = getcwd();
 
         // parse cli argv
         $argv = $argv ?? (array)$_SERVER['argv'];
+        if ($config) {
+            $this->setMetas($config);
+        }
 
         // get script file
         $this->script = array_shift($argv);
@@ -188,7 +200,7 @@ class App
 
     /**
      * @param string $command
-     * @param        $handler
+     * @param mixed  $handler
      *
      * @return mixed
      * @throws InvalidArgumentException
@@ -246,6 +258,10 @@ class App
      */
     public function addByConfig(callable $handler, array $config): void
     {
+        if (empty($config['name']) || !$handler) {
+            throw new InvalidArgumentException('Invalid arguments for add command');
+        }
+
         $this->addCommand($config['name'], $handler, $config);
     }
 
@@ -324,16 +340,20 @@ class App
         }
 
         // help
-        $len  = $this->keyWidth;
-        $help = "Welcome to the Lite Console Application.\n\n<comment>Available Commands:</comment>\n";
+        $desc  = ucfirst($this->metas['desc']);
+        $usage = "<cyan>{$this->script} COMMAND -h</cyan>";
+
+        $help = "$desc\n<comment>Usage:</comment> $usage\n<comment>Commands:</comment>\n";
         $data = $this->messages;
         ksort($data);
 
         foreach ($data as $command => $item) {
-            $command = str_pad($command, $len, ' ');
+            $command = str_pad($command, $this->keyWidth, ' ');
             $desc    = $item['desc'] ? ucfirst($item['desc']) : 'No description for the command';
-            $help    .= "  $command   $desc\n";
+            $help    .= "  <green>$command</green>   $desc\n";
         }
+
+        $help .= "\nFor command usage please run: <cyan>{$this->script} COMMAND -h</cyan>";
 
         echo Color::render($help) . PHP_EOL;
         exit(0);
@@ -551,14 +571,6 @@ class App
     }
 
     /**
-     * @param array $messages
-     */
-    public function setMessages(array $messages): void
-    {
-        $this->messages = $messages;
-    }
-
-    /**
      * @return int
      */
     public function getKeyWidth(): int
@@ -582,4 +594,19 @@ class App
         return $this->pwd;
     }
 
+    /**
+     * @return array
+     */
+    public function getMetas(): array
+    {
+        return $this->metas;
+    }
+
+    /**
+     * @param array $metas
+     */
+    public function setMetas(array $metas): void
+    {
+        $this->metas = array_merge($this->metas, $metas);
+    }
 }
