@@ -54,8 +54,9 @@ class App
      * @var array
      */
     private $metas = [
-        'name' => 'My application',
-        'desc' => 'My command line application',
+        'name'    => 'My application',
+        'desc'    => 'My command line application',
+        'version' => '0.2.1'
     ];
 
     /**
@@ -361,9 +362,13 @@ class App
 
         // help
         $desc  = ucfirst($this->metas['desc']);
+        if ($ver = $this->metas['version']) {
+            $desc .= "(<red>v$ver</red>)";
+        }
+
         $usage = "<cyan>{$this->script} COMMAND -h</cyan>";
 
-        $help = "$desc\n<comment>Usage:</comment> $usage\n<comment>Commands:</comment>\n";
+        $help = "$desc\n\n<comment>Usage:</comment> $usage\n<comment>Commands:</comment>\n";
         $data = $this->messages;
         ksort($data);
 
