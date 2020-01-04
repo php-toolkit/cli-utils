@@ -19,7 +19,7 @@ Provide some useful utils for the php CLI.
 composer require toolkit/cli-utils
 ```
 
-## Parse cli arguments and options
+## Parse CLI arguments and options
 
 ```php
 use Toolkit\Cli\Flags;
@@ -44,7 +44,7 @@ $app = new App([
 ]);
 ```
 
-### register commands
+### Register commands
 
 Use closure:
 
@@ -146,7 +146,7 @@ echo Color::render('hello world', 'success');
 
 ![colors](example/terminal-color.png)
 
-## Cli downloader
+## CLI downloader
 
 ```php
 use Toolkit\Cli\Download;
@@ -158,7 +158,7 @@ $down = Download::file($url, '');
 $down->start();
 ```
 
-### progress bar output:
+### Progress bar output:
 
 ```text
 Connected...
@@ -170,7 +170,7 @@ Mime-type: application/octet-stream
 [========================================>                                                           ] 40% (3076/7590 kb)
 ```
 
-### progress text output:
+### Progress text output:
 
 ```text
 Download: http://no2.php.net/distributions/php-7.2.5.tar.bz2
