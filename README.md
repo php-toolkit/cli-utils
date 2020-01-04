@@ -9,9 +9,9 @@ Provide some useful utils for the php CLI.
 
 - Parse CLI arguments and options
 - Console color render
-- CLI env information helper
 - CLI code highlighter
-- Build simple cli application
+- Build simple CLI application
+- CLI env information helper
 
 ## Install
 
@@ -42,21 +42,25 @@ use Toolkit\Cli\App;
 $app = new App([
   'desc' => 'this is my cli application',
 ]);
+```
 
-// register commands
+### register commands
 
-// use closure
+Use closure:
+
+```php
 $app->addCommand('test', function ($app) {
     echo "args:\n";
     /** @var Toolkit\Cli\App $app */
     /** @noinspection ForgottenDebugOutputInspection */
     print_r($app->getArgs());
 
-}, [
-  'desc' => 'the description text for the command: test',
-]);
+}, 'the description text for the command: test');
+```
 
-// use closure with config
+Use closure with config:
+
+```php
 $app->addByConfig(function ($app) {
     echo "args:\n";
     /** @var Toolkit\Cli\App $app */
@@ -67,9 +71,12 @@ $app->addByConfig(function ($app) {
   'name' => 'cmd2',
   'desc' => 'the description text for the command: test',
 ]);
+```
 
-// Use an object
-$app->addObject(new class
+Use an object:
+
+```php
+class MyCommand
 {
     public function getHelpConfig(): array
     {
@@ -93,13 +100,22 @@ STR;
     {
         echo "hello\n";
     }
-});
+}
 
+// add command
+$app->addObject(new MyCommand);
+```
+
+### Run application
+
+```php
 // run
 $app->run();
 ```
 
 Run demo: `php example/liteApp`
+
+![cli-app](example/cli-app.png)
 
 ## PHP file highlight
 
@@ -114,7 +130,7 @@ $rendered = Highlighter::create()->highlight(file_get_contents(__FILE__));
 \Toolkit\Cli\Cli::write($rendered);
 ```
 
-![colors](./example/cli-php-file-highlight.png)
+![colors](example/cli-php-file-highlight.png)
 
 ## Console color
 
@@ -128,7 +144,7 @@ Color::println('hello world', 'success');
 echo Color::render('hello world', 'success');
 ```
 
-![colors](./example/terminal-color.png)
+![colors](example/terminal-color.png)
 
 ## Cli downloader
 
@@ -168,4 +184,4 @@ Made some progress, downloaded 641 kb so far
 
 ## License
 
-MIT
+[MIT](LICENSE)
