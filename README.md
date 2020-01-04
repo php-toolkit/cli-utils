@@ -43,8 +43,63 @@ $app = new App([
   'desc' => 'this is my cli application',
 ]);
 
+// register commands
 
+// use closure
+$app->addCommand('test', function ($app) {
+    echo "args:\n";
+    /** @var Toolkit\Cli\App $app */
+    /** @noinspection ForgottenDebugOutputInspection */
+    print_r($app->getArgs());
+
+}, [
+  'desc' => 'the description text for the command: test',
+]);
+
+// use closure with config
+$app->addByConfig(function ($app) {
+    echo "args:\n";
+    /** @var Toolkit\Cli\App $app */
+    /** @noinspection ForgottenDebugOutputInspection */
+    print_r($app->getArgs());
+
+}, [
+  'name' => 'cmd2',
+  'desc' => 'the description text for the command: test',
+]);
+
+// Use an object
+$app->addObject(new class
+{
+    public function getHelpConfig(): array
+    {
+        $help = <<<STR
+Options:
+  --info    Output some information
+
+Example:
+  {{fullCmd}}
+
+STR;
+
+        return [
+            'name'  => 'list',
+            'desc'  => 'list all directory name in src/',
+            'help'  => $help,
+        ];
+    }
+
+    public function __invoke(App $app)
+    {
+        echo "hello\n";
+    }
+});
+
+// run
+$app->run();
 ```
+
+Run demo: `php example/liteApp`
 
 ## PHP file highlight
 

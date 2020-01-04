@@ -25,6 +25,18 @@ $app->addCommand('test', function ($app) {
   'desc' => 'the description text for the command: test',
 ]);
 
+// use closure with config
+$app->addByConfig(function ($app) {
+    echo "args:\n";
+    /** @var Toolkit\Cli\App $app */
+    /** @noinspection ForgottenDebugOutputInspection */
+    print_r($app->getArgs());
+
+}, [
+  'name' => 'cmd2',
+  'desc' => 'the description text for the command: test',
+]);
+
 // Use an object
 $app->addObject(new class
 {
@@ -35,13 +47,13 @@ Options:
   --info    Output some information
 
 Example:
-  {{command}}
+  {{fullCmd}}
 
 STR;
 
         return [
             'name'  => 'list',
-            'desc'  => 'list all swoft components in src/ dir',
+            'desc'  => 'list all directory name in src/',
             'help'  => $help,
         ];
     }
