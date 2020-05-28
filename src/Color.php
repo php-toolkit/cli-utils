@@ -107,6 +107,7 @@ class Color
      */
     public const STYLES = [
         // basic
+        'normal'      => '39',// no color
         'red'         => '0;31',
         'blue'        => '0;34',
         'cyan'        => '0;36',
@@ -114,8 +115,11 @@ class Color
         'green'       => '0;32',
         'brown'       => '0;33',
         'white'       => '1;37',
-        'normal'      => '39',// no color
+        'yellow0'     => '0;33',
         'yellow'      => '1;33',
+        'mga0'        => '0;35',
+        'magenta0'    => '0;35',
+        'mga'         => '1;35',
         'magenta'     => '1;35',
 
         // alert
@@ -227,6 +231,17 @@ class Color
         echo self::render($string . "\n", $style);
     }
 
+    /**
+     * @param string $text
+     * @param string $tag
+     *
+     * @return string
+     */
+    public static function addTag(string $text, string $tag = 'info'): string
+    {
+        return ColorTag::add($text, $tag);
+    }
+
     /*******************************************************************************
      * color render
      ******************************************************************************/
@@ -334,7 +349,7 @@ class Color
      */
     public static function getStyles(): array
     {
-        return array_filter(array_keys(self::STYLES), function ($style) {
+        return array_filter(array_keys(self::STYLES), static function ($style) {
             return !strpos($style, '_');
         });
     }
