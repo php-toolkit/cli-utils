@@ -72,4 +72,10 @@ class ColorTagTest extends TestCase
         $this->assertFalse(ColorTag::exists('<tag>text'));
         $this->assertFalse(ColorTag::exists('<tag>text<tag>'));
     }
+
+    public function testParse(): void
+    {
+        $text = ColorTag::parse('<info>INFO</info>');
+        $this->assertSame("\033[0;32mINFO\033[0m", $text);
+    }
 }

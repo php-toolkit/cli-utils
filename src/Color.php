@@ -208,10 +208,14 @@ class Color
         'white_ex'       => '97',
 
         // option
-        'bold'           => '1',
+        'b'              => '0;1',
+        'bold'           => '0;1',
+        'fuzzy'          => '2',
         'italic'         => '3',
         'underscore'     => '4',
+        'blink'          => '5',
         'reverse'        => '7',
+        'concealed'      => '8',
     ];
 
     // Regex to match color tags
@@ -221,6 +225,8 @@ class Color
     public const COLOR_TPL = "\033[%sm%s\033[0m";
 
     /**
+     * Flag to remove color codes from the output
+     *
      * @var bool
      */
     private static $noColor = false;
@@ -387,7 +393,7 @@ class Color
                     // check color name is valid
                     if (!isset(static::$knownColors[$fg])) {
                         $errTpl = 'Invalid foreground color "%1$s" [%2$s]';
-                        $names = implode(', ', self::getKnownColors());
+                        $names  = implode(', ', self::getKnownColors());
                         throw new InvalidArgumentException(sprintf($errTpl, $fg, $names));
                     }
 
@@ -398,7 +404,7 @@ class Color
                     // check color name is valid
                     if (!isset(static::$knownColors[$bg])) {
                         $errTpl = 'Invalid background color "%1$s" [%2$s]';
-                        $names = implode(', ', self::getKnownColors());
+                        $names  = implode(', ', self::getKnownColors());
                         throw new InvalidArgumentException(sprintf($errTpl, $bg, $names));
                     }
 
