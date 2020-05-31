@@ -193,8 +193,11 @@ class ColorCode
     {
         if ($fg) {
             if (!isset(self::KNOWN_COLORS[$fg])) {
-                throw new InvalidArgumentException(sprintf('Invalid foreground color "%1$s" [%2$s]', $fg,
-                    implode(', ', self::getKnownColors())));
+                throw new InvalidArgumentException(sprintf(
+                    'Invalid foreground color "%1$s" [%2$s]',
+                    $fg,
+                    implode(', ', self::getKnownColors())
+                ));
             }
 
             $this->fgColor = ($extra ? self::FG_EXTRA : self::FG_BASE) + self::KNOWN_COLORS[$fg];
@@ -202,8 +205,11 @@ class ColorCode
 
         if ($bg) {
             if (!isset(self::KNOWN_COLORS[$bg])) {
-                throw new InvalidArgumentException(sprintf('Invalid background color "%1$s" [%2$s]', $bg,
-                    implode(', ', self::getKnownColors())));
+                throw new InvalidArgumentException(sprintf(
+                    'Invalid background color "%1$s" [%2$s]',
+                    $bg,
+                    implode(', ', self::getKnownColors())
+                ));
             }
 
             $this->bgColor = ($extra ? self::BG_EXTRA : self::BG_BASE) + self::KNOWN_COLORS[$bg];
@@ -211,8 +217,11 @@ class ColorCode
 
         foreach ($options as $option) {
             if (!isset(self::KNOWN_OPTIONS[$option])) {
-                throw new InvalidArgumentException(sprintf('Invalid option "%1$s" [%2$s]', $option,
-                    implode(', ', self::getKnownOptions())));
+                throw new InvalidArgumentException(sprintf(
+                    'Invalid option "%1$s" [%2$s]',
+                    $option,
+                    implode(', ', self::getKnownOptions())
+                ));
             }
 
             $this->options[] = $option;

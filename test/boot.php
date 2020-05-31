@@ -1,6 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 /**
- * phpunit
+ * This file is part of toolkit/cli-utils.
+ *
+ * @link     https://github.com/inhere
+ * @author   https://github.com/inhere
+ * @license  MIT
  */
 
 error_reporting(E_ALL);
