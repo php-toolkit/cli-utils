@@ -1,9 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: inhere
- * Date: 2019-01-08
- * Time: 00:25
+ * This file is part of toolkit/cli-utils.
+ *
+ * @link     https://github.com/inhere
+ * @author   https://github.com/inhere
+ * @license  MIT
  */
 
 namespace Toolkit\Cli;
@@ -33,6 +34,7 @@ class Flags
 {
     // These words will be as a Boolean value
     private const TRUE_WORDS  = '|on|yes|true|';
+
     private const FALSE_WORDS = '|off|no|false|';
 
     /**
@@ -161,7 +163,7 @@ class Flags
                     $value = $nxt;
                     next($params);
 
-                    // short-opt: bool opts. like -e -abc
+                // short-opt: bool opts. like -e -abc
                 } elseif (!$isLong && $value === true) {
                     foreach (str_split($option) as $char) {
                         $sOpts[$char] = true;
@@ -263,7 +265,6 @@ class Flags
      */
     public static function parseString(string $string): void
     {
-
     }
 
     /**

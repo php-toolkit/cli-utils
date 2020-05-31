@@ -1,9 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: inhere
- * Date: 2017-08-11
- * Time: 15:50
+ * This file is part of toolkit/cli-utils.
+ *
+ * @link     https://github.com/inhere
+ * @author   https://github.com/inhere
+ * @license  MIT
  */
 
 namespace Toolkit\Cli;
@@ -58,15 +59,21 @@ use const T_WHITESPACE;
 class Highlighter
 {
     public const TOKEN_DEFAULT  = 'token_default';
+
     public const TOKEN_COMMENT  = 'token_comment';
+
     public const TOKEN_STRING   = 'token_string';
+
     public const TOKEN_HTML     = 'token_html';
 
     public const TOKEN_KEYWORD  = 'token_keyword';
+
     public const TOKEN_CONSTANT = 'token_constant';
+
     public const TOKEN_VARIABLE = 'token_variable';
 
     public const ACTUAL_LINE_MARK = 'actual_line_mark';
+
     public const LINE_NUMBER      = 'line_number';
 
     // @var Style
@@ -362,8 +369,10 @@ class Highlighter
         foreach ($lines as $i => $line) {
             if ($markLine !== null) {
                 $snippet .= ($markLine === $i + 1 ? Color::apply($lmStyle, '  > ') : '    ');
-                $snippet .= Color::apply($markLine === $i + 1 ? $lmStyle : $lnStyle,
-                    str_pad($i + 1, $lineLen, ' ', STR_PAD_LEFT) . '| ');
+                $snippet .= Color::apply(
+                    $markLine === $i + 1 ? $lmStyle : $lnStyle,
+                    str_pad($i + 1, $lineLen, ' ', STR_PAD_LEFT) . '| '
+                );
             } else {
                 $snippet .= Color::apply($lnStyle, str_pad($i + 1, $lineLen, ' ', STR_PAD_LEFT) . '| ');
             }

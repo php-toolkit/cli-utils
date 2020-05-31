@@ -1,6 +1,10 @@
 <?php declare(strict_types=1);
 /**
- * Created by PhpStorm.
+ * This file is part of toolkit/cli-utils.
+ *
+ * @link     https://github.com/inhere
+ * @author   https://github.com/inhere
+ * @license  MIT
  */
 
 namespace Toolkit\Cli;
@@ -35,38 +39,38 @@ class ColorCode
     public const BG_EXTRA = 100;
 
     // color
-    public const BLACK   = 'black';
+    public const BLACK = 'black';
 
-    public const RED     = 'red';
+    public const RED = 'red';
 
-    public const GREEN   = 'green';
+    public const GREEN = 'green';
 
-    public const YELLOW  = 'yellow'; // BROWN
+    public const YELLOW = 'yellow'; // BROWN
 
-    public const BLUE    = 'blue';
+    public const BLUE = 'blue';
 
     public const MAGENTA = 'magenta';
 
-    public const CYAN    = 'cyan';
+    public const CYAN = 'cyan';
 
-    public const WHITE   = 'white';
+    public const WHITE = 'white';
 
-    public const NORMAL  = 'normal';
+    public const NORMAL = 'normal';
 
     // color option
-    public const BOLD       = 'bold';       // 加粗
+    public const BOLD = 'bold';       // 加粗
 
-    public const FUZZY      = 'fuzzy';      // 模糊(不是所有的终端仿真器都支持)
+    public const FUZZY = 'fuzzy';      // 模糊(不是所有的终端仿真器都支持)
 
-    public const ITALIC     = 'italic';     // 斜体(不是所有的终端仿真器都支持)
+    public const ITALIC = 'italic';     // 斜体(不是所有的终端仿真器都支持)
 
     public const UNDERSCORE = 'underscore'; // 下划线
 
-    public const BLINK      = 'blink';      // 闪烁
+    public const BLINK = 'blink';      // 闪烁
 
-    public const REVERSE    = 'reverse';    // 颠倒的 交换背景色与前景色
+    public const REVERSE = 'reverse';    // 颠倒的 交换背景色与前景色
 
-    public const CONCEALED  = 'concealed';  // 隐匿的
+    public const CONCEALED = 'concealed';  // 隐匿的
 
     /**
      * @var array Known color list
@@ -87,13 +91,13 @@ class ColorCode
      * @var array Known option code
      */
     public const KNOWN_OPTIONS = [
-        'bold'       => self::BOLD,       // 加粗
-        'fuzzy'      => self::FUZZY,      // 模糊(不是所有的终端仿真器都支持)
-        'italic'     => self::ITALIC,     // 斜体(不是所有的终端仿真器都支持)
-        'underscore' => self::UNDERSCORE, // 下划线
-        'blink'      => self::BLINK,      // 闪烁
-        'reverse'    => self::REVERSE,    // 颠倒的 交换背景色与前景色
-        'concealed'  => self::CONCEALED,  // 隐匿的
+        'bold'       => Color::BOLD,       // 加粗
+        'fuzzy'      => Color::FUZZY,      // 模糊(不是所有的终端仿真器都支持)
+        'italic'     => Color::ITALIC,     // 斜体(不是所有的终端仿真器都支持)
+        'underscore' => Color::UNDERSCORE, // 下划线
+        'blink'      => Color::BLINK,      // 闪烁
+        'reverse'    => Color::REVERSE,    // 颠倒的 交换背景色与前景色
+        'concealed'  => Color::CONCEALED,  // 隐匿的
     ];
 
     /**
@@ -140,7 +144,7 @@ class ColorCode
      * @throws InvalidArgumentException
      * @throws RuntimeException
      */
-    public static function fromString($string)
+    public static function fromString(string $string)
     {
         $extra   = false;
         $options = [];
@@ -189,11 +193,8 @@ class ColorCode
     {
         if ($fg) {
             if (!isset(self::KNOWN_COLORS[$fg])) {
-                throw new InvalidArgumentException(sprintf(
-                    'Invalid foreground color "%1$s" [%2$s]',
-                    $fg,
-                    implode(', ', self::getKnownColors())
-                ));
+                throw new InvalidArgumentException(sprintf('Invalid foreground color "%1$s" [%2$s]', $fg,
+                    implode(', ', self::getKnownColors())));
             }
 
             $this->fgColor = ($extra ? self::FG_EXTRA : self::FG_BASE) + self::KNOWN_COLORS[$fg];
@@ -201,11 +202,8 @@ class ColorCode
 
         if ($bg) {
             if (!isset(self::KNOWN_COLORS[$bg])) {
-                throw new InvalidArgumentException(sprintf(
-                    'Invalid background color "%1$s" [%2$s]',
-                    $bg,
-                    implode(', ', self::getKnownColors())
-                ));
+                throw new InvalidArgumentException(sprintf('Invalid background color "%1$s" [%2$s]', $bg,
+                    implode(', ', self::getKnownColors())));
             }
 
             $this->bgColor = ($extra ? self::BG_EXTRA : self::BG_BASE) + self::KNOWN_COLORS[$bg];
@@ -213,11 +211,8 @@ class ColorCode
 
         foreach ($options as $option) {
             if (!isset(self::KNOWN_OPTIONS[$option])) {
-                throw new InvalidArgumentException(sprintf(
-                    'Invalid option "%1$s" [%2$s]',
-                    $option,
-                    implode(', ', self::getKnownOptions())
-                ));
+                throw new InvalidArgumentException(sprintf('Invalid option "%1$s" [%2$s]', $option,
+                    implode(', ', self::getKnownOptions())));
             }
 
             $this->options[] = $option;
@@ -242,6 +237,8 @@ class ColorCode
 
     /**
      * Get the translated color code.
+     *
+     * @return string
      */
     public function toStyle(): string
     {

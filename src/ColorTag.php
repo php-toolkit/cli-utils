@@ -1,9 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: inhere
- * Date: 2019-01-07
- * Time: 23:52
+ * This file is part of toolkit/cli-utils.
+ *
+ * @link     https://github.com/inhere
+ * @author   https://github.com/inhere
+ * @license  MIT
  */
 
 namespace Toolkit\Cli;
@@ -132,7 +133,7 @@ class ColorTag
             if (isset(Color::STYLES[$key])) {
                 $text = self::replaceColor($text, $key, $matches[2][$i], Color::STYLES[$key]);
 
-                /** Custom style format @see Color::stringToCode() */
+            /** Custom style format @see Color::stringToCode() */
             } elseif (strpos($key, '=')) {
                 $text = self::replaceColor($text, $key, $matches[2][$i], Color::stringToCode($key));
             }
@@ -153,7 +154,7 @@ class ColorTag
      */
     public static function replaceColor(string $text, string $tag, string $match, string $colorCode): string
     {
-        $replace = Color::isNoColor() ? $match : sprintf("\033[%sm%s\033[0m", $colorCode, $match);
+        $replace = sprintf("\033[%sm%s\033[0m", $colorCode, $match);
 
         return str_replace("<$tag>$match</$tag>", $replace, $text);
         // return sprintf("\033[%sm%s\033[%sm", implode(';', $setCodes), $text, implode(';', $unsetCodes));

@@ -1,9 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: inhere
- * Date: 2017-03-08
- * Time: 9:35
+ * This file is part of toolkit/cli-utils.
+ *
+ * @link     https://github.com/inhere
+ * @author   https://github.com/inhere
+ * @license  MIT
  */
 
 namespace Toolkit\Cli;
@@ -23,29 +24,45 @@ use function strpos;
 final class Terminal
 {
     public const BEGIN_CHAR = "\033[";
+
     public const END_CHAR   = "\033[0m";
 
     // Control cursor code name list. more @see [[self::$ctrlCursorCodes]]
     public const CUR_HIDE             = 'hide';
+
     public const CUR_SHOW             = 'show';
+
     public const CUR_SAVE_POSITION    = 'savePosition';
+
     public const CUR_RESTORE_POSITION = 'restorePosition';
+
     public const CUR_UP               = 'up';
+
     public const CUR_DOWN             = 'down';
+
     public const CUR_FORWARD          = 'forward';
+
     public const CUR_BACKWARD         = 'backward';
+
     public const CUR_NEXT_LINE        = 'nextLine';
+
     public const CUR_PREV_LINE        = 'prevLine';
+
     public const CUR_COORDINATE       = 'coordinate';
 
     // Control screen code name list. more @see [[self::$ctrlScreenCodes]]
     public const CLEAR                    = 'clear';
+
     public const CLEAR_BEFORE_CURSOR      = 'clearBeforeCursor';
+
     public const CLEAR_LINE               = 'clearLine';
+
     public const CLEAR_LINE_BEFORE_CURSOR = 'clearLineBeforeCursor';
+
     public const CLEAR_LINE_AFTER_CURSOR  = 'clearLineAfterCursor';
 
     public const SCROLL_UP   = 'scrollUp';
+
     public const SCROLL_DOWN = 'scrollDown';
 
     /**
@@ -183,7 +200,6 @@ final class Terminal
                 } else {
                     $code = sprintf($codes[1], $arg1, $arg2);
                 }
-
             } else {
                 $code = sprintf($code, $arg1);
             }

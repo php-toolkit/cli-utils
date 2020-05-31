@@ -1,6 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 /**
- * demo for cli download file.
+ * This file is part of toolkit/cli-utils.
+ *
+ * @link     https://github.com/inhere
+ * @author   https://github.com/inhere
+ * @license  MIT
  */
 
 use Toolkit\Cli\App;
