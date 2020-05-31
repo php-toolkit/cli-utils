@@ -19,6 +19,35 @@ Provide some useful utils for the php CLI.
 composer require toolkit/cli-utils
 ```
 
+## Console color
+
+```php
+Color::printf('<info>%s</info> world', 'hello');
+Color::println('hello world', 'info');
+Color::println('hello world', 'error');
+Color::println('hello world', 'warning');
+Color::println('hello world', 'success');
+
+echo Color::render('hello world', 'success');
+```
+
+![colors](example/terminal-color.png)
+
+## PHP file highlight
+
+> This is inspire jakub-onderka/php-console-highlighter
+
+```php
+use Toolkit\Cli\Highlighter;
+
+// this is an comment
+$rendered = Highlighter::create()->highlight(file_get_contents(__FILE__));
+
+\Toolkit\Cli\Cli::write($rendered);
+```
+
+![colors](example/cli-php-file-highlight.png)
+
 ## Parse CLI arguments and options
 
 ```php
@@ -116,35 +145,6 @@ $app->run();
 Run demo: `php example/liteApp`
 
 ![cli-app](example/cli-app.png)
-
-## PHP file highlight
-
-> This is inspire jakub-onderka/php-console-highlighter
-
-```php
-use Toolkit\Cli\Highlighter;
-
-// this is an comment
-$rendered = Highlighter::create()->highlight(file_get_contents(__FILE__));
-
-\Toolkit\Cli\Cli::write($rendered);
-```
-
-![colors](example/cli-php-file-highlight.png)
-
-## Console color
-
-```php
-Color::printf('<info>%s</info> world', 'hello');
-Color::println('hello world', 'info');
-Color::println('hello world', 'error');
-Color::println('hello world', 'warning');
-Color::println('hello world', 'success');
-
-echo Color::render('hello world', 'success');
-```
-
-![colors](example/terminal-color.png)
 
 ## CLI downloader
 

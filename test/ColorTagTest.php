@@ -9,6 +9,7 @@
 namespace Toolkit\CliTest;
 
 use PHPUnit\Framework\TestCase;
+use Toolkit\Cli\Color;
 use Toolkit\Cli\ColorTag;
 
 /**
@@ -75,7 +76,11 @@ class ColorTagTest extends TestCase
 
     public function testParse(): void
     {
+        Color::setForceColor(true);
+
         $text = ColorTag::parse('<info>INFO</info>');
         $this->assertSame("\033[0;32mINFO\033[0m", $text);
+
+        Color::resetConfig();
     }
 }

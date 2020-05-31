@@ -116,8 +116,8 @@ class ColorTag
             return $text;
         }
 
-        // if don't support output color text, clear color tag.
-        if (!Cli::isSupportColor() || Color::isNoColor()) {
+        // shouldn't render color, clear color code.
+        if (!Color::isShouldRenderColor()) {
             return self::strip($text);
         }
 

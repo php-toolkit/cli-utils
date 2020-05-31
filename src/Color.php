@@ -8,8 +8,6 @@
 
 namespace Toolkit\Cli;
 
-use InvalidArgumentException;
-use RuntimeException;
 use function array_filter;
 use function array_keys;
 use function implode;
@@ -17,7 +15,6 @@ use function is_array;
 use function is_string;
 use function preg_replace;
 use function sprintf;
-use function str_replace;
 use function strip_tags;
 use function strpos;
 
@@ -113,34 +110,6 @@ class Color
     public const CONCEALED  = 8;      // 隐匿的
 
     /**
-     * @var array Known color list
-     */
-    private static $knownColors = [
-        'black'   => 0,
-        'red'     => 1,
-        'green'   => 2,
-        'yellow'  => 3,
-        'blue'    => 4,
-        'magenta' => 5, // 洋红色 洋红 品红色
-        'cyan'    => 6, // 青色 青绿色 蓝绿色
-        'white'   => 7,
-        'normal'  => 9,
-    ];
-
-    /**
-     * @var array Known style option
-     */
-    private static $knownOptions = [
-        'bold'       => self::BOLD,       // 加粗
-        'fuzzy'      => self::FUZZY,      // 模糊(不是所有的终端仿真器都支持)
-        'italic'     => self::ITALIC,     // 斜体(不是所有的终端仿真器都支持)
-        'underscore' => self::UNDERSCORE, // 下划线
-        'blink'      => self::BLINK,      // 闪烁
-        'reverse'    => self::REVERSE,    // 颠倒的 交换背景色与前景色
-        'concealed'  => self::CONCEALED,  // 隐匿的
-    ];
-
-    /**
      * There are some internal styles
      * custom style: fg;bg;opt
      *
@@ -156,7 +125,9 @@ class Color
         'green'       => '0;32',
         'brown'       => '0;33',
         'white'       => '1;37',
+        'ylw0'        => '0;33',
         'yellow0'     => '0;33',
+        'ylw'         => '1;33',
         'yellow'      => '1;33',
         'mga0'        => '0;35',
         'magenta0'    => '0;35',
@@ -211,7 +182,8 @@ class Color
         'b'              => '0;1',
         'bold'           => '0;1',
         'fuzzy'          => '2',
-        'italic'         => '3',
+        'i'              => '0;3',
+        'italic'         => '0;3',
         'underscore'     => '4',
         'blink'          => '5',
         'reverse'        => '7',
@@ -232,6 +204,13 @@ class Color
     private static $noColor = false;
 
     /**
+     * Force render color code
+     *
+     * @var bool
+     */
+    private static $forceColor = false;
+
+    /**
      * @param string $method
      * @param array  $args
      *
@@ -244,22 +223,6 @@ class Color
         }
 
         return '';
-    }
-
-    /**
-     * @return bool
-     */
-    public static function isNoColor(): bool
-    {
-        return self::$noColor;
-    }
-
-    /**
-     * @param bool $noColor
-     */
-    public static function setNoColor(bool $noColor): void
-    {
-        self::$noColor = $noColor;
     }
 
     /**
@@ -330,13 +293,16 @@ class Color
             return $text;
         }
 
-        if (!Cli::isSupportColor() || self::isNoColor()) {
+        // shouldn't render color, clear color code.
+        if (!self::isShouldRenderColor()) {
             return self::clearColor($text);
         }
 
+        $color = '';
+
         // use defined style: 'green'
         if (is_string($style)) {
-            $color = self::STYLES[$style] ?? '0';
+            $color = self::STYLES[$style] ?? '';
 
             // custom style: [self::FG_GREEN, self::BG_WHITE, self::UNDERSCORE]
         } elseif (is_array($style)) {
@@ -345,7 +311,9 @@ class Color
             // user color tag: <info>message</info>
         } elseif (strpos($text, '</') > 0) {
             return self::parseTag($text);
-        } else {
+        }
+
+        if (!$color) {
             return $text;
         }
 
@@ -366,6 +334,25 @@ class Color
     }
 
     /**
+     * @return bool
+     */
+    public static function isShouldRenderColor(): bool
+    {
+        // force render color code
+        if (self::$forceColor) {
+            return true;
+        }
+
+        // disable color
+        if (self::$noColor) {
+            return false;
+        }
+
+        // current env is support render color?
+        return Cli::isSupportColor();
+    }
+
+    /**
      * Create a color style code from a parameter string.
      *
      * @param string $string e.g 'fg=white;bg=black;options=bold,underscore;extra=1'
@@ -374,75 +361,7 @@ class Color
      */
     public static function stringToCode(string $string): string
     {
-        $options = [];
-
-        $extra = false;
-        $parts = explode(';', str_replace(' ', '', $string));
-
-        $fg = $bg = '';
-        foreach ($parts as $part) {
-            $subParts = explode('=', $part);
-            if (count($subParts) < 2) {
-                continue;
-            }
-
-            switch ($subParts[0]) {
-                case 'fg':
-                    $fg = $subParts[1];
-
-                    // check color name is valid
-                    if (!isset(static::$knownColors[$fg])) {
-                        $errTpl = 'Invalid foreground color "%1$s" [%2$s]';
-                        $names  = implode(', ', self::getKnownColors());
-                        throw new InvalidArgumentException(sprintf($errTpl, $fg, $names));
-                    }
-
-                    break;
-                case 'bg':
-                    $bg = $subParts[1];
-
-                    // check color name is valid
-                    if (!isset(static::$knownColors[$bg])) {
-                        $errTpl = 'Invalid background color "%1$s" [%2$s]';
-                        $names  = implode(', ', self::getKnownColors());
-                        throw new InvalidArgumentException(sprintf($errTpl, $bg, $names));
-                    }
-
-                    break;
-                case 'extra':
-                    $extra = (bool)$subParts[1];
-                    break;
-                case 'options':
-                    $options = explode(',', $subParts[1]);
-                    break;
-                default:
-                    throw new RuntimeException('Invalid option');
-                    break;
-            }
-        }
-
-        $values = [];
-
-        // get fg color code
-        if ($fg) {
-            $values[] = ($extra ? self::FG_EXTRA : self::FG_BASE) + static::$knownColors[$fg];
-        }
-
-        // get bg color code
-        if ($bg) {
-            $values[] = ($extra ? self::BG_EXTRA : self::BG_BASE) + static::$knownColors[$bg];
-        }
-
-        $errTpl = 'Invalid option "%1$s" [%2$s]';
-        foreach ($options as $option) {
-            if (!isset(static::$knownOptions[$option])) {
-                throw new InvalidArgumentException(sprintf($errTpl, $option, implode(', ', self::getKnownOptions())));
-            }
-
-            $values[] = static::$knownOptions[$option];
-        }
-
-        return implode(';', $values);
+        return ColorCode::fromString($string)->toString();
     }
 
     /**
@@ -480,22 +399,42 @@ class Color
     }
 
     /**
-     * @param bool $onlyName
-     *
-     * @return array
+     * reset color config
      */
-    public static function getKnownColors(bool $onlyName = true): array
+    public static function resetConfig(): void
     {
-        return $onlyName ? array_keys(static::$knownColors) : static::$knownColors;
+        self::$noColor = self::$forceColor = false;
     }
 
     /**
-     * @param bool $onlyName
-     *
-     * @return array
+     * @return bool
      */
-    public static function getKnownOptions(bool $onlyName = true): array
+    public static function isNoColor(): bool
     {
-        return $onlyName ? array_keys(static::$knownOptions) : static::$knownOptions;
+        return self::$noColor;
+    }
+
+    /**
+     * @param bool $noColor
+     */
+    public static function setNoColor(bool $noColor): void
+    {
+        self::$noColor = $noColor;
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isForceColor(): bool
+    {
+        return self::$forceColor;
+    }
+
+    /**
+     * @param bool $forceColor
+     */
+    public static function setForceColor(bool $forceColor): void
+    {
+        self::$forceColor = $forceColor;
     }
 }

@@ -68,8 +68,10 @@ class ColorCode
 
     public const CONCEALED  = 'concealed';  // 隐匿的
 
-    /** @var array Known color list */
-    private static $knownColors = [
+    /**
+     * @var array Known color list
+     */
+    public const KNOWN_COLORS = [
         'black'   => 0,
         'red'     => 1,
         'green'   => 2,
@@ -81,24 +83,38 @@ class ColorCode
         'normal'  => 9,
     ];
 
-    /** @var array Known style option */
-    private static $knownOptions = [
-        'bold'       => 1,       // 22 加粗
-        'fuzzy'      => 2,      // 模糊(不是所有的终端仿真器都支持)
-        'italic'     => 3,      // 斜体(不是所有的终端仿真器都支持)
-        'underscore' => 4, // 24 下划线
-        'blink'      => 5,      // 25 闪烁
-        'reverse'    => 7,    // 27 颠倒的 交换背景色与前景色
-        'concealed'  => 8,  // 28 隐匿的
+    /**
+     * @var array Known option code
+     */
+    public const KNOWN_OPTIONS = [
+        'bold'       => self::BOLD,       // 加粗
+        'fuzzy'      => self::FUZZY,      // 模糊(不是所有的终端仿真器都支持)
+        'italic'     => self::ITALIC,     // 斜体(不是所有的终端仿真器都支持)
+        'underscore' => self::UNDERSCORE, // 下划线
+        'blink'      => self::BLINK,      // 闪烁
+        'reverse'    => self::REVERSE,    // 颠倒的 交换背景色与前景色
+        'concealed'  => self::CONCEALED,  // 隐匿的
     ];
 
-    /** @var int Foreground color */
+    /**
+     * Foreground color
+     *
+     * @var int
+     */
     private $fgColor = 0;
 
-    /** @var int Background color */
+    /**
+     * Background color
+     *
+     * @var int
+     */
     private $bgColor = 0;
 
-    /** @var array Array of style options */
+    /**
+     * Array of style options
+     *
+     * @var array
+     */
     private $options = [];
 
     /**
@@ -172,35 +188,35 @@ class ColorCode
     public function __construct($fg = '', $bg = '', array $options = [], bool $extra = false)
     {
         if ($fg) {
-            if (!isset(static::$knownColors[$fg])) {
+            if (!isset(self::KNOWN_COLORS[$fg])) {
                 throw new InvalidArgumentException(sprintf(
                     'Invalid foreground color "%1$s" [%2$s]',
                     $fg,
-                    implode(', ', $this->getKnownColors())
+                    implode(', ', self::getKnownColors())
                 ));
             }
 
-            $this->fgColor = ($extra ? self::FG_EXTRA : self::FG_BASE) + static::$knownColors[$fg];
+            $this->fgColor = ($extra ? self::FG_EXTRA : self::FG_BASE) + self::KNOWN_COLORS[$fg];
         }
 
         if ($bg) {
-            if (!isset(static::$knownColors[$bg])) {
+            if (!isset(self::KNOWN_COLORS[$bg])) {
                 throw new InvalidArgumentException(sprintf(
                     'Invalid background color "%1$s" [%2$s]',
                     $bg,
-                    implode(', ', $this->getKnownColors())
+                    implode(', ', self::getKnownColors())
                 ));
             }
 
-            $this->bgColor = ($extra ? self::BG_EXTRA : self::BG_BASE) + static::$knownColors[$bg];
+            $this->bgColor = ($extra ? self::BG_EXTRA : self::BG_BASE) + self::KNOWN_COLORS[$bg];
         }
 
         foreach ($options as $option) {
-            if (!isset(static::$knownOptions[$option])) {
+            if (!isset(self::KNOWN_OPTIONS[$option])) {
                 throw new InvalidArgumentException(sprintf(
                     'Invalid option "%1$s" [%2$s]',
                     $option,
-                    implode(', ', $this->getKnownOptions())
+                    implode(', ', self::getKnownOptions())
                 ));
             }
 
@@ -212,6 +228,14 @@ class ColorCode
      * Convert to a string.
      */
     public function __toString()
+    {
+        return $this->toStyle();
+    }
+
+    /**
+     * @return string
+     */
+    public function toString(): string
     {
         return $this->toStyle();
     }
@@ -232,33 +256,29 @@ class ColorCode
         }
 
         foreach ($this->options as $option) {
-            $values[] = static::$knownOptions[$option];
+            $values[] = self::KNOWN_OPTIONS[$option];
         }
 
         return implode(';', $values);
     }
 
     /**
-     * Get the known colors.
-     *
      * @param bool $onlyName
      *
      * @return array
      */
-    public function getKnownColors(bool $onlyName = true): array
+    public static function getKnownColors(bool $onlyName = true): array
     {
-        return $onlyName ? array_keys(static::$knownColors) : static::$knownColors;
+        return $onlyName ? array_keys(self::KNOWN_COLORS) : self::KNOWN_COLORS;
     }
 
     /**
-     * Get the known options.
-     *
      * @param bool $onlyName
      *
      * @return array
      */
-    public function getKnownOptions(bool $onlyName = true): array
+    public static function getKnownOptions(bool $onlyName = true): array
     {
-        return $onlyName ? array_keys(static::$knownOptions) : static::$knownOptions;
+        return $onlyName ? array_keys(self::KNOWN_OPTIONS) : self::KNOWN_OPTIONS;
     }
 }
