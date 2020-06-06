@@ -195,7 +195,12 @@ class Flags
             // value specified inline (<arg>=<value>)
             if (strpos($p, '=') !== false) {
                 [$name, $value] = explode('=', $p, 2);
-                $args[$name] = self::filterBool($value);
+
+                if (self::isValidArgName($name)) {
+                    $args[$name] = self::filterBool($value);
+                } else {
+                    $args[] = $p;
+                }
             } else {
                 $args[] = $p;
             }
@@ -312,6 +317,16 @@ class Flags
 
         // it isn't option or named argument
         return $val[0] !== '-' && false === strpos($val, '=');
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    public static function isValidArgName(string $name): bool
+    {
+        return preg_match('#^\w+$#', $name) === 1;
     }
 
     /**
