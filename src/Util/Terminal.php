@@ -7,8 +7,9 @@
  * @license  MIT
  */
 
-namespace Toolkit\Cli;
+namespace Toolkit\Cli\Util;
 
+use Toolkit\Cli\Cli;
 use function array_keys;
 use function strpos;
 
@@ -143,7 +144,10 @@ final class Terminal
         'scrollDown'            => '%dT',
     ];
 
-    public static function make(): Terminal
+    /**
+     * @return Terminal
+     */
+    public static function instance(): Terminal
     {
         if (!self::$instance) {
             self::$instance = new self;

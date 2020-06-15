@@ -13,17 +13,14 @@ use InvalidArgumentException;
 use function array_merge;
 use function array_slice;
 use function defined;
-use function end;
 use function explode;
 use function file_get_contents;
 use function function_exists;
 use function implode;
 use function is_array;
-use function key;
 use function max;
 use function str_pad;
 use function str_replace;
-use function strlen;
 use function token_get_all;
 use const PHP_EOL;
 use const STR_PAD_LEFT;
@@ -82,8 +79,10 @@ class Highlighter
     /** @var self */
     private static $instance;
 
-    /** @var array */
-    private $defaultTheme = [
+    /**
+     * @var array
+     */
+    private $codeTheme = [
         self::TOKEN_STRING     => 'green',
         self::TOKEN_COMMENT    => 'italic',
         self::TOKEN_KEYWORD    => 'yellow',
@@ -336,7 +335,7 @@ class Highlighter
         foreach ($tokenLines as $lineCount => $tokenLine) {
             $line = '';
             foreach ($tokenLine as [$tokenType, $tokenValue]) {
-                $style = $this->defaultTheme[$tokenType];
+                $style = $this->codeTheme[$tokenType];
 
                 if (Color::hasStyle($style)) {
                     $line .= Color::apply($style, $tokenValue);
@@ -359,22 +358,22 @@ class Highlighter
      */
     private function lineNumbers(array $lines, $markLine = null): string
     {
-        end($lines);
-
         $snippet = '';
-        $lineLen = strlen(key($lines) + 1);
-        $lmStyle = $this->defaultTheme[self::ACTUAL_LINE_MARK];
-        $lnStyle = $this->defaultTheme[self::LINE_NUMBER];
+        $lineLen = count($lines) + 1;
+        $lmStyle = $this->codeTheme[self::ACTUAL_LINE_MARK];
+        $lnStyle = $this->codeTheme[self::LINE_NUMBER];
 
         foreach ($lines as $i => $line) {
+            $lineNum = $i + 1;
+            $lineStr = (string)($lineNum);
             if ($markLine !== null) {
-                $snippet .= ($markLine === $i + 1 ? Color::apply($lmStyle, '  > ') : '    ');
+                $snippet .= ($markLine === $lineNum ? Color::apply($lmStyle, '  > ') : '    ');
                 $snippet .= Color::apply(
-                    $markLine === $i + 1 ? $lmStyle : $lnStyle,
-                    str_pad($i + 1, $lineLen, ' ', STR_PAD_LEFT) . '| '
+                    $markLine === $lineNum ? $lmStyle : $lnStyle,
+                    str_pad($lineStr, $lineLen, ' ', STR_PAD_LEFT) . '| '
                 );
             } else {
-                $snippet .= Color::apply($lnStyle, str_pad($i + 1, $lineLen, ' ', STR_PAD_LEFT) . '| ');
+                $snippet .= Color::apply($lnStyle, str_pad($lineStr, $lineLen, ' ', STR_PAD_LEFT) . '| ');
             }
 
             $snippet .= $line . PHP_EOL;
@@ -386,16 +385,16 @@ class Highlighter
     /**
      * @return array
      */
-    public function getDefaultTheme(): array
+    public function getCodeTheme(): array
     {
-        return $this->defaultTheme;
+        return $this->codeTheme;
     }
 
     /**
-     * @param array $defaultTheme
+     * @param array $codeTheme
      */
-    public function setDefaultTheme(array $defaultTheme): void
+    public function setCodeTheme(array $codeTheme): void
     {
-        $this->defaultTheme = array_merge($this->defaultTheme, $defaultTheme);
+        $this->codeTheme = array_merge($this->codeTheme, $codeTheme);
     }
 }

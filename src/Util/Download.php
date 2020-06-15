@@ -7,7 +7,7 @@
  * @license  MIT
  */
 
-namespace Toolkit\Cli;
+namespace Toolkit\Cli\Util;
 
 use RuntimeException;
 use function basename;

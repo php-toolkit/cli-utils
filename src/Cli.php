@@ -9,6 +9,8 @@
 
 namespace Toolkit\Cli;
 
+use Toolkit\Cli\Traits\ReadMessageTrait;
+use Toolkit\Cli\Traits\WriteMessageTrait;
 use function date;
 use function defined;
 use function fflush;
@@ -34,7 +36,6 @@ use const PHP_WINDOWS_VERSION_BUILD;
 use const PHP_WINDOWS_VERSION_MAJOR;
 use const PHP_WINDOWS_VERSION_MINOR;
 use const STDERR;
-use const STDIN;
 use const STDOUT;
 
 /**
@@ -44,6 +45,8 @@ use const STDOUT;
  */
 class Cli
 {
+    // use ReadMessageTrait, WriteMessageTrait;
+
     public const LOG_LEVEL2TAG = [
         'info'    => 'info',
         'warn'    => 'warning',
@@ -54,23 +57,12 @@ class Cli
     ];
 
     /*******************************************************************************
-     * read/write message
+     * read message
      ******************************************************************************/
 
-    /**
-     * @param string $message
-     * @param bool   $nl
-     *
-     * @return string
-     */
-    public static function read(string $message = '', bool $nl = false): string
-    {
-        if ($message) {
-            self::write($message, $nl);
-        }
-
-        return trim(fgets(STDIN));
-    }
+    /*******************************************************************************
+     * write message
+     ******************************************************************************/
 
     /**
      * @param string $format
@@ -138,7 +130,7 @@ class Cli
      ******************************************************************************/
 
     /**
-     * @param                  $text
+     * @param string           $text
      * @param string|int|array $style
      *
      * @return string

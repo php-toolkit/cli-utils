@@ -108,7 +108,7 @@ class App
         self::$i = $this;
 
         // get current dir
-        $this->pwd = getcwd();
+        $this->pwd = (string)getcwd();
 
         // parse cli argv
         $argv = $argv ?? (array)$_SERVER['argv'];
@@ -120,9 +120,10 @@ class App
         $this->script = array_shift($argv);
 
         // parse flags
-        [$this->args, $this->opts] = Flags::parseArgv(array_values($argv), [
-            'mergeOpts' => true
-        ]);
+        [
+            $this->args,
+            $this->opts
+        ] = Flags::parseArgv(array_values($argv), ['mergeOpts' => true]);
     }
 
     /**

@@ -3,7 +3,7 @@
 $header = <<<'EOF'
 This file is part of toolkit/cli-utils.
 
-@link     https://github.com/inhere
+@link     https://github.com/php-toolkit/cli-utils
 @author   https://github.com/inhere
 @license  MIT
 EOF;
@@ -17,7 +17,10 @@ return PhpCsFixer\Config::create()
         ],
         'class_attributes_separation' => true,
         'declare_strict_types' => true,
-        'global_namespace_import' => true,
+        'global_namespace_import' => [
+            'import_constants' => true,
+            'import_functions' => true,
+        ],
         'header_comment' => [
             'comment_type' => 'PHPDoc',
             'header'    => $header,
