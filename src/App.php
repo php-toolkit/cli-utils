@@ -64,12 +64,12 @@ class App
     /**
      * @var array Parsed from `arg0 name=val var2=val2`
      */
-    private $args = [];
+    private $args;
 
     /**
      * @var array Parsed from `--name=val --var2=val2 -d`
      */
-    private $opts = [];
+    private $opts;
 
     /**
      * @var string
@@ -111,7 +111,7 @@ class App
         $this->pwd = (string)getcwd();
 
         // parse cli argv
-        $argv = $argv ?? (array)$_SERVER['argv'];
+        $argv = $argv ?? $_SERVER['argv'];
         if ($config) {
             $this->setMetas($config);
         }

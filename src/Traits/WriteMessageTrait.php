@@ -198,7 +198,7 @@ trait WriteMessageTrait
      * @param bool         $nl
      * @param bool|int     $quit
      */
-    public static function stderr($text, $nl = true, $quit = -200): void
+    public static function stderr($text, $nl = true, $quit = -2): void
     {
         self::write($text, $nl, $quit, [
             'stream' => self::$errorStream,
