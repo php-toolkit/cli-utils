@@ -8,7 +8,7 @@
  */
 
 use Toolkit\Cli\Cli;
-use Toolkit\Cli\Highlighter;
+use Toolkit\Cli\Util\Highlighter;
 
 require dirname(__DIR__) . '/test/boot.php';
 
