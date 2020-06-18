@@ -307,4 +307,20 @@ trait WriteMessageTrait
     {
         self::$outputStream = $outputStream;
     }
+
+    /**
+     * @return resource
+     */
+    public static function getErrorStream()
+    {
+        return self::$errorStream;
+    }
+
+    /**
+     * @param resource $errorStream
+     */
+    public static function setErrorStream($errorStream): void
+    {
+        self::$errorStream = $errorStream;
+    }
 }
