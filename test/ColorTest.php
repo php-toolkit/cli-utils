@@ -26,6 +26,12 @@ class ColorTest extends TestCase
             return;
         }
 
+        $this->assertTrue(Color::isShouldRenderColor());
+
+        Color::println('text', '');
+        $text = Color::render('text', '');
+        $this->assertSame("text", $text);
+
         $text = Color::render('text', 'info');
         $this->assertStringContainsString(Color::STYLES['info'], $text);
 
