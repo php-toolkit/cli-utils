@@ -45,9 +45,8 @@ class LineParserTest extends TestCase
         $len = count($args);
         self::assertSame('val 2', $args[$len-1]);
 
-
         $line = 'kite top sub -a "the a message "foo val1 --bar "val 2"';
         $args = LineParser::parseIt($line);
-        self::assertCount(9, $args);
+        self::assertCount(8, $args);
     }
 }
