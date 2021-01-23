@@ -36,7 +36,7 @@ trait ReadMessageTrait
             'stream' => self::$inputStream,
         ], $opts);
 
-        return file_get_contents($opts['stream'], $opts['length']);
+        return (string)file_get_contents($opts['stream'], $opts['length']);
     }
 
     /**
@@ -62,7 +62,7 @@ trait ReadMessageTrait
             'stream' => self::$inputStream,
         ], $opts);
 
-        return trim(fgets($opts['stream'], $opts['length']));
+        return trim((string)fgets($opts['stream'], $opts['length']));
     }
 
     /**
