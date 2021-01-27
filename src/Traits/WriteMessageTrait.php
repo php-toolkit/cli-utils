@@ -1,4 +1,11 @@
 <?php declare(strict_types=1);
+/**
+ * This file is part of toolkit/cli-utils.
+ *
+ * @link     https://github.com/php-toolkit/cli-utils
+ * @author   https://github.com/inhere
+ * @license  MIT
+ */
 
 namespace Toolkit\Cli\Traits;
 
@@ -20,14 +27,10 @@ trait WriteMessageTrait
     /** @var bool */
     private static $buffering = false;
 
-    /**
-     * @var resource
-     */
+    /** @var resource */
     private static $outputStream = STDOUT;
 
-    /**
-     * @var resource
-     */
+    /** @var resource */
     private static $errorStream = STDERR;
 
     /***********************************************************************************
@@ -170,7 +173,7 @@ trait WriteMessageTrait
             fflush($stream);
         }
 
-        // if will quit.
+        // if want quit.
         if ($quit !== false) {
             $code = true === $quit ? 0 : (int)$quit;
             exit($code);
@@ -198,7 +201,7 @@ trait WriteMessageTrait
      * @param bool         $nl
      * @param bool|int     $quit
      */
-    public static function stderr($text, $nl = true, $quit = -2): void
+    public static function stderr($text, bool $nl = true, $quit = -2): void
     {
         self::write($text, $nl, $quit, [
             'stream' => self::$errorStream,

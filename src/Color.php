@@ -2,7 +2,7 @@
 /**
  * This file is part of toolkit/cli-utils.
  *
- * @link     https://github.com/inhere
+ * @link     https://github.com/php-toolkit/cli-utils
  * @author   https://github.com/inhere
  * @license  MIT
  */
@@ -18,6 +18,7 @@ use function preg_replace;
 use function sprintf;
 use function strip_tags;
 use function strpos;
+use const PHP_EOL;
 
 /**
  * Class Color
@@ -299,7 +300,7 @@ class Color
     {
         $string = is_array($messages) ? implode("\n", $messages) : (string)$messages;
 
-        echo self::render($string . "\n", $style);
+        echo self::render($string, $style) . PHP_EOL;
     }
 
     /**
@@ -344,11 +345,11 @@ class Color
         if (is_string($style)) {
             $color = self::STYLES[$style] ?? '';
 
-            // custom style: [self::FG_GREEN, self::BG_WHITE, self::UNDERSCORE]
+        // custom style: [self::FG_GREEN, self::BG_WHITE, self::UNDERSCORE]
         } elseif (is_array($style)) {
             $color = implode(';', $style);
 
-            // user color tag: <info>message</info>
+        // user color tag: <info>message</info>
         } elseif (strpos($text, '</') > 0) {
             return self::parseTag($text);
         }

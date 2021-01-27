@@ -2,7 +2,7 @@
 /**
  * This file is part of toolkit/cli-utils.
  *
- * @link     https://github.com/inhere
+ * @link     https://github.com/php-toolkit/cli-utils
  * @author   https://github.com/inhere
  * @license  MIT
  */
@@ -30,7 +30,7 @@ class ColorTest extends TestCase
 
         Color::println('text', '');
         $text = Color::render('text', '');
-        $this->assertSame("text", $text);
+        $this->assertSame('text', $text);
 
         $text = Color::render('text', 'info');
         $this->assertStringContainsString(Color::STYLES['info'], $text);

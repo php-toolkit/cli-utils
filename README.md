@@ -48,7 +48,7 @@ $rendered = Highlighter::create()->highlight(file_get_contents(__FILE__));
 
 ![colors](example/cli-php-file-highlight.png)
 
-## Parse CLI arguments and options
+## Parse CLI arguments & options
 
 ```php
 use Toolkit\Cli\Flags;
@@ -57,7 +57,7 @@ $argv = $_SERVER['argv'];
 // notice: must shift first element.
 $script = \array_shift($argv);
 // do parse
-list($args, $shortOpts, $longOpts) = Flags::parseArgv($argv);
+[$args, $shortOpts, $longOpts] = Flags::parseArgv($argv);
 ```
 
 ## Build CLI application
@@ -87,7 +87,7 @@ $app->addCommand('test', function ($app) {
 }, 'the description text for the command: test');
 ```
 
-Use closure with config:
+Use closure with a config:
 
 ```php
 $app->addByConfig(function ($app) {
@@ -105,6 +105,8 @@ $app->addByConfig(function ($app) {
 Use an object:
 
 ```php
+use Toolkit\Cli\App;
+
 class MyCommand
 {
     public function getHelpConfig(): array
@@ -158,7 +160,7 @@ $down = Download::file($url, '');
 $down->start();
 ```
 
-### Progress bar output:
+**Progress bar output:**
 
 ```text
 Connected...
@@ -170,7 +172,7 @@ Mime-type: application/octet-stream
 [========================================>                                                           ] 40% (3076/7590 kb)
 ```
 
-### Progress text output:
+**Progress text output:**
 
 ```text
 Download: http://no2.php.net/distributions/php-7.2.5.tar.bz2

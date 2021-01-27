@@ -2,7 +2,7 @@
 /**
  * This file is part of toolkit/cli-utils.
  *
- * @link     https://github.com/inhere
+ * @link     https://github.com/php-toolkit/cli-utils
  * @author   https://github.com/inhere
  * @license  MIT
  */
@@ -100,7 +100,7 @@ class App
      * Class constructor.
      *
      * @param array $config
-     * @param array $argv
+     * @param array|null $argv
      */
     public function __construct(array $config = [], array $argv = null)
     {
@@ -148,7 +148,6 @@ class App
         }
 
         $newArgs = [];
-
         foreach ($this->args as $key => $value) {
             if ($key === 0) {
                 $this->command = trim($value);
@@ -169,19 +168,31 @@ class App
      */
     public function dispatch(bool $exit = true): void
     {
+        $status = $this->doHandle();
+
+        if ($exit) {
+            $this->stop($status);
+        }
+    }
+
+    /**
+     * @return int
+     */
+    protected function doHandle(): int
+    {
         if (!$command = $this->command) {
             $this->displayHelp();
-            return;
+            return 0;
         }
 
         if (!isset($this->commands[$command])) {
             $this->displayHelp("The command '{$command}' is not exists!");
-            return;
+            return 0;
         }
 
         if (isset($this->opts['h']) || isset($this->opts['help'])) {
             $this->displayCommandHelp($command);
-            return;
+            return 0;
         }
 
         try {
@@ -190,9 +201,7 @@ class App
             $status = $this->handleException($e);
         }
 
-        if ($exit) {
-            $this->stop($status);
-        }
+        return $status;
     }
 
     /**
@@ -360,7 +369,7 @@ class App
     public function displayHelp(string $err = ''): void
     {
         if ($err) {
-            echo Color::render("<red>ERROR</red>: $err\n\n");
+            Color::println("<red>ERROR</red>: $err\n");
         }
 
         // help
@@ -383,8 +392,7 @@ class App
 
         $help .= "\nFor command usage please run: <cyan>{$this->script} COMMAND -h</cyan>";
 
-        echo Color::render($help) . PHP_EOL;
-        exit(0);
+        Color::println($help);
     }
 
     /**
@@ -427,7 +435,7 @@ class App
             ]);
         }
 
-        echo Color::render($help);
+        Color::println($help);
     }
 
     /**

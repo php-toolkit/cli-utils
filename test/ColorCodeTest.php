@@ -2,7 +2,7 @@
 /**
  * This file is part of toolkit/cli-utils.
  *
- * @link     https://github.com/inhere
+ * @link     https://github.com/php-toolkit/cli-utils
  * @author   https://github.com/inhere
  * @license  MIT
  */

@@ -1,9 +1,10 @@
 <?php declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: Inhere
- * Date: 15-4-1
- * Time: 上午10:08
+ * This file is part of toolkit/cli-utils.
+ *
+ * @link     https://github.com/php-toolkit/cli-utils
+ * @author   https://github.com/inhere
+ * @license  MIT
  */
 
 namespace Toolkit\Cli;
@@ -73,13 +74,6 @@ class Style
      * @var self
      */
     private static $instance;
-
-    /**
-     * Flag to remove color codes from the output
-     *
-     * @var bool
-     */
-    protected static $noColor = false;
 
     /**
      * Array of Color objects
@@ -221,7 +215,7 @@ class Style
                 $text = ColorTag::replaceColor($text, $key, $matches[2][$i], (string)$this->styles[$key]);
             } elseif (isset(Color::STYLES[$key])) {
                 $text = ColorTag::replaceColor($text, $key, $matches[2][$i], Color::STYLES[$key]);
-                /** Custom style format @see ColorCode::fromString() */
+            /** Custom style format @see ColorCode::fromString() */
             } elseif (strpos($key, '=')) {
                 $text = ColorTag::replaceColor($text, $key, $matches[2][$i], (string)ColorCode::fromString($key));
             }
@@ -337,11 +331,7 @@ class Style
      */
     public function getStyle($name): ?ColorCode
     {
-        if (!isset($this->styles[$name])) {
-            return null;
-        }
-
-        return $this->styles[$name];
+        return $this->styles[$name] ?? null;
     }
 
     /**
