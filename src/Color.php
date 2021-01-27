@@ -293,14 +293,14 @@ class Color
     /**
      * Print colored message to STDOUT
      *
-     * @param string|array $messages
-     * @param string       $style
+     * @param string|array      $messages
+     * @param string|array|null $style
      */
-    public static function println($messages, string $style = 'info'): void
+    public static function println($messages, $style = 'info'): void
     {
-        $string = is_array($messages) ? implode("\n", $messages) : (string)$messages;
+        $str = is_array($messages) ? implode("\n", $messages) : (string)$messages;
 
-        echo self::render($string, $style) . PHP_EOL;
+        echo self::render($str, $style) . PHP_EOL;
     }
 
     /**
@@ -321,8 +321,8 @@ class Color
     /**
      * Render text, apply color code
      *
-     * @param string       $text
-     * @param string|array $style
+     * @param string            $text
+     * @param string|array|null $style
      * - string: 'green', 'blue'
      * - array: [Color::FG_GREEN, Color::BG_WHITE, Color::UNDERSCORE]
      *
@@ -345,11 +345,11 @@ class Color
         if (is_string($style)) {
             $color = self::STYLES[$style] ?? '';
 
-        // custom style: [self::FG_GREEN, self::BG_WHITE, self::UNDERSCORE]
+            // custom style: [self::FG_GREEN, self::BG_WHITE, self::UNDERSCORE]
         } elseif (is_array($style)) {
             $color = implode(';', $style);
 
-        // user color tag: <info>message</info>
+            // user color tag: <info>message</info>
         } elseif (strpos($text, '</') > 0) {
             return self::parseTag($text);
         }
