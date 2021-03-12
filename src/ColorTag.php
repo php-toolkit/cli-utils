@@ -23,10 +23,10 @@ use function strpos;
 class ColorTag
 {
     // regex used for removing color tags
-    public const STRIP_TAG = '/<[\/]?[a-zA-Z=;]+>/';
+    public const STRIP_TAG = '/<[\/]?[a-zA-Z0-9=;]+>/';
 
     // Regex to match tags/
-    public const MATCH_TAG = '/<([a-zA-Z=;_]+)>(.*?)<\/\\1>/s';
+    public const MATCH_TAG = '/<([a-zA-Z0-9=;_]+)>(.*?)<\/\\1>/s';
 
     // color
     public const BLACK   = 'black';

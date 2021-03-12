@@ -299,6 +299,8 @@ class Flags
     }
 
     /**
+     * check next is option value
+     *
      * @param mixed $val
      *
      * @return bool
@@ -315,8 +317,22 @@ class Flags
             return true;
         }
 
-        // it isn't option or named argument
-        return $val[0] !== '-' && false === strpos($val, '=');
+        // is not option name.
+        if ($val[0] !== '-') {
+            // ensure is option value.
+            if (false === strpos($val, '=')) {
+                return true;
+            }
+
+            // is string value, but contains '='
+            [$name,] = explode('=', $val, 2);
+
+            // named argument OR invlaid: 'some = string'
+            return false === self::isValidArgName($name);
+        }
+
+        // is option name.
+        return false;
     }
 
     /**

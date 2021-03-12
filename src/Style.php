@@ -67,8 +67,9 @@ class Style
      * Regex to match tags
      *
      * @var string
+     * @deprecated please use ColorTag::MATCH_TAG
      */
-    public const COLOR_TAG = '/<([a-zA-Z=;]+)>(.*?)<\/\\1>/s';
+    public const COLOR_TAG = '/<([a-zA-Z0-9=;]+)>(.*?)<\/\\1>/s';
 
     /**
      * @var self
