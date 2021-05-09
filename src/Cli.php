@@ -129,19 +129,38 @@ class Cli
      */
     public static function isSupportColor(): bool
     {
-        if (DIRECTORY_SEPARATOR === '\\') {
-            return '10.0.10586' === PHP_WINDOWS_VERSION_MAJOR . '.' . PHP_WINDOWS_VERSION_MINOR . '.' . PHP_WINDOWS_VERSION_BUILD ||
-                false !== getenv('ANSICON') ||
-                'ON' === getenv('ConEmuANSI') ||
-                'xterm' === getenv('TERM')// || 'cygwin' === getenv('TERM')
-                ;
-        }
-
-        if (!defined('STDOUT')) {
+        // Follow https://no-color.org/
+        if (isset($_SERVER['NO_COLOR']) || false !== getenv('NO_COLOR')) {
             return false;
         }
 
-        return self::isInteractive(STDOUT);
+        // COLORTERM=truecolor
+        $colorTerm = getenv('COLORTERM');
+        if ('truecolor' === $colorTerm) {
+            return true;
+        }
+
+        // speical terminal
+        $termProgram = getenv('TERM_PROGRAM');
+        if ('Hyper' === $termProgram || 'Terminus' === $termProgram) {
+            return true;
+        }
+
+        $stream = STDOUT;
+        if (\DIRECTORY_SEPARATOR === '\\') {
+            return (\function_exists('sapi_windows_vt100_support')
+                && @sapi_windows_vt100_support($stream))
+                || false !== getenv('ANSICON')
+                || 'ON' === getenv('ConEmuANSI')
+                || 'xterm' === getenv('TERM');
+        }
+
+        // PHP 7 >= 7.2.0
+        if (function_exists('stream_isatty')) {
+            return \stream_isatty($stream);
+        }
+
+        return self::isInteractive($stream);
     }
 
     /**
