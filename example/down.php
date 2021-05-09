@@ -10,7 +10,7 @@
 use Toolkit\Cli\App;
 use Toolkit\Cli\Download;
 
-require dirname(__DIR__) . '/test/boot.php';
+require dirname(__DIR__) . '/test/bootstrap.php';
 
 $app  = new App();
 $url  = 'http://no2.php.net/distributions/php-7.2.5.tar.bz2';

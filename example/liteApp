@@ -5,7 +5,7 @@ use Toolkit\Cli\App;
 
 define('BASE_PATH', dirname(__DIR__));
 
-require dirname(__DIR__) . '/test/boot.php';
+require dirname(__DIR__) . '/test/bootstrap.php';
 
 // create app instance
 $app = new App([

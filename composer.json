@@ -1,10 +1,12 @@
 {
   "name": "toolkit/cli-utils",
   "type": "library",
-  "description": "some cli tool library of the php",
+  "description": "useful cli tool library of the php",
   "keywords": [
     "library",
+    "cli",
     "tool",
+    "command-line",
     "php"
   ],
   "homepage": "https://github.com/php-toolkit/cli-utils",

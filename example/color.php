@@ -9,7 +9,7 @@
 
 use Toolkit\Cli\Color;
 
-require dirname(__DIR__) . '/test/boot.php';
+require dirname(__DIR__) . '/test/bootstrap.php';
 
 foreach (Color::getStyles() as $style) {
     printf("    %s: %s\n", $style, Color::apply($style, 'This is a message'));

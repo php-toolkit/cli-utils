@@ -10,7 +10,7 @@
 use Toolkit\Cli\Cli;
 use Toolkit\Cli\Util\Highlighter;
 
-require dirname(__DIR__) . '/test/boot.php';
+require dirname(__DIR__) . '/test/bootstrap.php';
 
 echo "Highlight current file content:\n";
 
