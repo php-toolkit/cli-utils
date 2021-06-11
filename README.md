@@ -5,13 +5,13 @@
 [![Latest Stable Version](http://img.shields.io/packagist/v/toolkit/cli-utils.svg)](https://packagist.org/packages/toolkit/cli-utils)
 [![Github Actions Status](https://github.com/php-toolkit/cli-utils/workflows/Unit-tests/badge.svg)](https://github.com/php-toolkit/cli-utils/actions)
 
-Provide some useful utils for the php CLI. 
+Provide some useful utils for the php CLI application. 
 
 - Parse CLI arguments and options
 - Console color render
 - CLI code highlighter
 - Build simple CLI application
-- CLI env information helper
+- CLI ENV information helper
 
 ## Install
 

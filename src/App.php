@@ -207,7 +207,7 @@ class App
     /**
      * @param int $code
      */
-    public function stop($code = 0): void
+    public function stop(int $code = 0): void
     {
         exit((int)$code);
     }

@@ -102,7 +102,7 @@ class Style
      * @param string $bg      背景色
      * @param array  $options 其它选项
      */
-    public function __construct($fg = '', $bg = '', array $options = [])
+    public function __construct(string $fg = '', string $bg = '', array $options = [])
     {
         if ($fg || $bg || $options) {
             $this->add('base', $fg, $bg, $options);
@@ -118,7 +118,7 @@ class Style
      * @return mixed|string
      * @throws InvalidArgumentException
      */
-    public function __call($method, array $args)
+    public function __call(string $method, array $args)
     {
         if (isset($args[0]) && $this->hasStyle($method)) {
             return $this->format(sprintf('<%s>%s</%s>', $method, $args[0], $method));
@@ -253,7 +253,7 @@ class Style
      *
      * @return $this
      */
-    public function add(string $name, $fg = '', $bg = '', array $options = [], bool $extra = false): self
+    public function add(string $name, $fg = '', string $bg = '', array $options = [], bool $extra = false): self
     {
         if (is_array($fg)) {
             return $this->addByArray($name, $fg);
@@ -373,9 +373,9 @@ class Style
     /**
      * Method to set property noColor
      *
-     * @param $noColor
+     * @param bool $noColor
      */
-    public static function setNoColor($noColor = true): void
+    public static function setNoColor(bool $noColor = true): void
     {
         Color::setNoColor($noColor);
     }

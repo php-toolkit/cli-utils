@@ -26,9 +26,6 @@ use const DIRECTORY_SEPARATOR;
 use const JSON_PRETTY_PRINT;
 use const JSON_UNESCAPED_SLASHES;
 use const PHP_EOL;
-use const PHP_WINDOWS_VERSION_BUILD;
-use const PHP_WINDOWS_VERSION_MAJOR;
-use const PHP_WINDOWS_VERSION_MINOR;
 use const STDOUT;
 
 /**
@@ -62,7 +59,7 @@ class Cli
     }
 
     /**
-     * @param string           $text
+     * @param string                $text
      * @param string|int|array|null $style
      *
      * @return string
@@ -102,7 +99,7 @@ class Cli
             }
         }
 
-        $optString = $userOpts ? ' ' . implode(' ', $userOpts) : '';
+        $optString  = $userOpts ? ' ' . implode(' ', $userOpts) : '';
         $dataString = $data ? PHP_EOL . json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) : '';
 
         self::writef('%s [%s]%s %s %s', date('Y/m/d H:i:s'), $type, $optString, trim($msg), $dataString);
@@ -147,14 +144,14 @@ class Cli
         }
 
         // fix for "Undefined constant STDOUT" error
-        if (!\defined('STDOUT')) {
+        if (!defined('STDOUT')) {
             return false;
         }
-        
+
         $stream = STDOUT;
         if (\DIRECTORY_SEPARATOR === '\\') {
             return (\function_exists('sapi_windows_vt100_support')
-                && @sapi_windows_vt100_support($stream))
+                    && @sapi_windows_vt100_support($stream))
                 || false !== getenv('ANSICON')
                 || 'ON' === getenv('ConEmuANSI')
                 || 'xterm' === getenv('TERM');
@@ -191,7 +188,7 @@ class Cli
     /**
      * Returns if the file descriptor is an interactive terminal or not.
      *
-     * @param int|resource $fileDescriptor
+     * @param int|resource|mixed $fileDescriptor
      *
      * @return boolean
      */

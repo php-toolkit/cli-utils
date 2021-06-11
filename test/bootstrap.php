@@ -11,7 +11,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 'On');
 date_default_timezone_set('Asia/Shanghai');
 
-spl_autoload_register(function ($class) {
+spl_autoload_register(static function ($class) {
     $file = null;
 
     if (0 === strpos($class, 'Toolkit\Cli\Example\\')) {

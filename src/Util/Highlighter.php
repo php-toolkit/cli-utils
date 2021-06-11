@@ -173,7 +173,7 @@ class Highlighter
      *
      * @return string
      */
-    public function highlightSnippet(string $source, int $lineNumber, $linesBefore = 2, $linesAfter = 2): string
+    public function highlightSnippet(string $source, int $lineNumber, int $linesBefore = 2, int $linesAfter = 2): string
     {
         $tokenLines = $this->getHighlightedLines($source);
 
@@ -181,7 +181,7 @@ class Highlighter
         $offset = max($offset, 0);
         $length = $linesAfter + $linesBefore + 1;
 
-        $tokenLines = array_slice($tokenLines, $offset, $length, $preserveKeys = true);
+        $tokenLines = array_slice($tokenLines, $offset, $length, true);
 
         $lines = $this->colorLines($tokenLines);
 

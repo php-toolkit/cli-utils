@@ -10,6 +10,7 @@
 namespace Toolkit\Cli\Util;
 
 use RuntimeException;
+use Toolkit\Cli\Cli;
 use function basename;
 use function error_get_last;
 use function fclose;
@@ -90,7 +91,7 @@ final class Download
      * @param string $saveAs
      * @param string $type
      */
-    public function __construct(string $url, string $saveAs = '', $type = self::PROGRESS_TEXT)
+    public function __construct(string $url, string $saveAs = '', string $type = self::PROGRESS_TEXT)
     {
         $this->setUrl($url);
         $this->setSaveAs($saveAs);
@@ -152,7 +153,7 @@ final class Download
      * @param int    $transferredBytes Have been transferred bytes
      * @param int    $maxBytes         Target max length bytes
      */
-    public function progressShow($notifyCode, $severity, $message, $messageCode, $transferredBytes, $maxBytes): void
+    public function progressShow(int $notifyCode, $severity, string $message, $messageCode, int $transferredBytes, int $maxBytes): void
     {
         $msg = '';
 
@@ -214,7 +215,7 @@ final class Download
             if ($size === null) {
                 printf("\rUnknown file size... %2d kb done..", $tfKb);
             } else {
-                $length = ceil(($transferredBytes / $size) * 100); // ■ =
+                $length = (int)ceil(($transferredBytes / $size) * 100); // ■ =
                 printf("\r[%-100s] %d%% (%2d/%2d kb)", str_repeat('=', $length) . '>', $length, $tfKb, $size / 1024);
             }
         } else {

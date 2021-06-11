@@ -45,7 +45,7 @@ class Flags
     public static function simpleParseArgv(array $argv): array
     {
         $args = $opts = [];
-        foreach ($argv as $key => $value) {
+        foreach ($argv as $value) {
             // opts
             if (strpos($value, '-') === 0) {
                 $value = trim($value, '-');
@@ -278,7 +278,7 @@ class Flags
      *
      * @return bool|mixed
      */
-    public static function filterBool($val, $enable = true)
+    public static function filterBool($val, bool $enable = true)
     {
         if ($enable) {
             if (is_bool($val) || is_numeric($val)) {
