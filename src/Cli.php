@@ -149,8 +149,8 @@ class Cli
         }
 
         $stream = STDOUT;
-        if (\DIRECTORY_SEPARATOR === '\\') {
-            return (\function_exists('sapi_windows_vt100_support')
+        if (DIRECTORY_SEPARATOR === '\\') {
+            return (function_exists('sapi_windows_vt100_support')
                     && @sapi_windows_vt100_support($stream))
                 || false !== getenv('ANSICON')
                 || 'ON' === getenv('ConEmuANSI')

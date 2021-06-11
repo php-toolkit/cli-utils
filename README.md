@@ -157,32 +157,17 @@ $url  = 'http://no2.php.net/distributions/php-7.2.5.tar.bz2';
 $down = Download::file($url, '');
 
 // $down->setShowType('bar');
+// $down->setDebug(true);
 $down->start();
 ```
 
-**Progress bar output:**
+**Progress bar**
 
-```text
-Connected...
-Mime-type: text/html; charset=utf-8
-Being redirected to: http://no2.php.net/distributions/php-7.2.5.tar.bz2
-Connected...
-FileSize: 14280 kb
-Mime-type: application/octet-stream
-[========================================>                                                           ] 40% (3076/7590 kb)
-```
+![down-file-bar](./example/down-file-bar.jpg)
 
-**Progress text output:**
+**Progress text**
 
-```text
-Download: http://no2.php.net/distributions/php-7.2.5.tar.bz2
-Save As: /path/to/php-7.2.5.tar.bz2
-
-Connected ...
-Got the file size: 14280 kb
-Found the mime-type: application/octet-stream
-Made some progress, downloaded 641 kb so far
-```
+![down-file-txt-bar](./example/down-file-txt-bar.jpg)
 
 ## Projects 
 
