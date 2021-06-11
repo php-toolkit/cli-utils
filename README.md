@@ -35,7 +35,7 @@ echo Color::render('hello world', 'success');
 
 ## PHP file highlight
 
-> This is inspire jakub-onderka/php-console-highlighter
+> This is inspire `jakub-onderka/php-console-highlighter`
 
 ```php
 use Toolkit\Cli\Highlighter;
@@ -183,6 +183,10 @@ Got the file size: 14280 kb
 Found the mime-type: application/octet-stream
 Made some progress, downloaded 641 kb so far
 ```
+
+## Projects 
+
+- https://github.com/inhere/php-console Build rich console application
 
 ## License
 
