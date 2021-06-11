@@ -146,6 +146,11 @@ class Cli
             return true;
         }
 
+        // fix for "Undefined constant STDOUT" error
+        if (!\defined('STDOUT')) {
+            return false;
+        }
+        
         $stream = STDOUT;
         if (\DIRECTORY_SEPARATOR === '\\') {
             return (\function_exists('sapi_windows_vt100_support')
