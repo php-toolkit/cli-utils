@@ -21,6 +21,9 @@ use function getcwd;
 use function getenv;
 use function is_resource;
 use function preg_replace;
+use function printf;
+use function round;
+use function str_repeat;
 use function stream_context_create;
 use function stream_context_set_params;
 use function strpos;
@@ -112,8 +115,7 @@ final class Download
     {
         $this->setUrl($url);
         $this->setSaveAs($saveAs);
-
-        $this->showType = $type === self::PROGRESS_BAR ? self::PROGRESS_BAR : self::PROGRESS_TEXT;
+        $this->setShowType($type);
     }
 
     /**
@@ -271,32 +273,42 @@ final class Download
 
     /**
      * @param $transferredBytes
-     *
-     * @return string
      */
-    public function showProgressByType($transferredBytes): string
+    public function showProgressByType($transferredBytes): void
     {
         if ($transferredBytes <= 0) {
-            return '';
+            return;
         }
 
-        $tfKb = $transferredBytes / 1024;
+        $tfKbSize = $transferredBytes / 1024;
+        if ($this->fileSize === null) {
+            printf("\r\rUnknown file size... %2d kb done..", $tfKbSize);
+            return;
+        }
 
+        $totalSize = $this->fileSize / 1024;
+
+        $percent = $transferredBytes / $this->fileSize;
         if ($this->showType === self::PROGRESS_BAR) {
-            $size = $this->fileSize;
-
-            if ($size === null) {
-                printf("\rUnknown file size... %2d kb done..", $tfKb);
+            $barWidth  = 60;
+            $boxNumber = (int)round($percent * $barWidth); // ■ =
+            if ($barWidth === $boxNumber) {
+                $completed = 100;
+                $tfKbSize  = $totalSize;
             } else {
-                $length = (int)ceil(($transferredBytes / $size) * 100); // ■ =
-                printf("\r[%-100s] %d%% (%2d/%2d kb)", str_repeat('=', $length) . '>', $length, $tfKb, $size / 1024);
+                $completed = (int)round($percent * 100);
             }
-        } else {
-            printf("\r\rMade some progress, downloaded %2d kb so far", $tfKb);
-            //$msg = "Made some progress, downloaded <info>$transferredBytes</info> so far";
-        }
 
-        return '';
+            $paddingBar = str_repeat('=', $boxNumber) . '>';
+            printf("\r\r[%-60s] %d%% (%2d/%2d kb)", $paddingBar, $completed, $tfKbSize, $totalSize);
+        } else {
+            if ((int)round($percent * 100) === 100) {
+                $tfKbSize = $totalSize;
+            }
+
+            //$msg = "Made some progress, downloaded <info>$transferredBytes</info> so far";
+            printf("\r\rMade some progress, downloaded %2d kb so far", $tfKbSize);
+        }
     }
 
     /**
@@ -323,7 +335,7 @@ final class Download
      */
     public function setShowType(string $showType): void
     {
-        $this->showType = $showType;
+        $this->showType = $showType === self::PROGRESS_BAR ? self::PROGRESS_BAR : self::PROGRESS_TEXT;
     }
 
     /**
@@ -355,7 +367,9 @@ final class Download
      */
     public function setSaveAs(string $saveAs): void
     {
-        $this->saveAs = trim($saveAs);
+        if ($saveAs) {
+            $this->saveAs = trim($saveAs);
+        }
     }
 
     /**

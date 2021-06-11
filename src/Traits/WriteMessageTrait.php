@@ -125,7 +125,7 @@ trait WriteMessageTrait
      * Write a message to standard output stream.
      *
      * @param string|array $messages Output message
-     * @param boolean      $nl       True Will add line breaks, False Raw output.
+     * @param bool|mixed   $nl       True Will add line breaks, False Raw output.
      * @param int|boolean  $quit     If is Int, setting it is exit code.
      *                               'True' translate as code 0 and exit
      *                               'False' will not exit.
@@ -138,7 +138,7 @@ trait WriteMessageTrait
      *
      * @return int
      */
-    public static function write($messages, bool $nl = true, $quit = false, array $opts = []): int
+    public static function write($messages, $nl = true, $quit = false, array $opts = []): int
     {
         if (is_array($messages)) {
             $messages = implode($nl ? PHP_EOL : '', $messages);
