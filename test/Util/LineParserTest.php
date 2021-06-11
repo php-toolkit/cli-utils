@@ -13,6 +13,10 @@ use Toolkit\Cli\Util\LineParser;
 use PHPUnit\Framework\TestCase;
 use function count;
 
+/**
+ * Class LineParserTest
+ * @package Toolkit\CliTest\Util
+ */
 class LineParserTest extends TestCase
 {
     public function testParse(): void
