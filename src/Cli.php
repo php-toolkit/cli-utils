@@ -102,7 +102,7 @@ class Cli
         $optString  = $userOpts ? ' ' . implode(' ', $userOpts) : '';
         $dataString = $data ? PHP_EOL . json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) : '';
 
-        self::writef('%s [%s]%s %s %s', date('Y/m/d H:i:s'), $type, $optString, trim($msg), $dataString);
+        self::writef("%s [%s]%s %s %s\n", date('Y/m/d H:i:s'), $type, $optString, trim($msg), $dataString);
     }
 
     /*******************************************************************************

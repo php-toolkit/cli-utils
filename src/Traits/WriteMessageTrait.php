@@ -47,7 +47,7 @@ trait WriteMessageTrait
      */
     public static function writef(string $format, ...$args): int
     {
-        return self::write(sprintf($format, ...$args));
+        return self::write(sprintf($format, ...$args), false);
     }
 
     /**
@@ -60,7 +60,7 @@ trait WriteMessageTrait
      */
     public static function printf(string $format, ...$args): int
     {
-        return self::write(sprintf($format, ...$args));
+        return self::write(sprintf($format, ...$args), false);
     }
 
     /**

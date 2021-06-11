@@ -11,15 +11,19 @@ namespace Toolkit\Cli\Util;
 
 use RuntimeException;
 use Toolkit\Cli\Cli;
+use function array_merge;
 use function basename;
 use function error_get_last;
 use function fclose;
 use function file_put_contents;
 use function fopen;
 use function getcwd;
+use function getenv;
 use function is_resource;
+use function preg_replace;
 use function stream_context_create;
 use function stream_context_set_params;
+use function strpos;
 use function trim;
 use const STREAM_NOTIFY_AUTH_REQUIRED;
 use const STREAM_NOTIFY_AUTH_RESULT;
@@ -41,7 +45,7 @@ final class Download
 {
     public const PROGRESS_TEXT = 'text';
 
-    public const PROGRESS_BAR  = 'bar';
+    public const PROGRESS_BAR = 'bar';
 
     /** @var string */
     private $url;
@@ -54,6 +58,19 @@ final class Download
 
     /** @var string */
     private $showType;
+
+    /**
+     * @var bool
+     */
+    private $debug = false;
+
+    /**
+     * http context options
+     *
+     * @var array
+     * @link https://www.php.net/manual/en/context.http.php
+     */
+    private $httpCtxOptions = [];
 
     /**
      * @param string $url
@@ -118,14 +135,15 @@ final class Download
             $this->saveAs = $save;
         }
 
-        $ctx = stream_context_create();
+        $ctx = $this->createStreamContext();
 
         // register stream notification callback
+        // https://www.php.net/manual/en/function.stream-notification-callback.php
         stream_context_set_params($ctx, [
             'notification' => [$this, 'progressShow']
         ]);
 
-        Cli::write("Download: {$this->url}\nSave As: {$save}\n");
+        Cli::write("Download: {$this->url}\n Save As: {$save}\n");
 
         $fp = fopen($this->url, 'rb', false, $ctx);
 
@@ -145,16 +163,71 @@ final class Download
         return $this;
     }
 
-    /**
-     * @param int    $notifyCode       stream notify code
-     * @param int    $severity         severity code
-     * @param string $message          Message text
-     * @param int    $messageCode      Message code
-     * @param int    $transferredBytes Have been transferred bytes
-     * @param int    $maxBytes         Target max length bytes
-     */
-    public function progressShow(int $notifyCode, $severity, string $message, $messageCode, int $transferredBytes, int $maxBytes): void
+    protected function createStreamContext()
     {
+        // https://www.php.net/manual/en/context.http.php
+        $httpOpts = [
+            'max_redirects'    => '15',
+            'protocol_version' => '1.1',
+            'header'           => [
+                'Connection: close', // on 'protocol_version' => '1.1'
+            ],
+            // 'follow_location' => '1',
+            // 'timeout'         => 0,
+            // 'proxy'           => 'tcp://my-proxy.localhost:3128',
+        ];
+
+        if ($this->httpCtxOptions) {
+            $httpOpts = array_merge($httpOpts, $this->httpCtxOptions);
+        }
+
+        $isHttps = strpos($this->url, 'https') === 0;
+
+        if (!isset($httpOpts['proxy'])) {
+            if ($isHttps) {
+                $proxyUrl = (string)getenv('https_proxy');
+            } else {
+                $proxyUrl = (string)getenv('http_proxy');
+            }
+
+            if ($proxyUrl) {
+                $this->debugf('Uses proxy ENV variable: http%s_proxy=%s', $isHttps ? 's' : '', $proxyUrl);
+
+                // convert 'http://127.0.0.1:10801' to 'tcp://127.0.0.1:10801'
+                // see https://github.com/guzzle/guzzle/issues/1555#issuecomment-239450114
+                if (strpos($proxyUrl, 'http') === 0) {
+                    $proxyUrl = preg_replace('/^http[s]?/', 'tcp', $proxyUrl);
+                }
+
+                $httpOpts['proxy'] = $proxyUrl;
+                // see https://www.php.net/manual/en/context.http.php#110449
+                $httpOpts['request_fulluri'] = true;
+            }
+        }
+
+        return stream_context_create([
+            'http' => $httpOpts,
+        ]);
+    }
+
+    /**
+     * @link https://www.php.net/manual/en/function.stream-notification-callback.php
+     *
+     * @param int         $notifyCode       stream notify code
+     * @param int         $severity         severity code
+     * @param string|null $message          Message text
+     * @param int         $messageCode      Message code
+     * @param int         $transferredBytes Have been transferred bytes
+     * @param int         $maxBytes         Target max length bytes
+     */
+    public function progressShow(
+        int $notifyCode,
+        int $severity,
+        ?string $message,
+        $messageCode,
+        int $transferredBytes,
+        int $maxBytes
+    ): void {
         $msg = '';
 
         switch ($notifyCode) {
@@ -172,7 +245,7 @@ final class Download
                 break;
 
             case STREAM_NOTIFY_CONNECT:
-                $msg = 'Connected ...';
+                $msg = '> Connected ...';
                 break;
 
             case STREAM_NOTIFY_FILE_SIZE_IS:
@@ -227,6 +300,17 @@ final class Download
     }
 
     /**
+     * @param string $format
+     * @param mixed  ...$args
+     */
+    public function debugf(string $format, ...$args): void
+    {
+        if ($this->debug) {
+            Cli::printf("[DEBUG] $format\n", ...$args);
+        }
+    }
+
+    /**
      * @return string
      */
     public function getShowType(): string
@@ -272,5 +356,21 @@ final class Download
     public function setSaveAs(string $saveAs): void
     {
         $this->saveAs = trim($saveAs);
+    }
+
+    /**
+     * @param bool $debug
+     */
+    public function setDebug(bool $debug): void
+    {
+        $this->debug = $debug;
+    }
+
+    /**
+     * @param array $httpCtxOptions
+     */
+    public function setHttpCtxOptions(array $httpCtxOptions): void
+    {
+        $this->httpCtxOptions = $httpCtxOptions;
     }
 }
