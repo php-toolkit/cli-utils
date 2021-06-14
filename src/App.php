@@ -41,7 +41,7 @@ use function ucfirst;
 class App
 {
     /** @var self */
-    public static $i;
+    public static $global;
 
     private const COMMAND_CONFIG = [
         'desc'  => '',
@@ -55,7 +55,7 @@ class App
     /**
      * @var array
      */
-    private $metas = [
+    protected $params = [
         'name'    => 'My application',
         'desc'    => 'My command line application',
         'version' => '0.2.1'
@@ -97,6 +97,18 @@ class App
     private $keyWidth = 12;
 
     /**
+     * @return static
+     */
+    public static function global(): self
+    {
+        if (!self::$global) {
+            throw new RuntimeException('please create global app by new App()');
+        }
+
+        return self::$global;
+    }
+
+    /**
      * Class constructor.
      *
      * @param array      $config
@@ -105,7 +117,9 @@ class App
     public function __construct(array $config = [], array $argv = null)
     {
         // save self
-        self::$i = $this;
+        if (!self::$global) {
+            self::$global = $this;
+        }
 
         // get current dir
         $this->pwd = (string)getcwd();
@@ -113,7 +127,7 @@ class App
         // parse cli argv
         $argv = $argv ?? $_SERVER['argv'];
         if ($config) {
-            $this->setMetas($config);
+            $this->setParams($config);
         }
 
         // get script file
@@ -325,6 +339,11 @@ class App
 
         $this->commands[$command] = $handler;
 
+        // no config
+        if (!$config) {
+            return;
+        }
+
         if (is_string($config)) {
             $desc   = trim($config);
             $config = self::COMMAND_CONFIG;
@@ -344,18 +363,21 @@ class App
      *
      * @throws InvalidArgumentException
      */
-    public function commands(array $commands): void
+    public function addCommands(array $commands): void
     {
         foreach ($commands as $command => $handler) {
-            $desc = '';
+            $conf = [];
+            $name = is_string($command) ? $command : '';
 
-            if (is_array($handler)) {
-                $conf    = array_values($handler);
-                $handler = $conf[0];
-                $desc    = $conf[1] ?? '';
+            if (is_array($handler) && isset($handler['handler'])) {
+                $conf = $handler;
+                $name = $conf['name'] ?? $name;
+
+                $handler = $conf['handler'];
+                unset($conf['name'], $conf['handler']);
             }
 
-            $this->addCommand($command, $handler, $desc);
+            $this->addCommand($name, $handler, $conf);
         }
     }
 
@@ -373,8 +395,8 @@ class App
         }
 
         // help
-        $desc = ucfirst($this->metas['desc']);
-        if ($ver = $this->metas['version']) {
+        $desc = ucfirst($this->params['desc']);
+        if ($ver = $this->params['version']) {
             $desc .= "(<red>v$ver</red>)";
         }
 
@@ -386,9 +408,10 @@ class App
         ksort($data);
 
         foreach ($data as $command => $item) {
-            $command = str_pad($command, $this->keyWidth, ' ');
-            $desc    = $item['desc'] ? ucfirst($item['desc']) : 'No description for the command';
-            $help    .= "  <green>$command</green>   $desc\n";
+            $command = str_pad($command, $this->keyWidth);
+
+            $desc = $item['desc'] ? ucfirst($item['desc']) : 'No description for the command';
+            $help .= "  <green>$command</green>   $desc\n";
         }
 
         $help .= "\nFor command usage please run: <cyan>$script COMMAND -h</cyan>";
@@ -642,17 +665,56 @@ class App
 
     /**
      * @return array
+     * @deprecated please use getParams();
      */
     public function getMetas(): array
     {
-        return $this->metas;
+        return $this->getParams();
     }
 
     /**
-     * @param array $metas
+     * @param array $params
+     *
+     * @deprecated please use setParams()
      */
-    public function setMetas(array $metas): void
+    public function setMetas(array $params): void
     {
-        $this->metas = array_merge($this->metas, $metas);
+        $this->setParams($params);
+    }
+
+    /**
+     * @param string $key
+     * @param null   $default
+     *
+     * @return mixed|string|null
+     */
+    public function getParam(string $key, $default = null)
+    {
+        return $this->params[$key] ?? $default;
+    }
+
+    /**
+     * @param string $key
+     * @param mixed  $val
+     */
+    public function setParam(string $key, $val): void
+    {
+        $this->params[$key] = $val;
+    }
+
+    /**
+     * @return array
+     */
+    public function getParams(): array
+    {
+        return $this->params;
+    }
+
+    /**
+     * @param array $params
+     */
+    public function setParams(array $params): void
+    {
+        $this->params = array_merge($this->params, $params);
     }
 }

@@ -7,10 +7,10 @@
  * @license  MIT
  */
 
-namespace Toolkit\CliTest;
+namespace Toolkit\CliTest\Color;
 
 use PHPUnit\Framework\TestCase;
-use Toolkit\Cli\ColorCode;
+use Toolkit\Cli\Color\ColorCode;
 
 class ColorCodeTest extends TestCase
 {

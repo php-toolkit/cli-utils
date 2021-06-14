@@ -9,6 +9,7 @@
 
 namespace Toolkit\Cli;
 
+use Toolkit\Cli\Color\ANSICode;
 use function array_filter;
 use function array_keys;
 use function implode;
@@ -52,106 +53,13 @@ use const PHP_EOL;
  *
  * // more please @see Color::STYLES
  */
-class Color
+class Color extends ANSICode
 {
-    public const RESET = 0;
+    // Regex to match color tags
+    public const COLOR_TAG = '/<([a-z=;]+)>(.*?)<\/\\1>/s';
 
-    public const NORMAL = 0;
-
-    /** Foreground base value */
-    public const FG_BASE = 30;
-
-    /** Background base value */
-    public const BG_BASE = 40;
-
-    /** Extra Foreground base value */
-    public const FG_EXTRA = 90;
-
-    /** Extra Background base value */
-    public const BG_EXTRA = 100;
-
-    // Foreground color
-    public const FG_BLACK = 30;
-
-    public const FG_RED = 31;
-
-    public const FG_GREEN = 32;
-
-    public const FG_BROWN = 33; // like yellow
-
-    public const FG_BLUE = 34;
-
-    public const FG_CYAN = 36;
-
-    public const FG_WHITE = 37;
-
-    public const FG_DEFAULT = 39;
-
-    // extra Foreground color
-    public const FG_DARK_GRAY = 90;
-
-    public const FG_LIGHT_RED = 91;
-
-    public const FG_LIGHT_GREEN = 92;
-
-    public const FG_LIGHT_YELLOW = 93;
-
-    public const FG_LIGHT_BLUE = 94;
-
-    public const FG_LIGHT_MAGENTA = 95;
-
-    public const FG_LIGHT_CYAN = 96;
-
-    public const FG_LIGHT_WHITE = 97;
-
-    // Background color
-    public const BG_BLACK = 40;
-
-    public const BG_RED = 41;
-
-    public const BG_GREEN = 42;
-
-    public const BG_BROWN = 43; // like yellow
-
-    public const BG_BLUE = 44;
-
-    public const BG_CYAN = 46;
-
-    public const BG_WHITE = 47;
-
-    public const BG_DEFAULT = 49;
-
-    // extra Background color
-    public const BG_DARK_GRAY = 100;
-
-    public const BG_LIGHT_RED = 101;
-
-    public const BG_LIGHT_GREEN = 102;
-
-    public const BG_LIGHT_YELLOW = 103;
-
-    public const BG_LIGHT_BLUE = 104;
-
-    public const BG_LIGHT_MAGENTA = 105;
-
-    public const BG_LIGHT_CYAN = 106;
-
-    public const BG_WHITE_W = 107;
-
-    // color option
-    public const BOLD = 1;      // 加粗
-
-    public const FUZZY = 2;      // 模糊(不是所有的终端仿真器都支持)
-
-    public const ITALIC = 3;      // 斜体(不是所有的终端仿真器都支持)
-
-    public const UNDERSCORE = 4;      // 下划线
-
-    public const BLINK = 5;      // 闪烁
-
-    public const REVERSE = 7;      // 颠倒的 交换背景色与前景色
-
-    public const CONCEALED = 8;      // 隐匿的
+    // CLI color template
+    public const COLOR_TPL = "\033[%sm%s\033[0m";
 
     /**
      * There are some internal styles
@@ -161,66 +69,68 @@ class Color
      */
     public const STYLES = [
         // basic
-        'normal'      => '39',// no color
-        'red'         => '0;31',
-        'red1'        => '1;31',
-        'blue'        => '0;34',
-        'cyan'        => '0;36',
-        'cyan1'       => '1;36',
-        'black'       => '0;30',
-        'green'       => '0;32',
-        'green1'      => '1;32',
-        'brown'       => '0;33',
-        'brown1'      => '1;33',
-        'white'       => '1;37',
-        'ylw0'        => '0;33',
-        'ylw'         => '1;33',
-        'yellow0'     => '0;33',
-        'yellow'      => '1;33',
-        'mga0'        => '0;35',
-        'magenta0'    => '0;35',
-        'mga'         => '1;35',
-        'magenta'     => '1;35',
+        'normal'         => '39',// no color
+        'red'            => '0;31',
+        'red1'           => '1;31',
+        'blue'           => '0;34',
+        'cyan'           => '0;36',
+        'cyan1'          => '1;36',
+        'black'          => '0;30',
+        'green'          => '0;32',
+        'green1'         => '1;32',
+        'brown'          => '0;33',
+        'brown1'         => '1;33',
+        'white'          => '1;37',
+        'ylw0'           => '0;33',
+        'ylw'            => '1;33',
+        'yellow0'        => '0;33',
+        'yellow'         => '1;33',
+        'mga0'           => '0;35',
+        'magenta0'       => '0;35',
+        'mga'            => '1;35',
+        'mga1'           => '1;35',
+        'magenta'        => '1;35',
 
         // alert
-        'suc'         => '1;32',// same 'green' and 'bold'
-        'success'     => '1;32',
-        'info'        => '0;32',// same 'green'
-        'comment'     => '0;33',// same 'brown'
-        'note'        => '36;1',
-        'notice'      => '36;4',
-        'warn'        => '0;30;43',
-        'warning'     => '0;30;43',
-        'danger'      => '0;31',// same 'red'
-        'err'         => '97;41',
-        'error'       => '97;41',
+        'suc'            => '1;32',// same 'green' and 'bold'
+        'success'        => '1;32',
+        'info'           => '0;32',// same 'green'
+        'comment'        => '0;33',// same 'brown'
+        'note'           => '36;1',
+        'notice'         => '36;4',
+        'warn'           => '0;30;43',
+        'warning'        => '0;30;43',
+        'danger'         => '0;31',// same 'red'
+        'err'            => '97;41',
+        'error'          => '97;41',
 
-        // more
-        'lightRed'    => '1;31',
-        'light_red'   => '1;31',
-        'lightGreen'  => '1;32',
-        'light_green' => '1;32',
-        'lightBlue'   => '1;34',
-        'light_blue'  => '1;34',
-        'lightCyan'   => '1;36',
-        'light_cyan'  => '1;36',
-        'lightDray'   => '37',
-        'light_gray'  => '37',
-
+        // extra
         'darkDray'       => '90',
         'dark_gray'      => '90',
-        'lightYellow'    => '93',
-        'light_yellow'   => '93',
-        'lightMagenta'   => '95',
-        'light_magenta'  => '95',
+        'hiRed'          => '91',
+        'hiRed1'         => '1;91',
+        'hiGreen'        => '92',
+        'hiGreen1'       => '1;92',
+        'hiYellow'       => '93',
+        'hiYellow1'      => '1;93',
+        'hiBlue'         => '94',
+        'hiBlue1'        => '1;94',
+        'hiMagenta'      => '95',
+        'hiMagenta1'     => '1;95',
+        'hiCyan'         => '96',
+        'hiCyan1'        => '1;96',
 
         // extra
         'lightRedEx'     => '91',
         'light_red_ex'   => '91',
         'lightGreenEx'   => '92',
         'light_green_ex' => '92',
+        'lightYellow'    => '93',
+        'light_yellow'   => '93',
         'lightBlueEx'    => '94',
         'light_blue_ex'  => '94',
+        'lightMagenta'   => '95',
+        'light_magenta'  => '95',
         'lightCyanEx'    => '96',
         'light_cyan_ex'  => '96',
         'whiteEx'        => '97',
@@ -236,13 +146,20 @@ class Color
         'blink'          => '5',
         'reverse'        => '7',
         'concealed'      => '8',
+
+        // ---------- The following is deprecated ----------
+
+        'lightRed'    => '1;31',
+        'light_red'   => '1;31',
+        'lightGreen'  => '1;32',
+        'light_green' => '1;32',
+        'lightBlue'   => '1;34',
+        'light_blue'  => '1;34',
+        'lightCyan'   => '1;36',
+        'light_cyan'  => '1;36',
+        'lightDray'   => '37',
+        'light_gray'  => '37',
     ];
-
-    // Regex to match color tags
-    public const COLOR_TAG = '/<([a-z=;]+)>(.*?)<\/\\1>/s';
-
-    // CLI color template
-    public const COLOR_TPL = "\033[%sm%s\033[0m";
 
     /**
      * Flag to remove color codes from the output
@@ -409,7 +326,7 @@ class Color
      */
     public static function stringToCode(string $string): string
     {
-        return ColorCode::fromString($string)->toString();
+        return \Toolkit\Cli\Color\ColorCode::fromString($string)->toString();
     }
 
     /**

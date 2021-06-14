@@ -9,6 +9,9 @@
 
 namespace Toolkit\Cli;
 
+use RuntimeException;
+use Toolkit\Cli\Color\Alert;
+use Toolkit\Cli\Color\Prompt;
 use Toolkit\Cli\Traits\ReadMessageTrait;
 use Toolkit\Cli\Traits\WriteMessageTrait;
 use function date;
@@ -16,6 +19,7 @@ use function defined;
 use function function_exists;
 use function getenv;
 use function implode;
+use function is_array;
 use function is_numeric;
 use function json_encode;
 use function preg_replace;
@@ -32,19 +36,48 @@ use const STDOUT;
  * Class Cli
  *
  * @package Toolkit\Cli
+ *
+ * @method static alert(string|array|mixed $message, string $style = 'info')
+ * @method static prompt(string|array|mixed $message, string $style = 'info')
  */
 class Cli
 {
     use ReadMessageTrait, WriteMessageTrait;
 
-    public const LOG_LEVEL2TAG = [
-        'info'    => 'info',
-        'warn'    => 'warning',
-        'warning' => 'warning',
-        'debug'   => 'cyan',
-        'notice'  => 'notice',
-        'error'   => 'error',
-    ];
+    /**
+     * @param string $method {@see Color::STYLES}
+     * @param array  $args
+     */
+    public static function __callStatic(string $method, array $args)
+    {
+        if ($method === 'alert') {
+            Alert::global()->withStyle($args[1] ?? '')->println($args[0]);
+            return;
+        }
+        if ($method === 'prompt') {
+            Prompt::global()->withStyle($args[1] ?? '')->println($args[0]);
+            return;
+        }
+
+        if (isset(Color::STYLES[$method])) {
+            echo Color::render($args[0], $method), "\n";
+        }
+
+        throw new RuntimeException('call unknown method: ' . $method);
+    }
+
+    /**
+     * Print colored message to STDOUT
+     *
+     * @param string|array      $message
+     * @param string|array|null $style
+     */
+    public static function colored($message, $style = 'info'): void
+    {
+        $str = is_array($message) ? implode(' ', $message) : (string)$message;
+
+        echo Color::render($str, $style) . PHP_EOL;
+    }
 
     /*******************************************************************************
      * color render
@@ -68,6 +101,15 @@ class Cli
     {
         return Color::render($text, $style);
     }
+
+    public const LOG_LEVEL2TAG = [
+        'info'    => 'info',
+        'warn'    => 'warning',
+        'warning' => 'warning',
+        'debug'   => 'cyan',
+        'notice'  => 'notice',
+        'error'   => 'error',
+    ];
 
     /**
      * print log to console

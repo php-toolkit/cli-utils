@@ -263,8 +263,12 @@ trait WriteMessageTrait
      * @return string If flush = False, will return all buffer text.
      * @see write()
      */
-    public static function stopBuffer(bool $flush = true, bool $nl = false, bool $quit = false, array $opts = []): string
-    {
+    public static function stopBuffer(
+        bool $flush = true,
+        bool $nl = false,
+        bool $quit = false,
+        array $opts = []
+    ): string {
         self::$buffering = false;
 
         if ($flush && self::$buffer) {

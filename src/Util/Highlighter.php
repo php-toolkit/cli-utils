@@ -56,15 +56,15 @@ use const T_WHITESPACE;
  */
 class Highlighter
 {
-    public const TOKEN_DEFAULT  = 'token_default';
+    public const TOKEN_DEFAULT = 'token_default';
 
-    public const TOKEN_COMMENT  = 'token_comment';
+    public const TOKEN_COMMENT = 'token_comment';
 
-    public const TOKEN_STRING   = 'token_string';
+    public const TOKEN_STRING = 'token_string';
 
-    public const TOKEN_HTML     = 'token_html';
+    public const TOKEN_HTML = 'token_html';
 
-    public const TOKEN_KEYWORD  = 'token_keyword';
+    public const TOKEN_KEYWORD = 'token_keyword';
 
     public const TOKEN_CONSTANT = 'token_constant';
 
@@ -72,7 +72,7 @@ class Highlighter
 
     public const ACTUAL_LINE_MARK = 'actual_line_mark';
 
-    public const LINE_NUMBER      = 'line_number';
+    public const LINE_NUMBER = 'line_number';
 
     // @var Style
     //private $color;
@@ -239,8 +239,8 @@ class Highlighter
                     case T_CLOSE_TAG:
                     case T_STRING:
                         // Constants
-                    // case T_DIR:
-                    // case T_FILE:
+                        // case T_DIR:
+                        // case T_FILE:
                     case T_METHOD_C:
                     case T_DNUMBER:
                     case T_LNUMBER:

@@ -33,7 +33,7 @@ use function trim;
 class Flags
 {
     // These words will be as a Boolean value
-    private const TRUE_WORDS  = '|on|yes|true|';
+    private const TRUE_WORDS = '|on|yes|true|';
 
     private const FALSE_WORDS = '|off|no|false|';
 
@@ -163,7 +163,7 @@ class Flags
                     $value = $nxt;
                     next($params);
 
-                // short-opt: bool opts. like -e -abc
+                    // short-opt: bool opts. like -e -abc
                 } elseif (!$isLong && $value === true) {
                     foreach (str_split($option) as $char) {
                         $sOpts[$char] = true;
