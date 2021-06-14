@@ -99,7 +99,7 @@ class App
     /**
      * Class constructor.
      *
-     * @param array $config
+     * @param array      $config
      * @param array|null $argv
      */
     public function __construct(array $config = [], array $argv = null)
@@ -186,7 +186,7 @@ class App
         }
 
         if (!isset($this->commands[$command])) {
-            $this->displayHelp("The command '{$command}' is not exists!");
+            $this->displayHelp("The command '$command' is not exists!");
             return 0;
         }
 
@@ -201,7 +201,7 @@ class App
             $status = $this->handleException($e);
         }
 
-        return $status;
+        return (int)$status;
     }
 
     /**
@@ -209,7 +209,7 @@ class App
      */
     public function stop(int $code = 0): void
     {
-        exit((int)$code);
+        exit($code);
     }
 
     /**
@@ -369,16 +369,17 @@ class App
     public function displayHelp(string $err = ''): void
     {
         if ($err) {
-            Color::println("<red>ERROR</red>: $err\n");
+            Cli::println("<red>ERROR</red>: $err\n");
         }
 
         // help
-        $desc  = ucfirst($this->metas['desc']);
+        $desc = ucfirst($this->metas['desc']);
         if ($ver = $this->metas['version']) {
             $desc .= "(<red>v$ver</red>)";
         }
 
-        $usage = "<cyan>{$this->script} COMMAND -h</cyan>";
+        $script = $this->script;
+        $usage  = "<cyan>$script COMMAND -h</cyan>";
 
         $help = "$desc\n\n<comment>Usage:</comment> $usage\n<comment>Commands:</comment>\n";
         $data = $this->messages;
@@ -390,9 +391,9 @@ class App
             $help    .= "  <green>$command</green>   $desc\n";
         }
 
-        $help .= "\nFor command usage please run: <cyan>{$this->script} COMMAND -h</cyan>";
+        $help .= "\nFor command usage please run: <cyan>$script COMMAND -h</cyan>";
 
-        Color::println($help);
+        Cli::println($help);
     }
 
     /**
@@ -435,7 +436,7 @@ class App
             ]);
         }
 
-        Color::println($help);
+        Cli::println($help);
     }
 
     /**

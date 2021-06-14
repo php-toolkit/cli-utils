@@ -23,6 +23,13 @@ use const PHP_EOL;
 /**
  * Class Color
  *
+ * Usage:
+ *
+ * ```php
+ * echo Color::red('hello');
+ * echo Color::info('hello');
+ * ```
+ *
  * @package Toolkit\Cli
  * // basic
  * @method string red(string $text)
@@ -367,9 +374,9 @@ class Color
      *
      * @param string $text
      *
-     * @return mixed|string
+     * @return string
      */
-    public static function parseTag(string $text)
+    public static function parseTag(string $text): string
     {
         return ColorTag::parse($text);
     }

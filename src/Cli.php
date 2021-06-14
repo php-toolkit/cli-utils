@@ -194,7 +194,6 @@ class Cli
      */
     public static function isInteractive($fileDescriptor): bool
     {
-        /** @noinspection PhpComposerExtensionStubsInspection */
         return function_exists('posix_isatty') && @posix_isatty($fileDescriptor);
     }
 
