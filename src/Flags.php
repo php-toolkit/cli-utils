@@ -133,6 +133,11 @@ class Flags
         while (false !== ($p = current($params))) {
             next($params);
 
+            // empty string
+            if ($p === '') {
+                continue;
+            }
+
             // is options
             if ($p[0] === '-') {
                 $value  = true;
