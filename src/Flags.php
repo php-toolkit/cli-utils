@@ -21,6 +21,7 @@ use function next;
 use function preg_match;
 use function str_split;
 use function stripos;
+use function strlen;
 use function strpos;
 use function substr;
 use function trim;
@@ -138,8 +139,8 @@ class Flags
                 continue;
             }
 
-            // is options
-            if ($p[0] === '-') {
+            // is options and not equals '-' '--'
+            if ($p[0] === '-' && '' !== trim($p, '-')) {
                 $value  = true;
                 $option = substr($p, 1);
                 $isLong = false;
