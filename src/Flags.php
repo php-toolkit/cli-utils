@@ -9,6 +9,7 @@
 
 namespace Toolkit\Cli;
 
+use Toolkit\Cli\Util\LineParser;
 use function array_flip;
 use function array_merge;
 use function current;
@@ -21,7 +22,6 @@ use function next;
 use function preg_match;
 use function str_split;
 use function stripos;
-use function strlen;
 use function strpos;
 use function substr;
 use function trim;
@@ -77,9 +77,11 @@ class Flags
      * Parses $GLOBALS['argv'] for parameters and assigns them to an array.
      * eg:
      *
-     * ```
+     * ```bash
      * php cli.php run name=john city=chengdu -s=test --page=23 -d -rf --debug --task=off -y=false -D -e dev -v vvv
      * ```
+     *
+     * Usage:
      *
      * ```php
      * $argv = $_SERVER['argv'];
@@ -88,24 +90,30 @@ class Flags
      * $result = Flags::parseArgv($argv);
      * ```
      *
-     * Supports args:
+     * Supports args style:
+     *
+     * ```bash
      * <value>
      * arg=<value>
-     * Supports opts:
+     * ```
+     *
+     * Supports opts style:
+     *
+     * ```bash
      * -e
      * -e <value>
      * -e=<value>
      * --long-opt
      * --long-opt <value>
      * --long-opt=<value>
+     * ```
      *
      * @link http://php.net/manual/zh/function.getopt.php#83414
      *
      * @param array $params
      * @param array $config
      *
-     * @return array [args, short-opts, long-opts]
-     *               If 'mergeOpts' is True, will return [args, opts]
+     * @return array returns like `[args, short-opts, long-opts]`; If 'mergeOpts' is True, will return `[args, opts]`
      */
     public static function parseArgv(array $params, array $config = []): array
     {
@@ -118,10 +126,15 @@ class Flags
             'boolOpts'       => [], // ['debug', 'h']
             // Whether merge short-opts and long-opts
             'mergeOpts'      => false,
-            // want parsed options. if not empty, will ignore no matched
+            // Only want parsed options.
+            // if not empty, will ignore no matched
             'wantParsedOpts' => [],
-            // list of option allow array values.
+            // List of option allow array values.
             'arrayOpts'      => [], // ['names', 'status']
+            // Special short style
+            // posix: -abc will expand: -a -b -c
+            // unix: -abc  will expand: -a=bc
+            'shortStyle' => 'posix',
         ], $config);
 
         $args = $sOpts = $lOpts = [];
@@ -142,8 +155,8 @@ class Flags
             // is options and not equals '-' '--'
             if ($p[0] === '-' && '' !== trim($p, '-')) {
                 $value  = true;
-                $option = substr($p, 1);
                 $isLong = false;
+                $option = substr($p, 1);
 
                 // long-opt: (--<opt>)
                 if (strpos($option, '-') === 0) {
@@ -264,25 +277,29 @@ class Flags
     }
 
     /**
-     * parse flags from a string
+     * Parse flags from a string
      *
      * ```php
      * $result = Flags::parseString('foo --bar="foobar"');
      * ```
      *
      * @param string $string
+     * @param array  $config
      *
-     * @todo ...
+     * @return array
      */
-    public static function parseString(string $string): void
+    public static function parseString(string $string, array $config = []): array
     {
+        $flags = LineParser::parseIt($string);
+
+        return self::parseArgv($flags, $config);
     }
 
     /**
      * @param string|bool $val
      * @param bool        $enable
      *
-     * @return bool|mixed
+     * @return bool|int|mixed
      */
     public static function filterBool($val, bool $enable = true)
     {
