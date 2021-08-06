@@ -9,6 +9,10 @@
 
 namespace Toolkit\Cli\Traits;
 
+use Toolkit\Cli\Cli;
+use Toolkit\Cli\Util\Readline;
+use function fopen;
+use function strip_tags;
 use const STDIN;
 
 /**
@@ -35,7 +39,7 @@ trait ReadMessageTrait
     public static function read($message = null, bool $nl = false, array $opts = []): string
     {
         if ($message) {
-            self::write($message, $nl);
+            Cli::write($message, $nl);
         }
 
         $opts = array_merge([
@@ -61,9 +65,15 @@ trait ReadMessageTrait
     public static function readln($message = null, bool $nl = false, array $opts = []): string
     {
         if ($message) {
-            self::write($message, $nl);
+            Cli::write($message, $nl);
         }
 
+        // TIP: use readline method, support left and right press.
+        if (Readline::isSupported()) {
+            return Readline::readline();
+        }
+
+        // read from input stream
         $opts = array_merge([
             'length' => 1024,
             'stream' => self::$inputStream,
@@ -97,7 +107,7 @@ trait ReadMessageTrait
     public static function readSafe($message = null, bool $nl = false, array $opts = []): string
     {
         if ($message) {
-            self::write($message, $nl);
+            Cli::write($message, $nl);
         }
 
         $opts = array_merge([
@@ -106,7 +116,9 @@ trait ReadMessageTrait
             'allowTags' => null,
         ], $opts);
 
-        return trim(fgetss($opts['stream'], $opts['length'], $opts['allowTags']));
+        // up: fgetss has been DEPRECATED as of PHP 7.3.0
+        // return trim(fgetss($opts['stream'], $opts['length'], $opts['allowTags']));
+        return trim(strip_tags(fgets($opts['stream'], $opts['length']), $opts['allowTags']));
     }
 
     /**
@@ -135,6 +147,33 @@ trait ReadMessageTrait
     public static function readFirst(string $message = '', bool $nl = false): string
     {
         return self::readChar($message, $nl);
+    }
+
+    /**
+     * Read password text.
+     * NOTICE: only support linux
+     *
+     * @param string $prompt
+     *
+     * @return string
+     * @link https://www.php.net/manual/zh/function.readline.php#120729
+     */
+    public static function readPassword(string $prompt = ''): string
+    {
+        $termDevice = '/dev/tty';
+        if ($prompt) {
+            Cli::write($prompt);
+        }
+
+        $h = fopen($termDevice, 'rb');
+        if ($h === false) {
+            // throw new RuntimeException("Failed to open terminal device");
+            return ''; // probably not running in a terminal.
+        }
+
+        $line = trim((string)fgets($h));
+        fclose($h);
+        return $line;
     }
 
     /**
