@@ -1,9 +1,9 @@
 .idea/
 .phpintel/
-example/*.txt
 !README.md
 !.gitkeep
 composer.lock
+*.txt
 *.swp
 *.log
 *.pid
