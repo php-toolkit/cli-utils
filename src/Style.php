@@ -86,15 +86,15 @@ class Style
     /**
      * @return Style
      */
-    public static function global(): self
+    public static function instance(): self
     {
-        return self::instance();
+        return self::global();
     }
 
     /**
      * @return Style
      */
-    public static function instance(): self
+    public static function global(): self
     {
         if (!self::$instance) {
             self::$instance = new self();

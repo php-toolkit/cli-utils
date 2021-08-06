@@ -10,9 +10,13 @@
 namespace Toolkit\Cli\Traits;
 
 use Toolkit\Cli\Cli;
+use Toolkit\Cli\Style;
 use Toolkit\Cli\Util\Readline;
 use function fopen;
+use function implode;
+use function is_array;
 use function strip_tags;
+use const PHP_EOL;
 use const STDIN;
 
 /**
@@ -64,16 +68,22 @@ trait ReadMessageTrait
      */
     public static function readln($message = null, bool $nl = false, array $opts = []): string
     {
+        // TIP: use readline method, support left and right keypress.
+        if (Readline::isSupported()) {
+            if ($message && is_array($message)) {
+                $message = implode($nl ? PHP_EOL : '', $message);
+            }
+
+            // $message = Color::render((string)$message);
+            $message = Style::global()->render((string)$message);
+            return Readline::readline($message);
+        }
+
+        // read from input stream
         if ($message) {
             Cli::write($message, $nl);
         }
 
-        // TIP: use readline method, support left and right press.
-        if (Readline::isSupported()) {
-            return Readline::readline();
-        }
-
-        // read from input stream
         $opts = array_merge([
             'length' => 1024,
             'stream' => self::$inputStream,

@@ -7,6 +7,7 @@ use function explode;
 use function file_get_contents;
 use function function_exists;
 use function readline;
+use function readline_add_history;
 use function readline_callback_handler_install;
 use function readline_callback_handler_remove;
 use function readline_callback_read_char;
@@ -72,14 +73,14 @@ class Readline
      *  return $matches;
      * }
      *
-     * Readline::register($func);
+     * Readline::registerCompleter($func);
      * ```
      *
      * @param callable $callback
      *
      * @return bool
      */
-    public static function register(callable $callback): bool
+    public static function registerCompleter(callable $callback): bool
     {
         return readline_completion_function($callback);
     }
@@ -193,13 +194,27 @@ class Readline
     }
 
     /**
+     * @param string $input
+     *
+     * @return bool
+     */
+    public static function addHistory(string $input): bool
+    {
+        return readline_add_history($input);
+    }
+
+    /**
      * @param string $filepath
      *
      * @return bool
      */
     public static function loadHistory(string $filepath): bool
     {
-        return readline_read_history($filepath);
+        if ($filepath) {
+            return readline_read_history($filepath);
+        }
+
+        return false;
     }
 
     /**
@@ -209,7 +224,11 @@ class Readline
      */
     public static function dumpHistory(string $filepath): bool
     {
-        return readline_write_history($filepath);
+        if ($filepath) {
+            return readline_write_history($filepath);
+        }
+
+        return false;
     }
 
     /**

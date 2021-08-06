@@ -147,7 +147,7 @@ trait WriteMessageTrait
         $messages = (string)$messages;
 
         if (!isset($opts['color']) || $opts['color']) {
-            $messages = Style::instance()->render($messages);
+            $messages = Style::global()->render($messages);
         } else {
             $messages = Style::stripColor($messages);
         }
