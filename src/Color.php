@@ -96,10 +96,12 @@ class Color extends ANSICode
         'success'        => '1;32',
         'info'           => '0;32',// same 'green'
         'comment'        => '0;33',// same 'brown'
+        'cmd'            => '0;33',// same 'brown'
         'note'           => '36;1',
         'notice'         => '36;4',
         'warn'           => '0;30;43',
         'warning'        => '0;30;43',
+        'code'           => '0;95',// same 'red'
         'danger'         => '0;31',// same 'red'
         'err'            => '97;41',
         'error'          => '97;41',
