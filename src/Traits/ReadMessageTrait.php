@@ -12,6 +12,7 @@ namespace Toolkit\Cli\Traits;
 use Toolkit\Cli\Cli;
 use Toolkit\Cli\Style;
 use Toolkit\Cli\Util\Readline;
+use Toolkit\Stdlib\OS;
 use function fopen;
 use function implode;
 use function is_array;
@@ -69,7 +70,8 @@ trait ReadMessageTrait
     public static function readln($message = null, bool $nl = false, array $opts = []): string
     {
         // TIP: use readline method, support left and right keypress.
-        if (Readline::isSupported()) {
+        // fix: on windows, readline output format error
+        if (Readline::isSupported() && !OS::isWindows()) {
             if ($message && is_array($message)) {
                 $message = implode($nl ? PHP_EOL : '', $message);
             }
