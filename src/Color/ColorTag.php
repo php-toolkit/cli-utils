@@ -27,8 +27,9 @@ class ColorTag
     // regex used for removing color tags
     public const STRIP_TAG = '/<[\/]?[a-zA-Z0-9=;]+>/';
 
-    // Regex to match tags/
-    public const MATCH_TAG = '/<([a-zA-Z0-9=;_]+)>(.*)<\/\\1>/s';
+    // Regex to match tags
+    // TIP: `?` - 非贪婪匹配; 若不加，会导致有多个相同标签时，第一个开始会匹配到最后一个的关闭
+    public const MATCH_TAG = '/<([a-zA-Z0-9=;_]+)>(.*?)<\/\\1>/s';
 
     // color
     public const BLACK = 'black';

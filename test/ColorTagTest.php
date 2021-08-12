@@ -12,6 +12,7 @@ namespace Toolkit\CliTest;
 use PHPUnit\Framework\TestCase;
 use Toolkit\Cli\Color;
 use Toolkit\Cli\ColorTag;
+use function strpos;
 use function vdump;
 use const PHP_EOL;
 
@@ -85,10 +86,16 @@ class ColorTagTest extends TestCase
         echo $text, PHP_EOL;
         $this->assertSame("\033[0;32mINFO\033[0m", $text);
 
-        // nested Tags
-        $text = ColorTag::parse('<info>INFO <cyan>CYAN</cyan></info>');
+        // multi
+        $text = ColorTag::parse('multi: <info>INFO</info> <cyan>CYAN</cyan> <red>RED</red>');
         echo $text, PHP_EOL;
-        $this->assertSame("\033[0;32mINFO <cyan>CYAN</cyan>\033[0m", $text);
+        $this->assertFalse(strpos($text, '</'));
+
+        // nested Tags
+        $text = ColorTag::parse('nested: <info>INFO <cyan>CYAN</cyan></info>');
+        echo $text, PHP_EOL;
+        $this->assertTrue(strpos($text, '</') > 0);
+        $this->assertSame("nested: \033[0;32mINFO <cyan>CYAN</cyan>\033[0m", $text);
 
         Color::resetConfig();
     }
