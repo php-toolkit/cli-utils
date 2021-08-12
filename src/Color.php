@@ -141,10 +141,11 @@ class Color extends ANSICode
         // option
         'b'              => '0;1',
         'bold'           => '0;1',
-        'fuzzy'          => '2',
+        'fuzzy'          => '0;2',
         'i'              => '0;3',
         'italic'         => '0;3',
-        'underscore'     => '4',
+        'us'             => '0;4',
+        'underscore'     => '0;4',
         'blink'          => '5',
         'reverse'        => '7',
         'concealed'      => '8',
@@ -292,12 +293,13 @@ class Color extends ANSICode
      * parse color tag e.g: <info>message</info>
      *
      * @param string $text
+     * @param bool   $recursive
      *
      * @return string
      */
-    public static function parseTag(string $text): string
+    public static function parseTag(string $text, bool $recursive = false): string
     {
-        return ColorTag::parse($text);
+        return ColorTag::parse($text, $recursive);
     }
 
     /**

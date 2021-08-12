@@ -12,6 +12,8 @@ namespace Toolkit\CliTest;
 use PHPUnit\Framework\TestCase;
 use Toolkit\Cli\Color;
 use Toolkit\Cli\ColorTag;
+use function vdump;
+use const PHP_EOL;
 
 /**
  * Class ColorTagTest
@@ -80,7 +82,25 @@ class ColorTagTest extends TestCase
         Color::setForceColor(true);
 
         $text = ColorTag::parse('<info>INFO</info>');
+        echo $text, PHP_EOL;
         $this->assertSame("\033[0;32mINFO\033[0m", $text);
+
+        // nested Tags
+        $text = ColorTag::parse('<info>INFO <cyan>CYAN</cyan></info>');
+        echo $text, PHP_EOL;
+        $this->assertSame("\033[0;32mINFO <cyan>CYAN</cyan>\033[0m", $text);
+
+        Color::resetConfig();
+    }
+
+    public function testParseNestTag(): void
+    {
+        Color::setForceColor(true);
+
+        // nested Tags
+        $text = ColorTag::parse('<info>INFO <cyan>CYAN mess</cyan>age</info>', true);
+        echo $text, PHP_EOL;
+        $this->assertSame("\033[0;32mINFO \033[0;36mCYAN mess\033[0mage\033[0m", $text);
 
         Color::resetConfig();
     }
