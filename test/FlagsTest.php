@@ -11,6 +11,7 @@ namespace Toolkit\CliTest;
 
 use PHPUnit\Framework\TestCase;
 use Toolkit\Cli\Flags;
+use Toolkit\Cli\Helper\FlagHelper;
 use function explode;
 
 /**
@@ -54,7 +55,7 @@ class FlagsTest extends TestCase
         $this->assertSame('http://some.com/path/to/merge_requests/new?utf8=%E2%9C%93&merge_request%5Bsource_project_id%5D=319', $args[1]);
     }
 
-    public function testisParseWithSpace(): void
+    public function testParseWithSpace(): void
     {
         [$args, , ] = Flags::parseArgv([
             'cmd',
@@ -65,9 +66,25 @@ class FlagsTest extends TestCase
         $this->assertSame(' -', $args[1]);
     }
 
-    public function testisValidArgName(): void
+    public function testStopParseOnTwoHl(): void
     {
-        $this->assertTrue(Flags::isValidArgName('arg0'));
-        $this->assertFalse(Flags::isValidArgName('/path/to'));
+        [$args, , ] = Flags::parseArgv([
+            '-n',
+            'inhere',
+            '--',
+            '--age',
+            '99',
+            'cmd',
+            ' -'
+        ]);
+
+        $this->assertSame('--age', $args[0]);
+        $this->assertCount(4, $args);
+    }
+
+    public function testIsValidArgName(): void
+    {
+        $this->assertTrue(FlagHelper::isValidName('arg0'));
+        $this->assertFalse(FlagHelper::isValidName('/path/to'));
     }
 }

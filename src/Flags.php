@@ -9,19 +9,17 @@
 
 namespace Toolkit\Cli;
 
+use Toolkit\Cli\Helper\FlagHelper;
 use Toolkit\Cli\Util\LineParser;
 use function array_flip;
 use function array_merge;
 use function current;
 use function escapeshellarg;
 use function explode;
-use function is_bool;
 use function is_int;
-use function is_numeric;
 use function next;
 use function preg_match;
 use function str_split;
-use function stripos;
 use function strpos;
 use function substr;
 use function trim;
@@ -33,11 +31,6 @@ use function trim;
  */
 class Flags
 {
-    // These words will be as a Boolean value
-    private const TRUE_WORDS = '|on|yes|true|';
-
-    private const FALSE_WORDS = '|off|no|false|';
-
     /**
      * @param array $argv
      *
@@ -134,7 +127,7 @@ class Flags
             // Special short style
             // posix: -abc will expand: -a -b -c
             // unix: -abc  will expand: -a=bc
-            'shortStyle' => 'posix',
+            'shortStyle'     => 'posix',
         ], $config);
 
         $args = $sOpts = $lOpts = [];
@@ -142,18 +135,18 @@ class Flags
         $boolOpts  = array_flip((array)$config['boolOpts']);
         $arrayOpts = array_flip((array)$config['arrayOpts']);
 
-        // each() will deprecated at 7.2. so,there use current and next instead it.
-        // while (list(,$p) = each($params)) {
+        $optParseEnd = false;
         while (false !== ($p = current($params))) {
             next($params);
 
-            // empty string
-            if ($p === '') {
+            // option parse end, collect remaining arguments.
+            if ($optParseEnd) {
+                self::collectArgs($args, $p);
                 continue;
             }
 
             // is options and not equals '-' '--'
-            if ($p[0] === '-' && '' !== trim($p, '-')) {
+            if ($p && $p[0] === '-' && '' !== trim($p, '-')) {
                 $value  = true;
                 $isLong = false;
                 $option = substr($p, 1);
@@ -177,7 +170,7 @@ class Flags
                 $nxt = current($params);
 
                 // next elem is value. fix: allow empty string ''
-                if ($value === true && !isset($boolOpts[$option]) && self::nextIsValue($nxt)) {
+                if ($value === true && !isset($boolOpts[$option]) && FlagHelper::isOptionValue($nxt)) {
                     // list(,$val) = each($params);
                     $value = $nxt;
                     next($params);
@@ -190,7 +183,7 @@ class Flags
                     continue;
                 }
 
-                $value   = self::filterBool($value);
+                $value   = FlagHelper::filterBool($value);
                 $isArray = isset($arrayOpts[$option]);
 
                 if ($isLong) {
@@ -208,21 +201,16 @@ class Flags
                 continue;
             }
 
+            // stop parse options:
+            // - found '--' will stop parse options
+            if ($p === '--') {
+                $optParseEnd = true;
+                continue;
+            }
+
             // parse arguments:
             // - param doesn't belong to any option, define it is args
-
-            // value specified inline (<arg>=<value>)
-            if (strpos($p, '=') !== false) {
-                [$name, $value] = explode('=', $p, 2);
-
-                if (self::isValidArgName($name)) {
-                    $args[$name] = self::filterBool($value);
-                } else {
-                    $args[] = $p;
-                }
-            } else {
-                $args[] = $p;
-            }
+            self::collectArgs($args, $p);
         }
 
         if ($config['mergeOpts']) {
@@ -230,6 +218,26 @@ class Flags
         }
 
         return [$args, $sOpts, $lOpts];
+    }
+
+    /**
+     * @param array  $args
+     * @param string $p
+     */
+    private static function collectArgs(array &$args, string $p): void
+    {
+        // value specified inline (<arg>=<value>)
+        if (strpos($p, '=') !== false) {
+            [$name, $value] = explode('=', $p, 2);
+
+            if (FlagHelper::isValidName($name)) {
+                $args[$name] = FlagHelper::filterBool($value);
+            } else {
+                $args[] = $p;
+            }
+        } else {
+            $args[] = $p;
+        }
     }
 
     /**
@@ -293,79 +301,6 @@ class Flags
         $flags = LineParser::parseIt($string);
 
         return self::parseArgv($flags, $config);
-    }
-
-    /**
-     * @param string|bool $val
-     * @param bool        $enable
-     *
-     * @return bool|int|mixed
-     */
-    public static function filterBool($val, bool $enable = true)
-    {
-        if ($enable) {
-            if (is_bool($val) || is_numeric($val)) {
-                return $val;
-            }
-
-            // check it is a bool value.
-            if (false !== stripos(self::TRUE_WORDS, "|$val|")) {
-                return true;
-            }
-
-            if (false !== stripos(self::FALSE_WORDS, "|$val|")) {
-                return false;
-            }
-        }
-
-        return $val;
-    }
-
-    /**
-     * check next is option value
-     *
-     * @param mixed $val
-     *
-     * @return bool
-     */
-    public static function nextIsValue($val): bool
-    {
-        // current() fetch error, will return FALSE
-        if ($val === false) {
-            return false;
-        }
-
-        // if is: '', 0
-        if (!$val) {
-            return true;
-        }
-
-        // is not option name.
-        if ($val[0] !== '-') {
-            // ensure is option value.
-            if (false === strpos($val, '=')) {
-                return true;
-            }
-
-            // is string value, but contains '='
-            [$name,] = explode('=', $val, 2);
-
-            // named argument OR invlaid: 'some = string'
-            return false === self::isValidArgName($name);
-        }
-
-        // is option name.
-        return false;
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    public static function isValidArgName(string $name): bool
-    {
-        return preg_match('#^\w+$#', $name) === 1;
     }
 
     /**
