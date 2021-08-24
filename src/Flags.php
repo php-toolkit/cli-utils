@@ -32,41 +32,6 @@ use function trim;
 class Flags
 {
     /**
-     * @param array $argv
-     *
-     * @return array [$args, $opts]
-     */
-    public static function simpleParseArgv(array $argv): array
-    {
-        $args = $opts = [];
-        foreach ($argv as $value) {
-            // opts
-            if (strpos($value, '-') === 0) {
-                $value = trim($value, '-');
-
-                // invalid
-                if (!$value) {
-                    continue;
-                }
-
-                if (strpos($value, '=')) {
-                    [$n, $v] = explode('=', $value);
-                    $opts[$n] = $v;
-                } else {
-                    $opts[$value] = true;
-                }
-            } elseif (strpos($value, '=')) {
-                [$n, $v] = explode('=', $value);
-                $args[$n] = $v;
-            } else {
-                $args[] = $value;
-            }
-        }
-
-        return [$args, $opts];
-    }
-
-    /**
      * Parses $GLOBALS['argv'] for parameters and assigns them to an array.
      * eg:
      *
@@ -304,11 +269,12 @@ class Flags
     }
 
     /**
-     * Escapes a token through escapeshellarg if it contains unsafe chars.
+     * Escapes a token through escape shell arg if it contains unsafe chars.
      *
      * @param string $token
      *
      * @return string
+     * @deprecated please use FlagHelper::escapeToken
      */
     public static function escapeToken(string $token): string
     {
