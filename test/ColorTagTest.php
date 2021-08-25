@@ -106,7 +106,7 @@ class ColorTagTest extends TestCase
 
         // nested Tags
         $text = ColorTag::parse('<info>INFO <cyan>CYAN mess</cyan>age</info>', true);
-        echo $text, PHP_EOL;
+        echo 'nested: ' . $text, PHP_EOL;
         $this->assertSame("\033[0;32mINFO \033[0;36mCYAN mess\033[0mage\033[0m", $text);
 
         Color::resetConfig();
