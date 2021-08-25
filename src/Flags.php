@@ -269,6 +269,53 @@ class Flags
     }
 
     /**
+     * @param array $argv
+     *
+     * @return array
+     * @deprecated
+     */
+    public static function simpleParseArgv(array $argv): array
+    {
+        return $argv;
+    }
+
+    /**
+     * check next is option value
+     *
+     * @param mixed $val
+     *
+     * @return bool
+     * @deprecated please use FlagHelper::isOptionValue
+     */
+    public static function nextIsValue($val): bool
+    {
+        return FlagHelper::isOptionValue($val);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     * @deprecated please use FlagHelper::isValidName
+     */
+    public static function isValidArgName(string $name): bool
+    {
+        return FlagHelper::isValidName($name);
+    }
+
+    /**
+     * @param string|bool $val
+     * @param bool        $enable
+     *
+     * @return bool|int|mixed
+     * @deprecated please use FlagHelper::filterBool
+     */
+    public static function filterBool($val, bool $enable = true)
+    {
+        return FlagHelper::filterBool($val);
+    }
+
+    /**
      * Escapes a token through escape shell arg if it contains unsafe chars.
      *
      * @param string $token
