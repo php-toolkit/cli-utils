@@ -7,8 +7,8 @@
 
 Provide some useful utils for the php CLI application. 
 
-- Parse CLI arguments and options
-- Console color render
+- Simple CLI arguments and options parser.
+- Terminal console color render
 - CLI code highlighter
 - Build simple CLI application
 - CLI ENV information helper
@@ -32,6 +32,49 @@ echo Color::render('hello world', 'success');
 ```
 
 ![colors](example/terminal-color.png)
+
+## Terminal control
+
+examples:
+
+```php
+use \Toolkit\Cli\Util\Terminal;
+
+Terminal::forward(3);
+Terminal::backward(2);
+
+Terminal::clearLine();
+
+Terminal::clearScreen();
+```
+
+### Control Methods
+
+```php
+/**
+ * @method static showCursor()
+ * @method static hideCursor()
+ * @method static savePosition()
+ * @method static restorePosition()
+ * @method static toTop()
+ * @method static toColumn(int $step)
+ * @method static up(int $step = 1)
+ * @method static down(int $step = 1)
+ * @method static forward(int $step = 1)
+ * @method static backward(int $step = 1) Moves the terminal cursor backward
+ * @method static toPrevNLineStart(int $step = 1)
+ * @method static toNextNLineStart(int $step = 1)
+ * @method static coordinate(int $col, int $row = 0)
+ * @method static clearScreen()
+ * @method static clearLine()
+ * @method static clearToScreenBegin()
+ * @method static clearToScreenEnd()
+ * @method static scrollUp(int $step = 1)
+ * @method static scrollDown(int $step = 1)
+ * @method static showSecondaryScreen()
+ * @method static showPrimaryScreen()
+ */
+```
 
 ## PHP file highlight
 
@@ -172,6 +215,10 @@ $down->start();
 ## Projects 
 
 - https://github.com/inhere/php-console Build rich console application
+
+## Refer
+
+- https://www.sitepoint.com/howd-they-do-it-phpsnake-detecting-keypresses/
 
 ## License
 

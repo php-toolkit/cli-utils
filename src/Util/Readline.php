@@ -109,7 +109,7 @@ class Readline
     /**
      * Reads a character and informs the readline callback interface when a line is received
      */
-    public static function readChar(): void
+    public static function callbackReadChar(): void
     {
         // 当一个行被接收时读取一个字符并且通知 readline 调用回调函数
         readline_callback_read_char();
