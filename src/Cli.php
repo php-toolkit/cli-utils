@@ -41,6 +41,13 @@ use const STDOUT;
  * @method static alert(string|array|mixed $message, string $style = 'info')
  * @method static prompt(string|array|mixed $message, string $style = 'info')
  *
+ * @method static red(string ...$message) Print red color message line.
+ * @method static cyan(string ...$message) Print cyan color message line.
+ * @method static blue(string ...$message) Print blue color message line.
+ * @method static green(string ...$message) Print green color message line.
+ * @method static magenta(string ...$message) Print cyan color message line.
+ * @method static yellow(string ...$message) Print yellow color message line.
+ *
  * @method static error(string ...$message) Print error style message line.
  * @method static warn(string ...$message) Print warn style message line.
  * @method static info(string ...$message) Print info style message line.
