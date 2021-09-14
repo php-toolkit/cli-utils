@@ -14,6 +14,7 @@ use Toolkit\Cli\Color\Alert;
 use Toolkit\Cli\Color\Prompt;
 use Toolkit\Cli\Traits\ReadMessageTrait;
 use Toolkit\Cli\Traits\WriteMessageTrait;
+use function count;
 use function date;
 use function defined;
 use function function_exists;
@@ -39,6 +40,11 @@ use const STDOUT;
  *
  * @method static alert(string|array|mixed $message, string $style = 'info')
  * @method static prompt(string|array|mixed $message, string $style = 'info')
+ *
+ * @method static error(string ...$message) Print error style message line.
+ * @method static warn(string ...$message) Print warn style message line.
+ * @method static info(string ...$message) Print info style message line.
+ * @method static success(string ...$message) Print success style message line.
  */
 class Cli
 {
@@ -54,13 +60,16 @@ class Cli
             Alert::global()->withStyle($args[1] ?? '')->println($args[0]);
             return;
         }
+
         if ($method === 'prompt') {
             Prompt::global()->withStyle($args[1] ?? '')->println($args[0]);
             return;
         }
 
         if (isset(Color::STYLES[$method])) {
-            echo Color::render($args[0], $method), "\n";
+            $msg = count($args) > 1 ? implode(' ', $args) : (string)$args[0];
+            echo Color::render($msg, $method), "\n";
+            return;
         }
 
         throw new RuntimeException('call unknown method: ' . $method);
@@ -179,7 +188,7 @@ class Cli
             return true;
         }
 
-        // speical terminal
+        // special terminal
         $termProgram = getenv('TERM_PROGRAM');
         if ('Hyper' === $termProgram || 'Terminus' === $termProgram) {
             return true;
@@ -197,11 +206,6 @@ class Cli
                 || false !== getenv('ANSICON')
                 || 'ON' === getenv('ConEmuANSI')
                 || 'xterm' === getenv('TERM');
-        }
-
-        // PHP 7 >= 7.2.0
-        if (function_exists('stream_isatty')) {
-            return \stream_isatty($stream);
         }
 
         return self::isInteractive($stream);
@@ -230,12 +234,17 @@ class Cli
     /**
      * Returns if the file descriptor is an interactive terminal or not.
      *
-     * @param int|resource|mixed $fileDescriptor
+     * @param resource|mixed $fileDescriptor
      *
      * @return boolean
      */
     public static function isInteractive($fileDescriptor): bool
     {
+        // PHP 7 >= 7.2.0
+        if (function_exists('stream_isatty')) {
+            return \stream_isatty($fileDescriptor);
+        }
+
         return function_exists('posix_isatty') && @posix_isatty($fileDescriptor);
     }
 
