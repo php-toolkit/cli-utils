@@ -305,7 +305,7 @@ class App
      */
     public function addByConfig(callable $handler, array $config): void
     {
-        if (empty($config['name']) || !$handler) {
+        if (empty($config['name'])) {
             throw new InvalidArgumentException('Invalid arguments for add command');
         }
 
@@ -329,7 +329,7 @@ class App
      */
     public function addCommand(string $command, callable $handler, $config = null): void
     {
-        if (!$command || !$handler) {
+        if (!$command) {
             throw new InvalidArgumentException('Invalid arguments for add command');
         }
 

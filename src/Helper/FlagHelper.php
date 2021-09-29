@@ -112,7 +112,7 @@ class FlagHelper
      */
     public static function isValidName(string $name): bool
     {
-        return preg_match('#^\w[\w-]{0,36}$#', $name) === 1;
+        return preg_match('#^[a-zA-Z_][\w-]{0,36}$#', $name) === 1;
     }
 
     /**

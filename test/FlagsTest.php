@@ -81,10 +81,4 @@ class FlagsTest extends TestCase
         $this->assertSame('--age', $args[0]);
         $this->assertCount(4, $args);
     }
-
-    public function testIsValidArgName(): void
-    {
-        $this->assertTrue(FlagHelper::isValidName('arg0'));
-        $this->assertFalse(FlagHelper::isValidName('/path/to'));
-    }
 }

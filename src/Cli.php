@@ -51,6 +51,8 @@ use const STDOUT;
  * @method static error(string ...$message) Print error style message line.
  * @method static warn(string ...$message) Print warn style message line.
  * @method static info(string ...$message) Print info style message line.
+ * @method static note(string ...$message) Print note style message line.
+ * @method static notice(string ...$message) Print notice style message line.
  * @method static success(string ...$message) Print success style message line.
  */
 class Cli
