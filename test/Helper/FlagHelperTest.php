@@ -10,7 +10,6 @@ use Toolkit\Cli\Helper\FlagHelper;
  */
 class FlagHelperTest extends TestCase
 {
-
     public function testIsValidArgName1(): void
     {
         $this->assertTrue(FlagHelper::isValidName('arg0'));
