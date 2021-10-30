@@ -88,7 +88,7 @@ class ColorTag
      */
     public static function wrap(string $text, string $tag): string
     {
-        if (!$text || !$tag) {
+        if ($text === '' || !$tag) {
             return $text;
         }
 
