@@ -81,7 +81,7 @@ Terminal::clearScreen();
 > This is inspire `jakub-onderka/php-console-highlighter`
 
 ```php
-use Toolkit\Cli\Highlighter;
+use Toolkit\Cli\Util\Highlighter;
 
 // this is an comment
 $rendered = Highlighter::create()->highlight(file_get_contents(__FILE__));

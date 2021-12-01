@@ -28,21 +28,21 @@ class LineParser
      *
      * @var string
      */
-    private $line;
+    private string $line = '';
 
     /**
      * the exploded nodes by space.
      *
      * @var array
      */
-    private $nodes = [];
+    private array $nodes = [];
 
     /**
      * the parsed args
      *
      * @var array
      */
-    private $args = [];
+    private array $args = [];
 
     /**
      * @param string $line full command line string.

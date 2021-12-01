@@ -10,12 +10,12 @@
 namespace Toolkit\Cli;
 
 use InvalidArgumentException;
+use Toolkit\Cli\Color\ColorCode;
 use function array_key_exists;
 use function array_keys;
 use function array_merge;
 use function array_values;
 use function is_array;
-use function is_object;
 use function sprintf;
 use function strpos;
 
@@ -72,16 +72,16 @@ class Style
     public const COLOR_TAG = '/<([a-zA-Z0-9=;]+)>(.*?)<\/\\1>/s';
 
     /**
-     * @var self
+     * @var self|null
      */
-    private static $instance;
+    private static ?Style $instance = null;
 
     /**
      * Array of Color objects
      *
      * @var ColorCode[]
      */
-    private $styles = [];
+    private array $styles = [];
 
     /**
      * @return Style
@@ -123,10 +123,9 @@ class Style
      * @param string $method
      * @param array  $args
      *
-     * @return mixed|string
-     * @throws InvalidArgumentException
+     * @return string
      */
-    public function __call(string $method, array $args)
+    public function __call(string $method, array $args): string
     {
         if (isset($args[0]) && $this->hasStyle($method)) {
             return $this->format(sprintf('<%s>%s</%s>', $method, $args[0], $method));
@@ -178,9 +177,9 @@ class Style
      *
      * @param string $text
      *
-     * @return mixed
+     * @return string
      */
-    public function t(string $text)
+    public function t(string $text): string
     {
         return $this->format($text);
     }
@@ -190,9 +189,9 @@ class Style
      *
      * @param string $text
      *
-     * @return mixed
+     * @return string
      */
-    public function render(string $text)
+    public function render(string $text): string
     {
         return $this->format($text);
     }
@@ -200,11 +199,11 @@ class Style
     /**
      * @param string $text
      *
-     * @return mixed|string
+     * @return string
      */
-    public function format(string $text)
+    public function format(string $text): string
     {
-        if (!$text || false === strpos($text, '</')) {
+        if (!$text || !str_contains($text, '</')) {
             return $text;
         }
 
@@ -238,9 +237,9 @@ class Style
      *
      * @param string $string
      *
-     * @return mixed
+     * @return string
      */
-    public static function stripColor(string $string)
+    public static function stripColor(string $string): string
     {
         return ColorTag::strip($string);
     }
@@ -253,7 +252,7 @@ class Style
      * Add a style.
      *
      * @param string                 $name
-     * @param string|ColorCode|array $fg      前景色|Color对象|也可以是style配置数组(@see self::addByArray())
+     * @param array|string|ColorCode $fg      前景色|Color对象|也可以是style配置数组(@see self::addByArray())
      *                                        当它为Color对象或配置数组时，后面两个参数无效
      * @param string                 $bg      背景色
      * @param array                  $options 其它选项
@@ -261,13 +260,13 @@ class Style
      *
      * @return $this
      */
-    public function add(string $name, $fg = '', string $bg = '', array $options = [], bool $extra = false): self
+    public function add(string $name, array|string|ColorCode $fg = '', string $bg = '', array $options = [], bool $extra = false): self
     {
         if (is_array($fg)) {
             return $this->addByArray($name, $fg);
         }
 
-        if (is_object($fg) && $fg instanceof ColorCode) {
+        if ($fg instanceof ColorCode) {
             $this->styles[$name] = $fg;
         } else {
             $this->styles[$name] = ColorCode::make($fg, $bg, $options, $extra);

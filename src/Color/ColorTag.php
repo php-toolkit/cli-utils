@@ -117,7 +117,7 @@ class ColorTag
      */
     public static function parse(string $text, bool $recursive = false): string
     {
-        if (!$text || false === strpos($text, '</')) {
+        if (!$text || !str_contains($text, '</')) {
             return $text;
         }
 
@@ -149,7 +149,7 @@ class ColorTag
 
             // enhance: support parse nested tags
             $body = $match[2];
-            if ($recursive && false !== strpos($body, '</')) {
+            if ($recursive && str_contains($body, '</')) {
                 $body = self::pregReplaceTags($body, $recursive);
             }
 
@@ -210,11 +210,11 @@ class ColorTag
      *
      * @param string $text
      *
-     * @return mixed
+     * @return string
      */
     public static function strip(string $text): string
     {
-        if (false === strpos($text, '</')) {
+        if (!str_contains($text, '</')) {
             return $text;
         }
 

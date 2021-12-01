@@ -13,7 +13,6 @@ use BadMethodCallException;
 use Toolkit\Cli\Cli;
 use function array_keys;
 use function exec;
-use function strpos;
 
 /**
  * Class Terminal - terminal control by ansiCode
@@ -205,12 +204,12 @@ final class Terminal
      *
      * @var self
      */
-    private static $instance;
+    private static Terminal $instance;
 
     /**
      * @var bool
      */
-    private $echoBack = true;
+    private bool $echoBack = true;
 
     /**
      * @return Terminal
@@ -252,7 +251,7 @@ final class Terminal
      *
      * @return string
      */
-    public static function build($format, string $type = 'm'): string
+    public static function build(mixed $format, string $type = 'm'): string
     {
         $format = null === $format ? '' : implode(';', (array)$format);
 
@@ -304,7 +303,7 @@ final class Terminal
         $code = self::CURSOR_CONTROL_CODES[$typeName];
 
         // allow argument
-        if (false !== strpos($code, '%')) {
+        if (str_contains($code, '%')) {
             // The special code: ` 'coordinate' => '%dG|%d;%dH' `
             if ($typeName === self::CURSOR_COORDINATE) {
                 $codes = explode('|', $code);
@@ -326,8 +325,8 @@ final class Terminal
     /**
      * control screen
      *
-     * @param string   $typeName
-     * @param int|null $step
+     * @param string $typeName
+     * @param int $step
      *
      * @return $this
      */
@@ -340,7 +339,7 @@ final class Terminal
         $code = self::SCREEN_CONTROL_CODES[$typeName];
 
         // allow argument
-        if (false !== strpos($code, '%')) {
+        if (str_contains($code, '%')) {
             $code = sprintf($code, $step);
         }
 

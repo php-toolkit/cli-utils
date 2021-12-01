@@ -15,15 +15,15 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [7.3, 7.4, 8.0]
+        php: [8.0, 8.1]
         os: [ubuntu-latest, macOS-latest] # windows-latest,
-        include:
-          - os: 'ubuntu-latest'
-            php: '7.2'
-            phpunit: '8.5.13'
-          - os: 'ubuntu-latest'
-            php: '7.1'
-            phpunit: '7.5.20'
+#        include:
+#          - os: 'ubuntu-latest'
+#            php: '7.2'
+#            phpunit: '8.5.13'
+#          - os: 'ubuntu-latest'
+#            php: '7.1'
+#            phpunit: '7.5.20'
 
     steps:
       - name: Checkout

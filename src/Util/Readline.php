@@ -152,7 +152,7 @@ class Readline
     /**
      * @var string
      */
-    private static $listTmpFile = '';
+    private static string $listTmpFile = '';
 
     /**
      * @return bool

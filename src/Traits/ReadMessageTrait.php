@@ -35,13 +35,13 @@ trait ReadMessageTrait
     /**
      * Read message from STDIN
      *
-     * @param mixed $message
+     * @param mixed|null $message
      * @param bool  $nl
      * @param array $opts
      *
      * @return string
      */
-    public static function read($message = null, bool $nl = false, array $opts = []): string
+    public static function read(mixed $message = null, bool $nl = false, array $opts = []): string
     {
         if ($message) {
             Cli::write($message, $nl);
@@ -58,16 +58,16 @@ trait ReadMessageTrait
     /**
      * Gets line from file pointer
      *
-     * @param mixed $message
+     * @param mixed|null $message
      * @param bool  $nl
-     * @param array $opts
+     * @param array{stream: resource} $opts
      *   [
      *   'stream' => \STDIN
      *   ]
      *
      * @return string
      */
-    public static function readln($message = null, bool $nl = false, array $opts = []): string
+    public static function readln(mixed $message = null, bool $nl = false, array $opts = []): string
     {
         // TIP: use readline method, support left and right keypress.
         // fix: on windows, readline output format error
@@ -97,12 +97,12 @@ trait ReadMessageTrait
     /**
      * Read input information
      *
-     * @param mixed $message 若不为空，则先输出文本
+     * @param mixed|null $message 若不为空，则先输出文本
      * @param bool  $nl      true 会添加换行符 false 原样输出，不添加换行符
      *
      * @return string
      */
-    public static function readRow($message = null, bool $nl = false): string
+    public static function readRow(mixed $message = null, bool $nl = false): string
     {
         return self::readln($message, $nl);
     }
@@ -110,13 +110,13 @@ trait ReadMessageTrait
     /**
      * Gets line from file pointer and strip HTML tags
      *
-     * @param mixed $message
+     * @param mixed|null $message
      * @param bool  $nl
      * @param array $opts
      *
      * @return string
      */
-    public static function readSafe($message = null, bool $nl = false, array $opts = []): string
+    public static function readSafe(mixed $message = null, bool $nl = false, array $opts = []): string
     {
         if ($message) {
             Cli::write($message, $nl);
@@ -189,7 +189,7 @@ trait ReadMessageTrait
     }
 
     /**
-     * @return false|resource
+     * @return resource
      */
     public static function getInputStream()
     {

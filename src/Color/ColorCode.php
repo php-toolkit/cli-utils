@@ -21,7 +21,6 @@ use function str_replace;
  * Class Color
  * - fg unset 39
  * - bg unset 49
- *
  */
 class ColorCode
 {
@@ -104,21 +103,21 @@ class ColorCode
      *
      * @var int
      */
-    private $fgColor = 0;
+    private mixed $fgColor = 0;
 
     /**
      * Background color
      *
      * @var int
      */
-    private $bgColor = 0;
+    private mixed $bgColor = 0;
 
     /**
      * Array of style options
      *
      * @var array
      */
-    private $options = [];
+    private array $options = [];
 
     /**
      * @param string $fg

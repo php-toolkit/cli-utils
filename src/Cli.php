@@ -24,7 +24,7 @@ use function is_array;
 use function is_numeric;
 use function json_encode;
 use function preg_replace;
-use function strpos;
+use function stream_isatty;
 use function strtoupper;
 use function trim;
 use const DIRECTORY_SEPARATOR;
@@ -87,10 +87,10 @@ class Cli
     /**
      * Print colored message to STDOUT
      *
-     * @param string|array      $message
-     * @param string|array|null $style
+     * @param array|string $message
+     * @param array|string $style
      */
-    public static function colored($message, $style = 'info'): void
+    public static function colored(array|string $message, array|string $style = 'info'): void
     {
         $str = is_array($message) ? implode(' ', $message) : (string)$message;
 
@@ -110,12 +110,12 @@ class Cli
     }
 
     /**
-     * @param string                $text
-     * @param string|int|array|null $style
+     * @param string $text
+     * @param array|string|null $style
      *
      * @return string
      */
-    public static function color(string $text, $style = null): string
+    public static function color(string $text, array|string $style = null): string
     {
         return Color::render($text, $style);
     }
@@ -152,7 +152,7 @@ class Cli
         $userOpts = [];
 
         foreach ($opts as $n => $v) {
-            if (is_numeric($n) || strpos($n, '_') === 0) {
+            if (is_numeric($n) || str_starts_with($n, '_')) {
                 $userOpts[] = "[$v]";
             } else {
                 $userOpts[] = "[$n:$v]";
@@ -225,7 +225,7 @@ class Cli
      */
     public static function isSupport256Color(): bool
     {
-        return DIRECTORY_SEPARATOR === '/' && strpos(getenv('TERM'), '256color') !== false;
+        return DIRECTORY_SEPARATOR === '/' && str_contains(getenv('TERM'), '256color');
     }
 
     /**
@@ -247,11 +247,11 @@ class Cli
      *
      * @return boolean
      */
-    public static function isInteractive($fileDescriptor): bool
+    public static function isInteractive(mixed $fileDescriptor): bool
     {
         // PHP 7 >= 7.2.0
         if (function_exists('stream_isatty')) {
-            return \stream_isatty($fileDescriptor);
+            return stream_isatty($fileDescriptor);
         }
 
         return function_exists('posix_isatty') && @posix_isatty($fileDescriptor);

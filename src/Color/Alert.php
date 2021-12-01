@@ -15,10 +15,10 @@ use function strtoupper;
  */
 class Alert
 {
-    /** @var self */
-    public static $global;
+    /** @var self|null */
+    public static ?self $global = null;
 
-    protected $styles = [
+    protected array $styles = [
         'info'    => 'info',
         'warn'    => 'warning',
         'warning' => 'warning',
@@ -30,12 +30,12 @@ class Alert
     /**
      * @var string
      */
-    private $style;
+    private string $style;
 
     /**
      * @var string
      */
-    private $title;
+    private string $title;
 
     /**
      * @return static
@@ -104,7 +104,7 @@ class Alert
      *
      * @return string
      */
-    public function sprint($message): string
+    public function sprint(mixed $message): string
     {
         $title = strtoupper($this->title) . ': ';
         if (is_array($message)) {
@@ -117,7 +117,7 @@ class Alert
     /**
      * @param mixed $message
      */
-    public function println($message): void
+    public function println(mixed $message): void
     {
         $title = strtoupper($this->title) . ': ';
         if (is_array($message)) {

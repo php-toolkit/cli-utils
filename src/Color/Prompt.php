@@ -15,18 +15,18 @@ use function strtoupper;
  */
 class Prompt
 {
-    /** @var self */
-    public static $global;
+    /** @var self|null */
+    public static ?Prompt $global = null;
 
     /**
      * @var string
      */
-    private $style;
+    private string $style;
 
     /**
      * @var string
      */
-    private $title;
+    private string $title;
 
     /**
      * @return static
@@ -96,7 +96,7 @@ class Prompt
      *
      * @return string
      */
-    public function sprint($message): string
+    public function sprint(mixed $message): string
     {
         $title = strtoupper($this->title) . ': ';
         if (is_array($message)) {
@@ -109,7 +109,7 @@ class Prompt
     /**
      * @param mixed $message
      */
-    public function println($message): void
+    public function println(mixed $message): void
     {
         $title = strtoupper($this->title) . ': ';
         if (is_array($message)) {

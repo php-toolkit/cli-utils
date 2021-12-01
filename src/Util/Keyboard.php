@@ -11,9 +11,9 @@ namespace Toolkit\Cli\Util;
 class Keyboard
 {
     /**
-     * @var self
+     * @var self|null
      */
-    private static $global;
+    private static ?Keyboard $global = null;
 
     /**
      * @return static

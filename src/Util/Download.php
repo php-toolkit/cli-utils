@@ -26,7 +26,6 @@ use function round;
 use function str_repeat;
 use function stream_context_create;
 use function stream_context_set_params;
-use function strpos;
 use function trim;
 use const STREAM_NOTIFY_AUTH_REQUIRED;
 use const STREAM_NOTIFY_AUTH_RESULT;
@@ -51,21 +50,21 @@ final class Download
     public const PROGRESS_BAR = 'bar';
 
     /** @var string */
-    private $url;
+    private string $url = '';
 
     /** @var string */
-    private $saveAs;
+    private string $saveAs = '';
 
-    /** @var int */
-    private $fileSize;
+    /** @var int|null */
+    private ?int $fileSize = null;
 
     /** @var string */
-    private $showType;
+    private string $showType = self::PROGRESS_TEXT;
 
     /**
      * @var bool
      */
-    private $debug = false;
+    private bool $debug = false;
 
     /**
      * http context options
@@ -73,7 +72,7 @@ final class Download
      * @var array
      * @link https://www.php.net/manual/en/context.http.php
      */
-    private $httpCtxOptions = [];
+    private array $httpCtxOptions = [];
 
     /**
      * @param string $url
@@ -145,15 +144,15 @@ final class Download
             'notification' => [$this, 'progressShow']
         ]);
 
-        Cli::write("Download: {$this->url}\n Save As: {$save}\n");
+        $url = $this->url;
+        Cli::write("Download: $url\n Save As: $save\n");
 
-        $fp = fopen($this->url, 'rb', false, $ctx);
-
+        $fp = fopen($url, 'rb', false, $ctx);
         if (is_resource($fp) && file_put_contents($save, $fp)) {
             Cli::write("\nDone!");
         } else {
             $err = error_get_last();
-            Cli::stderr("\nErr.rrr..orr...\n {$err['message']}\n", true, -1);
+            Cli::stderr("\nErr.rrr..orr...\n {$err['message']}\n", true,  true,-1);
         }
 
         // close resource
@@ -183,7 +182,7 @@ final class Download
             $httpOpts = array_merge($httpOpts, $this->httpCtxOptions);
         }
 
-        $isHttps = strpos($this->url, 'https') === 0;
+        $isHttps = str_starts_with($this->url, 'https');
 
         if (!isset($httpOpts['proxy'])) {
             if ($isHttps) {
@@ -197,7 +196,7 @@ final class Download
 
                 // convert 'http://127.0.0.1:10801' to 'tcp://127.0.0.1:10801'
                 // see https://github.com/guzzle/guzzle/issues/1555#issuecomment-239450114
-                if (strpos($proxyUrl, 'http') === 0) {
+                if (str_starts_with($proxyUrl, 'http')) {
                     $proxyUrl = preg_replace('/^http[s]?/', 'tcp', $proxyUrl);
                 }
 
@@ -226,7 +225,7 @@ final class Download
         int $notifyCode,
         int $severity,
         ?string $message,
-        $messageCode,
+        int $messageCode,
         int $transferredBytes,
         int $maxBytes
     ): void {

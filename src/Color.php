@@ -10,6 +10,7 @@
 namespace Toolkit\Cli;
 
 use Toolkit\Cli\Color\ANSICode;
+use Toolkit\Cli\Color\ColorCode;
 use function array_filter;
 use function array_keys;
 use function implode;
@@ -169,14 +170,14 @@ class Color extends ANSICode
      *
      * @var bool
      */
-    private static $noColor = false;
+    private static bool $noColor = false;
 
     /**
      * Force render color code
      *
      * @var bool
      */
-    private static $forceColor = false;
+    private static bool $forceColor = false;
 
     /**
      * @param string $method
@@ -220,10 +221,10 @@ class Color extends ANSICode
     /**
      * Print colored message to STDOUT
      *
-     * @param string|array      $messages
-     * @param string|array|null $style
+     * @param array|string $messages
+     * @param array|string $style
      */
-    public static function println($messages, $style = 'info'): void
+    public static function println(array|string $messages, array|string $style = 'info'): void
     {
         $str = is_array($messages) ? implode("\n", $messages) : (string)$messages;
 
@@ -249,13 +250,13 @@ class Color extends ANSICode
      * Render text, apply color code
      *
      * @param string            $text
-     * @param string|array|null $style
+     * @param array|string|null $style
      * - string: 'green', 'blue'
      * - array: [Color::FG_GREEN, Color::BG_WHITE, Color::UNDERSCORE]
      *
      * @return string
      */
-    public static function render(string $text, $style = null): string
+    public static function render(string $text, array|string $style = null): string
     {
         if (!$text) {
             return $text;
@@ -330,7 +331,7 @@ class Color extends ANSICode
      */
     public static function stringToCode(string $string): string
     {
-        return \Toolkit\Cli\Color\ColorCode::fromString($string)->toString();
+        return ColorCode::fromString($string)->toString();
     }
 
     /**

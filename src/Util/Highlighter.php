@@ -77,13 +77,13 @@ class Highlighter
     // @var Style
     //private $color;
 
-    /** @var self */
-    private static $instance;
+    /** @var self|null */
+    private static ?Highlighter $instance = null;
 
     /**
      * @var array
      */
-    private $codeTheme = [
+    private array $codeTheme = [
         self::TOKEN_STRING     => 'green',
         self::TOKEN_COMMENT    => 'italic',
         self::TOKEN_KEYWORD    => 'yellow',
@@ -96,7 +96,7 @@ class Highlighter
     ];
 
     /** @var bool */
-    private $hasTokenFunc;
+    private bool $hasTokenFunc;
 
     /**
      * @return Highlighter

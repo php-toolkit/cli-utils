@@ -28,6 +28,7 @@ use function trim;
  * Class FlagsParse - console argument and option parse
  *
  * @package Toolkit\Cli
+ * @deprecated please use package: toolkit/pflag
  */
 class Flags
 {
@@ -117,12 +118,12 @@ class Flags
                 $option = substr($p, 1);
 
                 // long-opt: (--<opt>)
-                if (strpos($option, '-') === 0) {
+                if (str_starts_with($option, '-')) {
                     $option = substr($option, 1);
                     $isLong = true;
 
                     // long-opt: value specified inline (--<opt>=<value>)
-                    if (strpos($option, '=') !== false) {
+                    if (str_contains($option, '=')) {
                         [$option, $value] = explode('=', $option, 2);
                     }
 
@@ -192,7 +193,7 @@ class Flags
     private static function collectArgs(array &$args, string $p): void
     {
         // value specified inline (<arg>=<value>)
-        if (strpos($p, '=') !== false) {
+        if (str_contains($p, '=')) {
             [$name, $value] = explode('=', $p, 2);
 
             if (FlagHelper::isValidName($name)) {
@@ -237,9 +238,9 @@ class Flags
                 continue;
             }
 
-            if (0 === strpos($key, '--')) { // long option
+            if (str_starts_with($key, '--')) { // long option
                 $lOpts[$cleanKey] = $val;
-            } elseif (0 === strpos($key, '-')) { // short option
+            } elseif (str_starts_with($key, '-')) { // short option
                 $sOpts[$cleanKey] = $val;
             } else {
                 $args[$key] = $val;
@@ -287,7 +288,7 @@ class Flags
      * @return bool
      * @deprecated please use FlagHelper::isOptionValue
      */
-    public static function nextIsValue($val): bool
+    public static function nextIsValue(mixed $val): bool
     {
         return FlagHelper::isOptionValue($val);
     }
@@ -304,13 +305,13 @@ class Flags
     }
 
     /**
-     * @param string|bool $val
+     * @param bool|string $val
      * @param bool        $enable
      *
      * @return bool|int|mixed
      * @deprecated please use FlagHelper::filterBool
      */
-    public static function filterBool($val, bool $enable = true)
+    public static function filterBool(bool|string $val, bool $enable = true): mixed
     {
         return FlagHelper::filterBool($val);
     }

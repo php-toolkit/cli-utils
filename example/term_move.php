@@ -2,7 +2,7 @@
 
 class TermMove {
 
-    const KEYS = [
+    public const KEYS = [
         10  => 'enter',
         127 => 'backspace',
         65  => 'up',
@@ -50,7 +50,7 @@ class TermMove {
             return $c;
         }
 
-        readline_callback_handler_install('', function() {});
+        readline_callback_handler_install('', static function() {});
         // $c = $this->read(1);
         // $c = fread(STDIN, 4);
         $c = stream_get_contents(STDIN, 4);

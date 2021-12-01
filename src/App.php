@@ -37,11 +37,12 @@ use function ucfirst;
  * Class App - A lite CLI Application
  *
  * @package Inhere\Console
+ * @deprecated please use package: toolkit/pflag
  */
 class App
 {
-    /** @var self */
-    public static $global;
+    /** @var self|null */
+    public static ?self $global = null;
 
     private const COMMAND_CONFIG = [
         'desc'  => '',
@@ -50,12 +51,12 @@ class App
     ];
 
     /** @var string Current dir */
-    private $pwd;
+    private string $pwd;
 
     /**
      * @var array
      */
-    protected $params = [
+    protected array $params = [
         'name'    => 'My application',
         'desc'    => 'My command line application',
         'version' => '0.2.1'
@@ -64,37 +65,37 @@ class App
     /**
      * @var array Parsed from `arg0 name=val var2=val2`
      */
-    private $args;
+    private mixed $args;
 
     /**
      * @var array Parsed from `--name=val --var2=val2 -d`
      */
-    private $opts;
+    private mixed $opts;
 
     /**
      * @var string
      */
-    private $script;
+    private mixed $script;
 
     /**
      * @var string
      */
-    private $command = '';
+    private string $command = '';
 
     /**
      * @var array User add commands
      */
-    private $commands = [];
+    private array $commands = [];
 
     /**
      * @var array Command messages for the commands
      */
-    private $messages = [];
+    private array $messages = [];
 
     /**
      * @var int
      */
-    private $keyWidth = 12;
+    private int $keyWidth = 12;
 
     /**
      * @return static
@@ -233,7 +234,7 @@ class App
      * @return mixed
      * @throws InvalidArgumentException
      */
-    public function runHandler(string $command, $handler)
+    public function runHandler(string $command, mixed $handler): mixed
     {
         if (is_string($handler)) {
             // function name
@@ -315,9 +316,9 @@ class App
     /**
      * @param string            $command
      * @param callable          $handler
-     * @param null|array|string $config
+     * @param array|string|null $config
      */
-    public function add(string $command, callable $handler, $config = null): void
+    public function add(string $command, callable $handler, array|string $config = null): void
     {
         $this->addCommand($command, $handler, $config);
     }
@@ -325,9 +326,9 @@ class App
     /**
      * @param string            $command
      * @param callable          $handler
-     * @param null|array|string $config
+     * @param array|string|null $config
      */
-    public function addCommand(string $command, callable $handler, $config = null): void
+    public function addCommand(string $command, callable $handler, array|string $config = null): void
     {
         if (!$command) {
             throw new InvalidArgumentException('Invalid arguments for add command');
@@ -463,45 +464,45 @@ class App
     }
 
     /**
-     * @param string|int $name
-     * @param mixed      $default
+     * @param int|string $name
+     * @param mixed|null $default
      *
      * @return mixed|null
      */
-    public function getArg($name, $default = null)
+    public function getArg(int|string $name, mixed $default = null): mixed
     {
         return $this->args[$name] ?? $default;
     }
 
     /**
-     * @param string|int $name
+     * @param int|string $name
      * @param int        $default
      *
      * @return int
      */
-    public function getIntArg($name, int $default = 0): int
+    public function getIntArg(int|string $name, int $default = 0): int
     {
         return (int)$this->getArg($name, $default);
     }
 
     /**
-     * @param string|int $name
+     * @param int|string $name
      * @param string     $default
      *
      * @return string
      */
-    public function getStrArg($name, string $default = ''): string
+    public function getStrArg(int|string $name, string $default = ''): string
     {
         return (string)$this->getArg($name, $default);
     }
 
     /**
      * @param string $name
-     * @param mixed  $default
+     * @param mixed|null $default
      *
      * @return mixed|null
      */
-    public function getOpt(string $name, $default = null)
+    public function getOpt(string $name, mixed $default = null): mixed
     {
         return $this->opts[$name] ?? $default;
     }
@@ -688,7 +689,7 @@ class App
      *
      * @return mixed|string|null
      */
-    public function getParam(string $key, $default = null)
+    public function getParam(string $key, $default = null): mixed
     {
         return $this->params[$key] ?? $default;
     }
@@ -697,7 +698,7 @@ class App
      * @param string $key
      * @param mixed  $val
      */
-    public function setParam(string $key, $val): void
+    public function setParam(string $key, mixed $val): void
     {
         $this->params[$key] = $val;
     }

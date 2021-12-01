@@ -18,7 +18,7 @@ function handler_read_demo(int $count, string $prompt = null): string
 
     // 初始化一个 readline 回调接口，然后终端输出提示信息并立即返回
     // TIP: 第二次调用这个函数不需要移除上一个回调接口，这个函数将自动覆盖旧的接口
-    readline_callback_handler_install($prompt ?? " \e[D", function ($input) use (&$prev) {
+    readline_callback_handler_install($prompt ?? " \e[D", static function ($input) use (&$prev) {
         echo "Input is: $input\n";
         $prev .= $input . '|';
     });
