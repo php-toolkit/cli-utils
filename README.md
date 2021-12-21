@@ -33,14 +33,28 @@ Color::println('hello world', 'success');
 echo Color::render('hello world', 'success');
 ```
 
-![colors](example/terminal-color.png)
+![colors](example/images/color-styles.png)
+
+## Console log
+
+```php
+use Toolkit\Cli\Util\Clog;
+
+// run: php example/log.php
+foreach (Clog::getLevelNames() as $level) {
+    Clog::log($level, "example log $level message");
+}
+
+```
+
+![clog-example](example/images/clog-example.png)
 
 ## Terminal control
 
 examples:
 
 ```php
-use \Toolkit\Cli\Util\Terminal;
+use Toolkit\Cli\Util\Terminal;
 
 Terminal::forward(3);
 Terminal::backward(2);
@@ -93,106 +107,6 @@ $rendered = Highlighter::create()->highlight(file_get_contents(__FILE__));
 
 ![colors](example/cli-php-file-highlight.png)
 
-## Parse CLI arguments & options
-
-```php
-use Toolkit\Cli\Flags;
-
-$argv = $_SERVER['argv'];
-// notice: must shift first element.
-$script = \array_shift($argv);
-// do parse
-[$args, $shortOpts, $longOpts] = Flags::parseArgv($argv);
-```
-
-## Build CLI application
-
-You can quickly build an simple CLI application:
-
-```php
-use Toolkit\Cli\App;
-
-// create app instance
-$app = new App([
-  'desc' => 'this is my cli application',
-]);
-```
-
-### Register commands
-
-Use closure:
-
-```php
-$app->addCommand('test', function ($app) {
-    echo "args:\n";
-    /** @var Toolkit\Cli\App $app */
-    /** @noinspection ForgottenDebugOutputInspection */
-    print_r($app->getArgs());
-
-}, 'the description text for the command: test');
-```
-
-Use closure with a config:
-
-```php
-$app->addByConfig(function ($app) {
-    echo "args:\n";
-    /** @var Toolkit\Cli\App $app */
-    /** @noinspection ForgottenDebugOutputInspection */
-    print_r($app->getArgs());
-
-}, [
-  'name' => 'cmd2',
-  'desc' => 'the description text for the command: test',
-]);
-```
-
-Use an object:
-
-```php
-use Toolkit\Cli\App;
-
-class MyCommand
-{
-    public function getHelpConfig(): array
-    {
-        $help = <<<STR
-Options:
-  --info    Output some information
-
-Example:
-  {{fullCmd}}
-
-STR;
-
-        return [
-            'name'  => 'list',
-            'desc'  => 'list all directory name in src/',
-            'help'  => $help,
-        ];
-    }
-
-    public function __invoke(App $app)
-    {
-        echo "hello\n";
-    }
-}
-
-// add command
-$app->addObject(new MyCommand);
-```
-
-### Run application
-
-```php
-// run
-$app->run();
-```
-
-Run demo: `php example/liteApp`
-
-![cli-app](example/cli-app.png)
-
 ## CLI downloader
 
 ```php
@@ -217,6 +131,7 @@ $down->start();
 ## Projects 
 
 - https://github.com/inhere/php-console Build rich console application
+- https://github.com/php-toolkit/pflag Generic flags parse library, build simple console application.
 
 ## Refer
 

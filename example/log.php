@@ -7,14 +7,11 @@
  * @license  MIT
  */
 
-use Toolkit\Cli\Util\Download;
+use Toolkit\Cli\Util\Clog;
 
 require dirname(__DIR__) . '/test/bootstrap.php';
 
-$url  = 'http://no2.php.net/distributions/php-7.2.5.tar.bz2';
-$down = Download::create($url);
-
-$type = 'bar';
-
-$down->setShowType($type);
-$down->start();
+// run: php example/log.php
+foreach (Clog::getLevelNames() as $level) {
+    Clog::log($level, "example log $level message");
+}
