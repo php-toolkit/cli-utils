@@ -11,7 +11,7 @@ namespace Toolkit\CliTest;
 
 use PHPUnit\Framework\TestCase;
 use Toolkit\Cli\Color;
-use Toolkit\Cli\ColorTag;
+use Toolkit\Cli\Color\ColorTag;
 use function strpos;
 use function vdump;
 use const PHP_EOL;
