@@ -11,6 +11,7 @@ namespace Toolkit\Cli;
 
 use Toolkit\Cli\Color\ANSICode;
 use Toolkit\Cli\Color\ColorCode;
+use Toolkit\Cli\Color\ColorTag;
 use function array_filter;
 use function array_keys;
 use function implode;

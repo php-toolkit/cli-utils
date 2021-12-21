@@ -11,7 +11,9 @@ namespace Toolkit\Cli\Traits;
 
 use Toolkit\Cli\Style;
 use function count;
+use function fopen;
 use function implode;
+use function is_string;
 use const PHP_EOL;
 use const STDERR;
 use const STDOUT;
@@ -178,7 +180,6 @@ trait WriteMessageTrait
         // if open buffering
         if (self::isBuffering()) {
             self::$buffer .= $messages . ($nl ? PHP_EOL : '');
-
             if (!$quit) {
                 return 0;
             }
@@ -190,8 +191,12 @@ trait WriteMessageTrait
             $messages .= $nl ? PHP_EOL : '';
         }
 
-        fwrite($stream = $opts['stream'] ?? self::$outputStream, $messages);
+        $stream = self::$outputStream;
+        if (!empty($opts['stream'])) {
+            $stream = is_string($opts['stream']) ? fopen($opts['stream'], 'wb+') : $opts['stream'];
+        }
 
+        fwrite($stream, $messages);
         if (!isset($opts['flush']) || $opts['flush']) {
             fflush($stream);
         }

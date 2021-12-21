@@ -12,6 +12,7 @@ namespace Toolkit\Cli;
 use RuntimeException;
 use Toolkit\Cli\Color\Alert;
 use Toolkit\Cli\Color\Prompt;
+use Toolkit\Cli\Color\ColorTag;
 use Toolkit\Cli\Traits\ReadMessageTrait;
 use Toolkit\Cli\Traits\WriteMessageTrait;
 use function count;
@@ -24,6 +25,7 @@ use function is_array;
 use function is_numeric;
 use function json_encode;
 use function preg_replace;
+use function sprintf;
 use function stream_isatty;
 use function strtoupper;
 use function trim;
@@ -135,7 +137,7 @@ class Cli
      * @param string $msg
      * @param array  $data
      * @param string $type
-     * @param array  $opts
+     * @param array{writeOpts:array} $labels
      *  [
      *  '_category' => 'application',
      *  'process' => 'work',
@@ -143,15 +145,19 @@ class Cli
      *  'coId' => 12,
      *  ]
      */
-    public static function clog(string $msg, array $data = [], string $type = 'info', array $opts = []): void
+    public static function clog(string $msg, array $data = [], string $type = 'info', array $labels = []): void
     {
         if (isset(self::LOG_LEVEL2TAG[$type])) {
             $type = ColorTag::add(strtoupper($type), self::LOG_LEVEL2TAG[$type]);
         }
 
-        $userOpts = [];
+        $userOpts = $writeOpt = [];
+        if (isset($labels['writeOpts'])) {
+            $writeOpt = $labels['writeOpts'];
+            unset($labels['writeOpts']);
+        }
 
-        foreach ($opts as $n => $v) {
+        foreach ($labels as $n => $v) {
             if (is_numeric($n) || str_starts_with($n, '_')) {
                 $userOpts[] = "[$v]";
             } else {
@@ -162,7 +168,8 @@ class Cli
         $optString  = $userOpts ? ' ' . implode(' ', $userOpts) : '';
         $dataString = $data ? PHP_EOL . json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) : '';
 
-        self::writef("%s [%s]%s %s %s\n", date('Y/m/d H:i:s'), $type, $optString, trim($msg), $dataString);
+        $msg = sprintf("%s [%s]%s %s %s", date('Y/m/d H:i:s'), $type, $optString, trim($msg), $dataString);
+        self::writeln($msg, false, $writeOpt);
     }
 
     /*******************************************************************************

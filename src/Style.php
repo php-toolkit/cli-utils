@@ -11,6 +11,7 @@ namespace Toolkit\Cli;
 
 use InvalidArgumentException;
 use Toolkit\Cli\Color\ColorCode;
+use Toolkit\Cli\Color\ColorTag;
 use function array_key_exists;
 use function array_keys;
 use function array_merge;

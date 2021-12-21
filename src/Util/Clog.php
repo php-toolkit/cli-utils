@@ -11,6 +11,7 @@ use function method_exists;
  *
  * @author inhere
  * @method static alert(Stringable|string $message, array $context = []): void
+ * @method static emerg(Stringable|string $message, array $context = []): void
  * @method static emergency(Stringable|string $message, array $context = []): void
  * @method static critical(Stringable|string $message, array $context = []): void
  * @method static warn(Stringable|string $message, array $context = []): void
