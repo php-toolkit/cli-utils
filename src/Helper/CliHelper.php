@@ -3,7 +3,6 @@
 namespace Toolkit\Cli\Helper;
 
 use function escapeshellarg;
-use function explode;
 use function is_bool;
 use function is_numeric;
 use function preg_match;
@@ -62,42 +61,6 @@ class CliHelper
         }
 
         return $val;
-    }
-
-    /**
-     * check input is valid option value
-     *
-     * @param mixed $val
-     *
-     * @return bool
-     */
-    public static function isOptionValue(mixed $val): bool
-    {
-        if ($val === false) {
-            return false;
-        }
-
-        // if is: '', 0
-        if (!$val) {
-            return true;
-        }
-
-        // is not option name.
-        if ($val[0] !== '-') {
-            // ensure is option value.
-            if (!str_contains($val, '=')) {
-                return true;
-            }
-
-            // is string value, but contains '='
-            [$name,] = explode('=', $val, 2);
-
-            // named argument OR invalid: 'some = string'
-            return false === self::isValidName($name);
-        }
-
-        // is option name.
-        return false;
     }
 
     /**

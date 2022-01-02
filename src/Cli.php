@@ -94,7 +94,7 @@ class Cli
      */
     public static function colored(array|string $message, array|string $style = 'info'): void
     {
-        $str = is_array($message) ? implode(' ', $message) : (string)$message;
+        $str = is_array($message) ? implode(' ', $message) : $message;
 
         echo Color::render($str, $style) . PHP_EOL;
     }
@@ -134,16 +134,20 @@ class Cli
     /**
      * print log to console
      *
-     * @param string $msg
-     * @param array  $data
-     * @param string $type
-     * @param array{writeOpts:array} $labels
+     * ```php
      *  [
      *  '_category' => 'application',
      *  'process' => 'work',
      *  'pid' => 234,
      *  'coId' => 12,
      *  ]
+     * ```
+     *
+     * @param string $msg
+     * @param array  $data
+     * @param string $type
+     * @param array{writeOpts:array} $labels
+     * @deprecated please use Clog::info();
      */
     public static function clog(string $msg, array $data = [], string $type = 'info', array $labels = []): void
     {

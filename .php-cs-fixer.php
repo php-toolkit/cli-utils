@@ -3,16 +3,19 @@
 $header = <<<'EOF'
 This file is part of toolkit/cli-utils.
 
-@homepage https://github.com/php-toolkit/cli-utils
+@link     https://github.com/php-toolkit/cli-utils
 @author   https://github.com/inhere
 @license  MIT
 EOF;
 
-return (new PhpCsFixer\Config)
+return (new PhpCsFixer\Config())
     ->setRiskyAllowed(true)
     ->setRules([
         '@PSR2' => true,
         'array_syntax' => [
+            'syntax' => 'short'
+        ],
+        'list_syntax' => [
             'syntax' => 'short'
         ],
         'class_attributes_separation' => true,
@@ -29,11 +32,13 @@ return (new PhpCsFixer\Config)
         'no_unused_imports' => true,
         'single_quote' => true,
         'standardize_not_equals' => true,
+        'void_return' => true, // add :void for method
     ])
     ->setFinder(
         PhpCsFixer\Finder::create()
-            // ->exclude('test')
+            ->exclude('test')
             ->exclude('runtime')
+            ->exclude('.github')
             ->exclude('vendor')
             ->in(__DIR__)
     )
