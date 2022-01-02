@@ -1,6 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 /**
- * https://www.php.net/manual/zh/function.readline-callback-handler-install.php
+ * This file is part of toolkit/cli-utils.
+ *
+ * @link     https://github.com/php-toolkit/cli-utils
+ * @author   https://github.com/inhere
+ * @license  MIT
  */
 
 require dirname(__DIR__) . '/../test/bootstrap.php';
@@ -18,7 +22,7 @@ function handler_read_demo(int $count, string $prompt = null): string
 
     // 初始化一个 readline 回调接口，然后终端输出提示信息并立即返回
     // TIP: 第二次调用这个函数不需要移除上一个回调接口，这个函数将自动覆盖旧的接口
-    readline_callback_handler_install($prompt ?? " \e[D", static function ($input) use (&$prev) {
+    readline_callback_handler_install($prompt ?? " \e[D", static function ($input) use (&$prev): void {
         echo "Input is: $input\n";
         $prev .= $input . '|';
     });

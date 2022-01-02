@@ -1,7 +1,14 @@
-<?php
+<?php declare(strict_types=1);
+/**
+ * This file is part of toolkit/cli-utils.
+ *
+ * @link     https://github.com/php-toolkit/cli-utils
+ * @author   https://github.com/inhere
+ * @license  MIT
+ */
 
-class TermMove {
-
+class TermMove
+{
     public const KEYS = [
         10  => 'enter',
         127 => 'backspace',
@@ -44,13 +51,14 @@ class TermMove {
     {
         // return fread(STDIN, 4);
 
-        if (DIRECTORY_SEPARATOR === "\\") {
+        if (DIRECTORY_SEPARATOR === '\\') {
             $c = stream_get_contents(STDIN, 1);
 
             return $c;
         }
 
-        readline_callback_handler_install('', static function() {});
+        readline_callback_handler_install('', static function (): void {
+        });
         // $c = $this->read(1);
         // $c = fread(STDIN, 4);
         $c = stream_get_contents(STDIN, 4);
@@ -64,6 +72,6 @@ require dirname(__DIR__) . '/test/bootstrap.php';
 
 $tm = new TermMove();
 
-echo "please input:";
+echo 'please input:';
 $c = $tm->readChar();
 echo "CHAR: $c\n";

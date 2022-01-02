@@ -1,4 +1,11 @@
 <?php declare(strict_types=1);
+/**
+ * This file is part of toolkit/cli-utils.
+ *
+ * @link     https://github.com/php-toolkit/cli-utils
+ * @author   https://github.com/inhere
+ * @license  MIT
+ */
 
 namespace Toolkit\Cli\Util;
 
@@ -26,12 +33,19 @@ use const STDOUT;
 class CliLogger // implements LoggerInterface
 {
     public const EMERGENCY = 'emergency';
+
     public const ALERT     = 'alert';
+
     public const CRITICAL  = 'critical';
+
     public const ERROR     = 'error';
+
     public const WARNING   = 'warning';
+
     public const NOTICE    = 'notice';
+
     public const INFO      = 'info';
+
     public const DEBUG     = 'debug';
 
     public const LEVEL2COLOR = [

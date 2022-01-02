@@ -152,7 +152,7 @@ final class Download
             Cli::write("\nDone!");
         } else {
             $err = error_get_last();
-            Cli::stderr("\nErr.rrr..orr...\n {$err['message']}\n", true,  true,-1);
+            Cli::stderr("\nErr.rrr..orr...\n {$err['message']}\n", true, true, -1);
         }
 
         // close resource

@@ -1,4 +1,11 @@
 <?php declare(strict_types=1);
+/**
+ * This file is part of toolkit/cli-utils.
+ *
+ * @link     https://github.com/php-toolkit/cli-utils
+ * @author   https://github.com/inhere
+ * @license  MIT
+ */
 
 namespace Toolkit\Cli\Color;
 
@@ -106,5 +113,4 @@ abstract class ANSICode
     public const REVERSE = 7;      // 颠倒的 交换背景色与前景色
 
     public const CONCEALED = 8;      // 隐匿的
-
 }

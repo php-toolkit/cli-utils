@@ -224,7 +224,7 @@ class Style
                 $text = ColorTag::replaceColor($text, $key, $matches[2][$i], (string)$this->styles[$key]);
             } elseif (isset(Color::STYLES[$key])) {
                 $text = ColorTag::replaceColor($text, $key, $matches[2][$i], Color::STYLES[$key]);
-                /** Custom style format @see ColorCode::fromString() */
+            /** Custom style format @see ColorCode::fromString() */
             } elseif (strpos($key, '=')) {
                 $text = ColorTag::replaceColor($text, $key, $matches[2][$i], (string)ColorCode::fromString($key));
             }

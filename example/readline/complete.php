@@ -1,6 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 /**
- * @link https://www.php.net/manual/zh/function.readline-completion-function.php
+ * This file is part of toolkit/cli-utils.
+ *
+ * @link     https://github.com/php-toolkit/cli-utils
+ * @author   https://github.com/inhere
+ * @license  MIT
  */
 
 require dirname(__DIR__) . '/../test/bootstrap.php';
@@ -55,13 +59,13 @@ $ok = readline_completion_function('your_callback');
 
 // 使用 Tab 键测试一下吧
 // $line = \Toolkit\Cli\Cli::readln('please input> ');
-$line = trim(readline("please input> "));
+$line = trim(readline('please input> '));
 if (!empty($line)) {
     readline_add_history($line);
 }
 
 echo $line, PHP_EOL; // 当前输入的命令信息
 // 如果命令是 exit 或者 quit ，就退出程序执行
-if($line === 'exit' || $line === 'quit'){
+if ($line === 'exit' || $line === 'quit') {
     exit('bye');
 }

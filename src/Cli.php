@@ -65,7 +65,7 @@ class Cli
      * @param string $method {@see Color::STYLES}
      * @param array  $args
      */
-    public static function __callStatic(string $method, array $args)
+    public static function __callStatic(string $method, array $args): void
     {
         if ($method === 'alert') {
             Alert::global()->withStyle($args[1] ?? '')->println($args[0]);
@@ -172,7 +172,7 @@ class Cli
         $optString  = $userOpts ? ' ' . implode(' ', $userOpts) : '';
         $dataString = $data ? PHP_EOL . json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) : '';
 
-        $msg = sprintf("%s [%s]%s %s %s", date('Y/m/d H:i:s'), $type, $optString, trim($msg), $dataString);
+        $msg = sprintf('%s [%s]%s %s %s', date('Y/m/d H:i:s'), $type, $optString, trim($msg), $dataString);
         self::writeln($msg, false, $writeOpt);
     }
 

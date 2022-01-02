@@ -1,6 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 /**
- * https://www.jb51.net/article/212496.htm
+ * This file is part of toolkit/cli-utils.
+ *
+ * @link     https://github.com/php-toolkit/cli-utils
+ * @author   https://github.com/inhere
+ * @license  MIT
  */
 
 use Toolkit\Cli\Util\Readline;
@@ -8,7 +12,7 @@ use Toolkit\Cli\Util\Readline;
 require dirname(__DIR__) . '/../test/bootstrap.php';
 
 // 输出的内容进入这个回调函数中
-function rl_callback($ret)
+function rl_callback($ret): void
 {
     global $c, $prompting;
 

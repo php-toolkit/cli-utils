@@ -1,14 +1,21 @@
-<?php
+<?php declare(strict_types=1);
+/**
+ * This file is part of toolkit/cli-utils.
+ *
+ * @link     https://github.com/php-toolkit/cli-utils
+ * @author   https://github.com/inhere
+ * @license  MIT
+ */
 
 require dirname(__DIR__) . '/../test/bootstrap.php';
 
-$line = readline("command："); // 读取命令行交互信息
+$line = readline('command：'); // 读取命令行交互信息
 if (!empty($line)) {
     readline_add_history($line); // 需要手动加入到命令历史记录中
 }
 echo $line, PHP_EOL; // aaa
 
-$line = readline("command：");
+$line = readline('command：');
 if (!empty($line)) {
     readline_add_history($line);
 }

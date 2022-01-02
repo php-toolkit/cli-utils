@@ -227,7 +227,7 @@ final class Terminal
      * @param string $method
      * @param array  $args
      */
-    public static function __callStatic(string $method, array $args = [])
+    public static function __callStatic(string $method, array $args = []): void
     {
         if (isset(self::CURSOR_CONTROL_CODES[$method])) {
             self::instance()->cursor($method, ...$args);
