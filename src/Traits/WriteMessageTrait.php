@@ -9,6 +9,7 @@
 
 namespace Toolkit\Cli\Traits;
 
+use Stringable;
 use Toolkit\Cli\Style;
 use function count;
 use function fopen;
@@ -156,14 +157,14 @@ trait WriteMessageTrait
      *  ]
      * ```
      *
-     * @param array|string $messages Output message
+     * @param array|string|Stringable $messages Output message
      * @param bool $nl  True - Will add line breaks, False Raw output.
      * @param bool $quit whether quit after write
      * @param array{color:bool,stream:resource,flush:bool,quit:bool,quitCode:int} $opts Some options for write
      *
      * @return int
      */
-    public static function write(array|string $messages, bool $nl = true, bool $quit = false, array $opts = []): int
+    public static function write(array|string|Stringable $messages, bool $nl = true, bool $quit = false, array $opts = []): int
     {
         if (is_array($messages)) {
             $messages = implode($nl ? PHP_EOL : '', $messages);
