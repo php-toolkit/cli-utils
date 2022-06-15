@@ -15,13 +15,13 @@ filters:
 # not matched will use 'Other' group.
 groups:
   - name: New
-    keywords: [add, new]
+    contains: [add, new]
   - name: Fixed
     startWiths: [add, new]
-    keywords: [add, new]
+    contains: [add, new]
   - name: Feat
     startWiths: [feat]
-    keywords: [feature]
+    contains: [feature]
   - name: Update
     startWiths: [update, 'up:']
-    keywords: []
+    contains: []
