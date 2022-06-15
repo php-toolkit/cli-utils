@@ -49,6 +49,28 @@ foreach (Clog::getLevelNames() as $level) {
 
 ![clog-example](example/images/clog-example.png)
 
+## Simple console app
+
+```php
+use Toolkit\Cli\CliApp;
+
+// run:
+// php example/mycmd
+// php example/mycmd -i abc --lon def ag1 ag2 ag3
+$cmd = CliApp::new('cmd1', 'this is my cli application');
+$cmd->addOpt('info', 'i', 'Output some information');
+$cmd->addOpt('long-option-name', 'lon', 'this is a long option for command');
+$cmd->addArg('arg1', 'this is first argument');
+
+$cmd->setHandler(function (CliApp $cmd) {
+  var_dump($cmd->getOpts(), $cmd->getArgs(), $cmd->getRemainArgs());
+});
+
+$cmd->run();
+```
+
+![clog-example](example/images/cli-app.png)
+
 ## Terminal control
 
 examples:

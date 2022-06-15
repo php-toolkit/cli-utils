@@ -11,6 +11,7 @@ namespace Toolkit\CliTest\Helper;
 
 use PHPUnit\Framework\TestCase;
 use Toolkit\Cli\Helper\FlagHelper;
+use function printf;
 
 /**
  * class FlagHelperTest
@@ -22,6 +23,17 @@ class FlagHelperTest extends TestCase
         $this->assertTrue(FlagHelper::isValidName('arg0'));
         $this->assertFalse(FlagHelper::isValidName('9'));
         $this->assertFalse(FlagHelper::isValidName('/path/to'));
+    }
+
+    public function testIsOptionValue(): void
+    {
+        $this->assertTrue(FlagHelper::isOptionValue('arg0'));
+        $this->assertTrue(FlagHelper::isOptionValue('arg0-'));
+        $this->assertTrue(FlagHelper::isOptionValue('-'));
+        $this->assertTrue(FlagHelper::isOptionValue('--'));
+
+        $this->assertFalse(FlagHelper::isOptionValue('-d'));
+        $this->assertFalse(FlagHelper::isOptionValue('--opt'));
     }
 
     public function testIsValidName(): void
@@ -48,9 +60,12 @@ class FlagHelperTest extends TestCase
             $this->assertSame($ok, FlagHelper::isValidName((string)$name));
         }
     }
+
     public function testParseArgv(): void
     {
-        $rawArgv = explode(' ', 'git:tag --only-tag -d ../view arg0');
+        $str = 'git:tag --only-tag -d ../view arg0';
+        printf("parse: %s\n", $str);
+        $rawArgv = explode(' ', $str);
 
         [$args, $sOpts, $lOpts] = FlagHelper::parseArgv($rawArgv);
 

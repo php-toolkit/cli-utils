@@ -10,8 +10,8 @@
 namespace Toolkit\CliTest;
 
 use PHPUnit\Framework\TestCase;
-use Toolkit\Cli\Color;
 use Toolkit\Cli\Cli;
+use Toolkit\Cli\Color;
 
 /**
  * Class ColorTest
@@ -23,6 +23,7 @@ class ColorTest extends TestCase
     public function testRender(): void
     {
         if (!Cli::isSupportColor()) {
+            $this->assertFalse(Color::isShouldRenderColor());
             return;
         }
 

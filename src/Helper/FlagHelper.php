@@ -38,19 +38,24 @@ class FlagHelper extends CliHelper
     /**
      * check input is valid option value
      *
-     * @param mixed $val
+     * @param string|bool $val
      *
      * @return bool
      */
-    public static function isOptionValue(mixed $val): bool
+    public static function isOptionValue(string|bool $val): bool
     {
         if ($val === false) {
             return false;
         }
 
-        // if is: '', 0 || is not option name
+        // if is '', 0 || is not option name
         if (!$val || $val[0] !== '-') {
             return true;
+        }
+
+        // is option name.
+        if (ltrim($val, '-')) {
+            return false;
         }
 
         // ensure is option value.
@@ -189,7 +194,7 @@ class FlagHelper extends CliHelper
 
                 // long-opt: (--<opt>)
                 if (str_starts_with($option, '-')) {
-                    $option = substr($option, 1);
+                    $option = $pn;
                     $isLong = true;
 
                     // long-opt: value specified inline (--<opt>=<value>)
@@ -207,7 +212,6 @@ class FlagHelper extends CliHelper
 
                 // next elem is value. fix: allow empty string ''
                 if ($value === true && !isset($boolOpts[$option]) && self::isOptionValue($nxt)) {
-                    // list(,$val) = each($params);
                     $value = $nxt;
                     next($params);
 
