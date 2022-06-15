@@ -11,10 +11,11 @@ namespace Toolkit\Cli;
 
 use RuntimeException;
 use Toolkit\Cli\Color\Alert;
-use Toolkit\Cli\Color\Prompt;
 use Toolkit\Cli\Color\ColorTag;
+use Toolkit\Cli\Color\Prompt;
 use Toolkit\Cli\Traits\ReadMessageTrait;
 use Toolkit\Cli\Traits\WriteMessageTrait;
+use function array_shift;
 use function count;
 use function date;
 use function defined;
@@ -26,8 +27,10 @@ use function is_numeric;
 use function json_encode;
 use function preg_replace;
 use function sprintf;
+use function str_ends_with;
 use function stream_isatty;
 use function strtoupper;
+use function substr;
 use function trim;
 use const DIRECTORY_SEPARATOR;
 use const JSON_PRETTY_PRINT;
@@ -44,18 +47,25 @@ use const STDOUT;
  * @method static prompt(string|array|mixed $message, string $style = 'info')
  *
  * @method static red(string ...$message) Print red color message line.
+ * @method static redf(string $format, ...$args) Print red color message, use like sprintf.
  * @method static cyan(string ...$message) Print cyan color message line.
+ * @method static cyanf(string $format, ...$args) Print cyan color message, use like sprintf.
  * @method static blue(string ...$message) Print blue color message line.
  * @method static green(string ...$message) Print green color message line.
  * @method static magenta(string ...$message) Print cyan color message line.
  * @method static yellow(string ...$message) Print yellow color message line.
  *
  * @method static error(string ...$message) Print error style message line.
+ * @method static errorf(string $format, ...$args) Print error style message, use like sprintf.
  * @method static warn(string ...$message) Print warn style message line.
+ * @method static warnf(string $format, ...$args) Print warn style message, use like sprintf.
  * @method static info(string ...$message) Print info style message line.
+ * @method static infof(string $format, ...$args) Print info style message, use like sprintf.
  * @method static note(string ...$message) Print note style message line.
+ * @method static notef(string $format, ...$args) Print note style message, use like sprintf.
  * @method static notice(string ...$message) Print notice style message line.
  * @method static success(string ...$message) Print success style message line.
+ * @method static successf(string $format, ...$args) Print success style message, use like sprintf.
  */
 class Cli
 {
@@ -81,6 +91,18 @@ class Cli
             $msg = count($args) > 1 ? implode(' ', $args) : (string)$args[0];
             echo Color::render($msg, $method), "\n";
             return;
+        }
+
+        // use like sprintf
+        if (str_ends_with($method, 'f') ) {
+            $realName = substr($method, 0, -1);
+
+            if (isset(Color::STYLES[$realName]) && count($args) > 1) {
+                $fmt = (string)array_shift($args);
+                $msg = count($args) > 1 ? sprintf($fmt, ...$args) : $fmt;
+                echo Color::render($msg, $realName);
+                return;
+            }
         }
 
         throw new RuntimeException('call unknown method: ' . $method);
@@ -147,7 +169,7 @@ class Cli
      * @param array  $data
      * @param string $type
      * @param array{writeOpts:array} $labels
-     * @deprecated please use Clog::info();
+     * @deprecated please use Util\Clog::log()
      */
     public static function clog(string $msg, array $data = [], string $type = 'info', array $labels = []): void
     {

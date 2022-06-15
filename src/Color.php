@@ -35,23 +35,23 @@ use const PHP_EOL;
  *
  * @package Toolkit\Cli
  * // basic
- * @method string red(string $text)
- * @method string blue(string $text)
- * @method string cyan(string $text)
- * @method string black(string $text)
- * @method string brown(string $text)
- * @method string green(string $text)
- * @method string white(string $text)
- * @method string yellow(string $text)
- * @method string magenta(string $text)
+ * @method static string red(string $text)
+ * @method static string blue(string $text)
+ * @method static string cyan(string $text)
+ * @method static string black(string $text)
+ * @method static string brown(string $text)
+ * @method static string green(string $text)
+ * @method static string white(string $text)
+ * @method static string yellow(string $text)
+ * @method static string magenta(string $text)
  *
  * // alert
- * @method string info(string $text)
- * @method string danger(string $text)
- * @method string error(string $text)
- * @method string notice(string $text)
- * @method string warning(string $text)
- * @method string success(string $text)
+ * @method static string info(string $text)
+ * @method static string danger(string $text)
+ * @method static string error(string $text)
+ * @method static string notice(string $text)
+ * @method static string warning(string $text)
+ * @method static string success(string $text)
  *
  * // more please @see Color::STYLES
  */
