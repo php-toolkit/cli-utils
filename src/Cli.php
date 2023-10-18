@@ -15,6 +15,7 @@ use Toolkit\Cli\Color\ColorTag;
 use Toolkit\Cli\Color\Prompt;
 use Toolkit\Cli\Traits\ReadMessageTrait;
 use Toolkit\Cli\Traits\WriteMessageTrait;
+use Toolkit\Stdlib\Str;
 use function array_shift;
 use function count;
 use function date;
@@ -300,5 +301,16 @@ class Cli
     public static function stripAnsiCode(string $string): string
     {
         return preg_replace('/\033\[[\d;?]*\w/', '', $string);
+    }
+
+    /**
+     * @param array $args
+     * @param string $prefix
+     *
+     * @return string
+     */
+    public static function toCmdline(array $args, string $prefix = ''): string
+    {
+        return Str::shellQuotesToLine($args, $prefix);
     }
 }

@@ -9,6 +9,7 @@
 
 namespace Toolkit\Cli\Helper;
 
+use Toolkit\Stdlib\Str;
 use function escapeshellarg;
 use function is_bool;
 use function is_numeric;
@@ -91,5 +92,16 @@ class CliHelper
     public static function escapeToken(string $token): string
     {
         return preg_match('{^[\w-]+$}', $token) ? $token : escapeshellarg($token);
+    }
+
+    /**
+     * @param array $args
+     * @param string $prefix
+     *
+     * @return string
+     */
+    public static function toCmdline(array $args, string $prefix = ''): string
+    {
+        return Str::shellQuotesToLine($args, $prefix);
     }
 }
