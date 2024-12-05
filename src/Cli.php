@@ -140,7 +140,7 @@ class Cli
      *
      * @return string
      */
-    public static function color(string $text, array|string $style = null): string
+    public static function color(string $text, array|string|null $style = null): string
     {
         return Color::render($text, $style);
     }

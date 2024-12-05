@@ -257,7 +257,7 @@ class Color extends ANSICode
      *
      * @return string
      */
-    public static function render(string $text, array|string $style = null): string
+    public static function render(string $text, array|string|null $style = null): string
     {
         if (!$text) {
             return $text;
