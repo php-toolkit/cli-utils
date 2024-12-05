@@ -10,14 +10,14 @@
 namespace Toolkit\CliTest\Util;
 
 use Toolkit\Cli\Util\Clog;
-use Toolkit\CliTest\BaseCliTest;
+use Toolkit\CliTest\BaseCliTestCase;
 
 /**
  * class ClogTest
  *
  * @author inhere
  */
-class ClogTest extends BaseCliTest
+class ClogTest extends BaseCliTestCase
 {
     public function testClog_basic(): void
     {

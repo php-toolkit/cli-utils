@@ -11,6 +11,6 @@ namespace Toolkit\CliTest;
 
 use PHPUnit\Framework\TestCase;
 
-abstract class BaseCliTest extends TestCase
+abstract class BaseCliTestCase extends TestCase
 {
 }
