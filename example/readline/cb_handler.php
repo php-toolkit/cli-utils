@@ -16,7 +16,7 @@ require dirname(__DIR__) . '/../test/bootstrap.php';
  * @return string
  * @link https://www.php.net/manual/zh/function.readline-callback-handler-install.php#123075
  */
-function handler_read_demo(int $count, string $prompt = null): string
+function handler_read_demo(int $count, ?string $prompt = null): string
 {
     $prev = '';
 

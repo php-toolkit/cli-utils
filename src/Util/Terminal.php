@@ -294,7 +294,7 @@ final class Terminal
      *
      * @return $this
      */
-    public function cursor(string $typeName, int $arg1 = 1, int $arg2 = null): self
+    public function cursor(string $typeName, int $arg1 = 1, ?int $arg2 = null): self
     {
         if (!isset(self::CURSOR_CONTROL_CODES[$typeName])) {
             Cli::stderr("The [$typeName] is not supported cursor control.");

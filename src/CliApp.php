@@ -215,7 +215,7 @@ class CliApp
      *
      * @return int
      */
-    public function run(array $flags = null): int
+    public function run(?array $flags = null): int
     {
         if ($flags === null) {
             $flags = $_SERVER['argv'];
