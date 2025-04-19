@@ -356,7 +356,7 @@ class Highlighter
      *
      * @return string
      */
-    private function lineNumbers(array $lines, int $markLine = null): string
+    private function lineNumbers(array $lines, ?int $markLine = null): string
     {
         $snippet = '';
         $lineLen = count($lines) + 1;
